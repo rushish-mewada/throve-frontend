@@ -1,0 +1,148 @@
+.footer {
+  background-color: var(--color-footer-bg);
+  color: #ffffff;
+  padding: 100px 80px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+}
+
+/* CTA Section */
+.ctaSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.ctaSubheading {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #a3a3a3;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.ctaHeading {
+  font-family: var(--font-serif);
+  font-size: 4rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  margin: 0 0 24px 0;
+}
+
+.ctaText {
+  font-size: 1rem;
+  color: #a3a3a3;
+  margin-bottom: 64px;
+}
+
+.ctaButton {
+  background-color: #ffffff;
+  color: var(--color-footer-bg);
+  border: none;
+  border-radius: 9999px; /* Pill shape */
+  padding: 16px 48px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.ctaButton:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+/* Main Content Grid */
+.mainContent {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  align-items: flex-start;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.brandCol {
+  display: flex;
+  align-items: flex-start;
+}
+
+.logo {
+  filter: brightness(0) invert(1);
+}
+
+/* Links */
+.linksContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding-right: 40px; /* slight offset from socials */
+}
+
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.linkHeading {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.linkItem {
+  color: #e5e5e5;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+  width: fit-content;
+}
+
+.linkItem:hover {
+  color: #ffffff;
+}
+
+/* Socials */
+.socialCol {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.socialIcon {
+  color: #e5e5e5;
+  transition: all 0.2s ease;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #333333;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.socialIcon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.socialIcon:hover {
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+/* Copyright */
+.copyright {
+  border-top: 1px solid #2a2a2a;
+  padding-top: 32px;
+  text-align: center;
+  color: #a3a3a3;
+  font-size: 0.85rem;
+  width: 100%;
+}

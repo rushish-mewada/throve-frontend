@@ -1,0 +1,13 @@
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+  
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-800: #1f2937;
+  --color-footer-bg: #1a1a1a;
+  
+  --font-sans: var(--font-poppins), Arial, Helvetica, sans-serif;
+  --font-serif: var(--font-abhaya), "Times New Roman", Times, serif;
+}

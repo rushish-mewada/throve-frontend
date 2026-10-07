@@ -1,0 +1,19 @@
+.container {
+  background-color: var(--foreground);
+  color: var(--background);
+  text-align: center;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+}
+
+.text {
+  margin: 0;
+  font-weight: 300;
+}
+
+.highlight {
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+}
