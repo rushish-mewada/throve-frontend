@@ -235,8 +235,12 @@
   }
   .productsGrid {
     flex-wrap: wrap;
+    gap: 16px;
   }
   .productCard {
-    flex: 0 0 100%;
+    flex: 0 0 calc(50% - 8px);
+  }
+  .title {
+    font-size: 2.2rem;
   }
 }

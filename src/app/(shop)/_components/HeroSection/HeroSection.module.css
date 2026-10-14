@@ -448,10 +448,21 @@
 @media (max-width: 1024px) {
   .slot_-3, .slot_3 { display: none; }
   .hotspotCard { width: 185px; padding: 8px 10px; }
+  .header { left: 24px; }
+  .bottomBar { left: 24px; right: 24px; }
 }
 
 @media (max-width: 768px) {
   .slot_-2, .slot_-1, .slot_1, .slot_2 { display: none; }
-  .bottomBar { flex-direction: column; gap: 10px; text-align: center; }
-  .descriptionBox { max-width: 100%; }
+  .slot_0 { width: 300px; height: 80%; }
+  .bottomBar { flex-direction: column; gap: 16px; align-items: center; bottom: 20px; }
+  .descriptionBox { max-width: 100%; text-align: center; }
+  .title { font-size: 2rem; }
+  .exploreWrapper { bottom: 120px; } /* Push above bottom bar */
+}
+
+@media (max-width: 480px) {
+  .slot_0 { width: 100%; padding: 0 24px; height: 75%; }
+  .hotspotCard { display: none; } /* Hide complex hover cards on very small screens */
+  .title { font-size: 1.8rem; }
 }

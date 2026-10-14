@@ -193,6 +193,9 @@
 
 @media (max-width: 480px) {
   .productCard {
-    flex: 0 0 100%;
+    flex: 0 0 calc(50% - 8px);
+  }
+  .productTitle, .productPrice {
+    font-size: 0.8rem;
   }
 }

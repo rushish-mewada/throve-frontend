@@ -1,0 +1,124 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.categoryTabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--color-border-subtle, #f0f0f0);
+  -webkit-overflow-scrolling: touch;
+}
+
+.categoryTabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tabBtn {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #666666);
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.tabBtn:hover {
+  color: var(--color-text-primary, #111111);
+  background: var(--color-background-secondary, #f8f8f8);
+}
+
+.activeTab {
+  color: var(--color-text-inverse, #ffffff) !important;
+  background: var(--color-background-inverse, #111111) !important;
+}
+
+.accordionList {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border-subtle, #f0f0f0);
+}
+
+.item {
+  border-bottom: 1px solid var(--color-border-subtle, #f0f0f0);
+}
+
+.questionBtn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 20px 0;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.questionText {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-text-primary, #111111);
+  letter-spacing: -0.01em;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary, #666666);
+  flex-shrink: 0;
+}
+
+.chevron {
+  transition: transform 0.25s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.answerWrapper {
+  padding: 0 0 20px 0;
+  animation: fadeIn 0.25s ease;
+}
+
+.answerText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary, #555555);
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .questionBtn {
+    padding: 16px 0;
+  }
+
+  .questionText {
+    font-size: 14px;
+  }
+
+  .answerText {
+    font-size: 13px;
+  }
+}

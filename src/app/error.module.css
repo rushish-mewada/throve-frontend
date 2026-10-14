@@ -1,0 +1,91 @@
+.errorContainer {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  background-color: var(--color-background-primary, #ffffff);
+}
+
+.card {
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+}
+
+.statusCode {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #d32f2f;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary, #111111);
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+
+.description {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text-secondary, #666666);
+  margin: 0 0 32px;
+}
+
+.actionGroup {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.primaryBtn {
+  padding: 14px 28px;
+  background: var(--color-background-inverse, #111111);
+  color: var(--color-text-inverse, #ffffff);
+  border: 1px solid var(--color-background-inverse, #111111);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.primaryBtn:hover {
+  opacity: 0.85;
+}
+
+.secondaryBtn {
+  padding: 14px 28px;
+  background: transparent;
+  color: var(--color-text-primary, #111111);
+  border: 1px solid var(--color-background-inverse, #111111);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.secondaryBtn:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+@media (max-width: 640px) {
+  .actionGroup {
+    flex-direction: column;
+  }
+
+  .primaryBtn, .secondaryBtn {
+    width: 100%;
+  }
+}

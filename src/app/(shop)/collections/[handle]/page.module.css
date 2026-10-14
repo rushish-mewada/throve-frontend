@@ -1,0 +1,137 @@
+.plpLayout {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 48px 64px 48px;
+}
+
+.mainContent {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 48px;
+  margin-top: 48px;
+}
+
+.sidebar {
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.gridContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.productCount {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  color: #555555;
+}
+
+.sortDropdown {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  color: #111111;
+}
+
+.sortDropdown select {
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  outline: none;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.pageBtn {
+  padding: 10px 20px;
+  border: 1px solid #111111;
+  background: transparent;
+  color: #111111;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.pageBtn:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+.pageNumbers {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  color: #555555;
+  cursor: pointer;
+}
+
+.activePage {
+  color: #111111;
+  font-weight: 600;
+  border-bottom: 2px solid #111111;
+  padding-bottom: 2px;
+}
+
+@media (max-width: 1024px) {
+  .plpLayout {
+    padding: 0 24px 64px 24px;
+  }
+  .mainContent {
+    grid-template-columns: 1fr;
+    margin-top: 24px;
+  }
+  .sidebar {
+    display: none; /* Hide sidebar on tablet/mobile, requires a slide-out drawer */
+  }
+}
+
+@media (max-width: 768px) {
+  .plpLayout {
+    padding: 0 16px 48px 16px;
+  }
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .sortDropdown {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .productCount {
+    font-size: 0.85rem;
+  }
+  .pagination {
+    flex-direction: column;
+    gap: 24px;
+  }
+  .pageNumbers {
+    order: -1;
+  }
+}

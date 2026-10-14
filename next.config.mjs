@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  allowedDevOrigins: ['192.168.0.101', 'localhost'],
+  allowedDevOrigins: ['192.168.0.101', 'localhost', '10.233.51.55'],
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   experimental: {
@@ -22,6 +22,59 @@ const nextConfig = {
         hostname: '**',
       }
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/login',
+        destination: '/account/login',
+        permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/women',
+        destination: '/collections/women',
+      },
+      {
+        source: '/men',
+        destination: '/collections/men',
+      },
+      {
+        source: '/sale',
+        destination: '/collections/sale',
+      },
+      {
+        source: '/new-arrival',
+        destination: '/collections/new-arrivals',
+      },
+      {
+        source: '/new-arrivals',
+        destination: '/collections/new-arrivals',
+      },
+      {
+        source: '/terms',
+        destination: '/policies/terms',
+      },
+      {
+        source: '/privacy',
+        destination: '/policies/privacy',
+      },
+      {
+        source: '/returns',
+        destination: '/policies/returns',
+      },
+      {
+        source: '/shipping',
+        destination: '/policies/shipping',
+      },
+      {
+        source: '/cookies',
+        destination: '/policies/cookies',
+      },
+    ];
   },
   async headers() {
     return [

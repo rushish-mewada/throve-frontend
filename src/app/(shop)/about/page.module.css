@@ -1,0 +1,129 @@
+.aboutLayout {
+  background-color: #ffffff;
+  min-height: calc(100vh - 80px);
+}
+
+.heroSection {
+  position: relative;
+  height: 60vh;
+  min-height: 400px;
+  background-color: #111111;
+  background-image: linear-gradient(rgba(17, 17, 17, 0.7), rgba(17, 17, 17, 0.7)), url('https://placehold.co/1920x1080/111111/333333.png?text=Throve+Streetwear');
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.heroContent h1 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 4rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.heroContent p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #cccccc;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 96px 24px;
+}
+
+.storySection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  margin-bottom: 120px;
+}
+
+.textContent h2, .valuesSection h2 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 32px;
+  text-transform: uppercase;
+}
+
+.textContent p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.1rem;
+  color: #555555;
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+
+.imageContent {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.valuesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.valueCard {
+  background-color: #f7f7f7;
+  padding: 48px 32px;
+  border-radius: 12px;
+  transition: transform 0.3s ease;
+}
+
+.valueCard:hover {
+  transform: translateY(-8px);
+}
+
+.valueCard h3 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 16px;
+}
+
+.valueCard p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1rem;
+  color: #666666;
+  line-height: 1.6;
+}
+
+@media (max-width: 900px) {
+  .storySection {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+  .valuesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+  .heroContent p {
+    font-size: 1.2rem;
+  }
+  .container {
+    padding: 64px 16px;
+  }
+}

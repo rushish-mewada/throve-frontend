@@ -1,0 +1,267 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.searchCard {
+  background: #ffffff;
+  border: 1px solid var(--color-border-subtle, #f0f0f0);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-primary, #111111);
+}
+
+.input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border-subtle, #e0e0e0);
+  background: var(--color-background-primary, #ffffff);
+  color: var(--color-text-primary, #111111);
+  font-size: 14px;
+  border-radius: 2px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  border-color: var(--color-text-primary, #111111);
+}
+
+.errorMessage {
+  font-size: 13px;
+  color: #d32f2f;
+  margin: 0;
+}
+
+.submitBtn {
+  margin-top: 4px;
+  padding: 14px;
+  background: var(--color-background-inverse, #111111);
+  color: var(--color-text-inverse, #ffffff);
+  border: 1px solid var(--color-background-inverse, #111111);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.submitBtn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Result Card */
+.resultCard {
+  background: #ffffff;
+  border: 1px solid var(--color-border-subtle, #f0f0f0);
+  padding: 32px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.resultHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--color-border-subtle, #f0f0f0);
+  gap: 16px;
+}
+
+.badge {
+  display: inline-block;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+
+.orderTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-primary, #111111);
+  margin: 0 0 6px;
+}
+
+.metaText {
+  font-size: 13px;
+  color: var(--color-text-secondary, #666666);
+  margin: 0;
+}
+
+.etaBox {
+  text-align: right;
+  background: var(--color-background-secondary, #f8f8f8);
+  padding: 12px 16px;
+  border-radius: 2px;
+}
+
+.etaLabel {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #666666);
+  margin-bottom: 2px;
+}
+
+.etaDate {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary, #111111);
+}
+
+/* Timeline */
+.timeline {
+  padding: 32px 0 24px;
+}
+
+.timelineStep {
+  display: flex;
+  gap: 20px;
+  min-height: 54px;
+}
+
+.stepIndicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-border-subtle, #e0e0e0);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #e0e0e0;
+  transition: all 0.2s ease;
+}
+
+.completed .dot {
+  background: #111111;
+  box-shadow: 0 0 0 1px #111111;
+}
+
+.current .dot {
+  background: #2e7d32;
+  box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.2);
+}
+
+.line {
+  width: 2px;
+  flex: 1;
+  background: var(--color-border-subtle, #e0e0e0);
+  margin: 4px 0;
+}
+
+.completed .line {
+  background: #111111;
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 16px;
+}
+
+.stepStatus {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #111111);
+}
+
+.stepTime {
+  font-size: 12px;
+  color: var(--color-text-secondary, #777777);
+}
+
+/* Footer */
+.resultFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border-subtle, #f0f0f0);
+  gap: 16px;
+}
+
+.destLabel {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #666666);
+  margin-bottom: 2px;
+}
+
+.destValue {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary, #111111);
+  margin: 0;
+}
+
+.helpLink {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary, #111111);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .searchCard, .resultCard {
+    padding: 20px 16px;
+  }
+
+  .resultHeader {
+    flex-direction: column;
+  }
+
+  .etaBox {
+    text-align: left;
+    width: 100%;
+  }
+
+  .resultFooter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

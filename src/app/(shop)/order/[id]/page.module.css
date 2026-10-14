@@ -1,0 +1,294 @@
+.orderLayout {
+  background-color: #f7f7f7;
+  min-height: calc(100vh - 80px);
+  padding: 48px 24px 96px 24px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  background-color: #ffffff;
+  padding: 48px 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  margin-bottom: 24px;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 24px auto;
+}
+
+.header h1 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.header p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.05rem;
+  color: #333333;
+  margin-bottom: 8px;
+}
+
+.emailHint {
+  color: #666666 !important;
+  font-size: 0.95rem !important;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+
+.section {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  margin-bottom: 24px;
+}
+
+.section h2, .summaryCard h2, .infoCard h2 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.itemCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.itemImage {
+  position: relative;
+  width: 80px;
+  height: 96px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.itemInfo {
+  flex: 1;
+}
+
+.itemInfo h3 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: 4px;
+}
+
+.itemInfo p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.9rem;
+  color: #666666;
+}
+
+.itemPriceQty {
+  text-align: right;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.itemPriceQty p {
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: 4px;
+}
+
+.itemPriceQty span {
+  font-size: 0.85rem;
+  color: #666666;
+}
+
+/* Tracking Timeline */
+.trackingBox {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  padding-left: 12px;
+}
+
+.trackingBox::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 17px;
+  width: 2px;
+  background-color: #eaeaea;
+  z-index: 0;
+}
+
+.trackingStep {
+  display: flex;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background-color: #eaeaea;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  margin-top: 4px;
+}
+
+.trackingStep.active .dot {
+  background-color: #111111;
+  box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.1);
+}
+
+.stepInfo h4 {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #666666;
+  margin-bottom: 4px;
+}
+
+.trackingStep.active .stepInfo h4 {
+  color: #111111;
+}
+
+.stepInfo p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  color: #999999;
+}
+
+.trackingStep.active .stepInfo p {
+  color: #666666;
+}
+
+/* Right Column Cards */
+.summaryCard, .infoCard {
+  background-color: #ffffff;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  margin-bottom: 24px;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  color: #333333;
+  margin-bottom: 12px;
+}
+
+.summaryDivider {
+  height: 1px;
+  background-color: #eaeaea;
+  margin: 16px 0;
+}
+
+.totalRow {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111111;
+  margin-bottom: 0;
+}
+
+.infoCard p {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  color: #666666;
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.infoCard p strong {
+  color: #111111;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.primaryBtn, .outlineBtn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.primaryBtn {
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+}
+
+.primaryBtn:hover {
+  background-color: #333333;
+}
+
+.outlineBtn {
+  background-color: transparent;
+  color: #111111;
+  border: 1px solid #111111;
+}
+
+.outlineBtn:hover {
+  background-color: #f7f7f7;
+}
+
+@media (max-width: 768px) {
+  .orderLayout {
+    padding: 24px 16px 64px 16px;
+  }
+  .content {
+    grid-template-columns: 1fr;
+  }
+  .header {
+    padding: 32px 24px;
+  }
+  .header h1 {
+    font-size: 1.5rem;
+  }
+}

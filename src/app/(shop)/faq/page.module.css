@@ -1,0 +1,135 @@
+.faqPage {
+  min-height: calc(100vh - 80px);
+  padding: 60px 24px 100px;
+  background-color: var(--color-background-primary, #ffffff);
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.eyebrow {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary, #666666);
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary, #111111);
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--color-text-secondary, #666666);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+.contactBanner {
+  margin-top: 60px;
+  padding: 36px 32px;
+  background: var(--color-background-secondary, #f9f9f9);
+  border: 1px solid var(--color-border-subtle, #f0f0f0);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.bannerContent h3 {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-text-primary, #111111);
+  margin: 0 0 6px;
+}
+
+.bannerContent p {
+  font-size: 13px;
+  color: var(--color-text-secondary, #666666);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.bannerActions {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.contactBtn {
+  padding: 12px 24px;
+  background: var(--color-background-inverse, #111111);
+  color: var(--color-text-inverse, #ffffff);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.contactBtn:hover {
+  opacity: 0.85;
+}
+
+.trackBtn {
+  padding: 12px 24px;
+  background: transparent;
+  color: var(--color-text-primary, #111111);
+  border: 1px solid var(--color-background-inverse, #111111);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.trackBtn:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+@media (max-width: 768px) {
+  .faqPage {
+    padding: 32px 16px 60px;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+  .contactBanner {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 20px;
+  }
+
+  .bannerActions {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .contactBtn, .trackBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

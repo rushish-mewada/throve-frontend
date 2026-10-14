@@ -367,8 +367,8 @@ export default function HeroSlider() {
                   src={prod.image}
                   alt={prod.title}
                   fill
-                  priority={isCenter}
-                  sizes={isCenter ? "260px" : "110px"}
+                  priority={true}
+                  sizes={isCenter ? "300px" : "150px"}
                   style={{ objectFit: "contain", objectPosition: "center bottom" }}
                 />
 
