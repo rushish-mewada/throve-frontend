@@ -46,7 +46,7 @@ export default function AddToCartClient({ variants, colors, product }) {
         </div>
       </div>
 
-      {/* Decart Lucy VTON Trigger */}
+      {/* Throve VTON Trigger */}
       <div className={styles.vtonTriggerSection}>
         <button 
           type="button" 
@@ -55,7 +55,7 @@ export default function AddToCartClient({ variants, colors, product }) {
         >
           <span className={styles.vtonIcon}>✨</span>
           <span className={styles.vtonText}>Virtual Try-On · Live Stream</span>
-          <span className={styles.vtonBadge}>DECART LUCY</span>
+          <span className={styles.vtonBadge}>THROVE VTON</span>
         </button>
       </div>
 

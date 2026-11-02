@@ -1,6 +1,6 @@
 "use server";
 
-import { sdk } from "@/lib/medusa";
+import { sdk } from "@/lib/medusa/client";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 

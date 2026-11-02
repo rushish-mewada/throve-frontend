@@ -4,10 +4,12 @@ export function proxy(request) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://checkout.razorpay.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' data: blob: https://placehold.co;
+    img-src 'self' data: blob: https://placehold.co https://images.unsplash.com https://*.razorpay.com;
     font-src 'self';
+    connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com wss://api.decart.ai https://api.decart.ai;
+    frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
