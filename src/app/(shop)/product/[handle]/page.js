@@ -2,52 +2,25 @@ import ProductGallery from './_components/ProductGallery/ProductGallery';
 import ProductInfo from './_components/ProductInfo/ProductInfo';
 import ProductGrid from './_components/ProductGrid/ProductGrid';
 import ProductReviews from './_components/ProductReviews/ProductReviews';
+import { getProductByHandle, LAUNCH_PRODUCTS } from '@/lib/catalog';
 import styles from './page.module.css';
-
-// Dummy data matching the visual design
-const dummyProduct = {
-  id: 'prod_1',
-  title: 'Long Sleeve Jacket',
-  collection: 'Spring summer collection',
-  oldPrice: '₹4000.00',
-  price: '₹2800.00',
-  sold: '1,238',
-  rating: '4.5',
-  category: 'Women',
-  subcategory: "Women's Shirts & Tops",
-  description: 'Boba etiam ut bulla tea est potus dilectus singulari compositione saporum et textuum, quae in Taiwan annis 1980 orta sunt. Boba refert ad pilas masticas tapiocas in fundo potus inventas, quae typice lacte tea nigro sapiuntur. Boba phaenomenon.',
-  images: [
-    'https://placehold.co/800x1000/f5f5f5/666666.png?text=Main+Jacket',
-    'https://placehold.co/800x1000/e0e0e0/666666.png?text=View+2',
-    'https://placehold.co/800x1000/cccccc/666666.png?text=View+3',
-    'https://placehold.co/800x1000/d5d5d5/666666.png?text=View+4',
-    'https://placehold.co/800x1000/e5e5e5/666666.png?text=View+5',
-  ],
-  colors: [
-    { id: 'c1', name: 'Peach', hex: '#b57b61' },
-    { id: 'c2', name: 'Sand', hex: '#cbbda7' },
-    { id: 'c3', name: 'Burgundy', hex: '#5f1e24' }
-  ],
-  variants: [
-    { id: 'v1', name: '6' },
-    { id: 'v2', name: '8' },
-    { id: 'v3', name: '10' },
-    { id: 'v4', name: '14' },
-    { id: 'v5', name: '18' },
-    { id: 'v6', name: '20' }
-  ]
-};
-
-const dummyRelatedProducts = [
-  { id: 1, image: 'https://placehold.co/400x500/e0e0e0/666666.png?text=Brown+Jacket', title: 'Brown Jacket', rating: '4.8', price: '₹ 139,600', colors: ['#5c4033', '#cbbda7', '#800000'] },
-  { id: 2, image: 'https://placehold.co/400x500/d5d5d5/666666.png?text=Denim+Shirt', title: 'Brown Jacket', rating: '4.8', price: '₹ 139,600', colors: ['#5c4033', '#cbbda7', '#800000'] },
-  { id: 3, image: 'https://placehold.co/400x500/e5e5e5/666666.png?text=Polo+Shirt', title: 'Brown Jacket', rating: '4.8', price: '₹ 139,600', colors: ['#5c4033', '#cbbda7', '#800000'] },
-  { id: 4, image: 'https://placehold.co/400x500/cccccc/666666.png?text=Jeans', title: 'Brown Jacket', rating: '4.8', price: '₹ 139,600', colors: ['#5c4033', '#cbbda7', '#800000'] }
-];
 
 export default async function ProductPage({ params }) {
   const resolvedParams = await params;
-  const product = dummyProduct;
+  const product = getProductByHandle(resolvedParams?.handle);
+
+  const relatedProducts = LAUNCH_PRODUCTS
+    .filter((p) => p.handle !== product.handle)
+    .slice(0, 4)
+    .map((p) => ({
+      id: p.id,
+      title: p.title,
+      price: p.price,
+      rating: p.rating,
+      image: p.images[0],
+      colors: p.colorHexes,
+      handle: p.handle,
+    }));
 
   return (
     <main className={styles.pdpLayout}>
@@ -64,11 +37,19 @@ export default async function ProductPage({ params }) {
         </div>
       </div>
       
-      <ProductGrid title="Related Product" products={dummyRelatedProducts} seeAllLink="/collections/women" />
+      <ProductGrid
+        title="Related Products"
+        products={relatedProducts}
+        seeAllLink={`/collections/${product.category.toLowerCase() === 'men' ? 'men' : 'women'}`}
+      />
       
       <ProductReviews />
 
-      <ProductGrid title="Popular this week" products={dummyRelatedProducts} seeAllLink="/collections/women" />
+      <ProductGrid
+        title="Popular This Week"
+        products={relatedProducts}
+        seeAllLink="/collections/new-arrivals"
+      />
     </main>
   );
 }

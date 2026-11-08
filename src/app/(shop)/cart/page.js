@@ -7,8 +7,8 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 
 const INITIAL_CART_ITEMS = [
-  { id: 1, image: 'https://placehold.co/150x180/e0e0e0/666666.png?text=Jacket', title: 'Long Sleeve Jacket', variant: 'Peach / 8', priceNum: 2800, qty: 1 },
-  { id: 2, image: 'https://placehold.co/150x180/d5d5d5/666666.png?text=Shirt', title: 'Classic Denim Shirt', variant: 'Blue / M', priceNum: 1500, qty: 1 },
+  { id: 1, image: '/products/navy-tailored-mini-dress/main.jpg', title: 'Sleeveless Tailored Mini Dress', variant: 'Navy / M', priceNum: 4800, qty: 1 },
+  { id: 2, image: '/products/asymmetric-mandarin-shirt/main.jpg', title: 'Overlapping Mandarin Shirt', variant: 'Espresso Brown / L', priceNum: 3900, qty: 1 },
 ];
 
 export default function CartPage() {

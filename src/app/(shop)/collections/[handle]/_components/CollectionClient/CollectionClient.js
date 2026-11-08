@@ -88,10 +88,10 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
     if (selectedPriceRanges.length > 0) {
       result = result.filter((p) => {
         return selectedPriceRanges.some((range) => {
-          if (range === 'Under ₹50,000') return p.priceNum < 50000;
-          if (range === '₹50,000 - ₹100,000') return p.priceNum >= 50000 && p.priceNum <= 100000;
-          if (range === '₹100,000 - ₹150,000') return p.priceNum >= 100000 && p.priceNum <= 150000;
-          if (range === 'Over ₹150,000') return p.priceNum > 150000;
+          if (range === 'Under ₹3,500' || range === 'Under ₹50,000') return p.priceNum < 3500;
+          if (range === '₹3,500 - ₹4,500' || range === '₹50,000 - ₹100,000') return p.priceNum >= 3500 && p.priceNum <= 4500;
+          if (range === '₹4,500 - ₹5,500' || range === '₹100,000 - ₹150,000') return p.priceNum >= 4500 && p.priceNum <= 5500;
+          if (range === 'Over ₹5,500' || range === 'Over ₹150,000') return p.priceNum > 5500;
           return true;
         });
       });

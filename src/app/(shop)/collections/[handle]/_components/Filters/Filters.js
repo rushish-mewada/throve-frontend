@@ -29,13 +29,13 @@ export default function Filters({
   };
 
   const priceOptions = [
-    'Under ₹50,000',
-    '₹50,000 - ₹100,000',
-    '₹100,000 - ₹150,000',
-    'Over ₹150,000',
+    'Under ₹3,500',
+    '₹3,500 - ₹4,500',
+    '₹4,500 - ₹5,500',
+    'Over ₹5,500',
   ];
 
-  const sizeOptions = ['S', 'M', 'L', 'XL', '6', '8', '10', '12', '14', '16'];
+  const sizeOptions = ['S', 'M', 'L'];
   const colorOptions = ['#111111', '#ffffff', '#cbbda7', '#5f1e24', '#1C2841', '#5c4033'];
 
   return (

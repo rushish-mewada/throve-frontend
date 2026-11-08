@@ -267,22 +267,22 @@ export default function CheckoutPage() {
               <span className={styles.itemBadge}>1</span>
             </div>
             <div className={styles.itemInfo}>
-              <h4>Long Sleeve Jacket</h4>
-              <p>Peach / 8</p>
+              <h4>Sleeveless Tailored Mini Dress</h4>
+              <p>Navy / M</p>
             </div>
-            <span className={styles.itemPrice}>₹2,800.00</span>
+            <span className={styles.itemPrice}>₹4,800.00</span>
           </div>
           
           <div className={styles.summaryItem}>
             <div className={styles.itemImageWrapper}>
               <div className={styles.itemImage}></div>
-              <span className={styles.itemBadge}>2</span>
+              <span className={styles.itemBadge}>1</span>
             </div>
             <div className={styles.itemInfo}>
-              <h4>Classic Denim Shirt</h4>
-              <p>Blue / M</p>
+              <h4>Overlapping Mandarin Shirt</h4>
+              <p>Espresso Brown / L</p>
             </div>
-            <span className={styles.itemPrice}>₹1,500.00</span>
+            <span className={styles.itemPrice}>₹3,900.00</span>
           </div>
         </div>
 
