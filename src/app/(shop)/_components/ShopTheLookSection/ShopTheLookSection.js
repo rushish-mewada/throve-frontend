@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useStore } from '@/context/StoreContext';
 import styles from './ShopTheLookSection.module.css';
 
 const LOOKS = [
@@ -115,15 +116,9 @@ const LOOKS = [
 ];
 
 export default function ShopTheLookSection() {
+  const { isInWishlist, toggleWishlist } = useStore();
   const [activeLook, setActiveLook] = useState(0);
-  const [wishlist, setWishlist] = useState({});
   const [activeImageIndices, setActiveImageIndices] = useState({});
-
-  const toggleWishlist = (id, e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setWishlist((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
 
   const handlePrev = () => {
     setActiveLook((prev) => (prev === 0 ? LOOKS.length - 1 : prev - 1));
@@ -219,14 +214,18 @@ export default function ShopTheLookSection() {
                         type="button"
                         className={styles.wishlistBtn}
                         aria-label="Add to wishlist"
-                        onClick={(e) => toggleWishlist(product.id, e)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist(product);
+                        }}
                       >
                         <svg
                           width="20"
                           height="20"
                           viewBox="0 0 24 24"
-                          fill={wishlist[product.id] ? "#ef4444" : "none"}
-                          stroke={wishlist[product.id] ? "#ef4444" : "currentColor"}
+                          fill={isInWishlist(product.id || product.handle) ? "#ef4444" : "none"}
+                          stroke={isInWishlist(product.id || product.handle) ? "#ef4444" : "currentColor"}
                           strokeWidth="1.5"
                           style={{ transition: 'fill 0.2s ease, stroke 0.2s ease' }}
                         >

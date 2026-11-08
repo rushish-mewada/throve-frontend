@@ -3,65 +3,22 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useStore } from '@/context/StoreContext';
 import styles from './WishlistGrid.module.css';
 
-const INITIAL_WISHLIST = [
-  {
-    id: 'w1',
-    title: 'Boxy Heavyweight Acid Wash Hoodie',
-    category: 'Outerwear',
-    price: 4999,
-    originalPrice: 6499,
-    image: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&q=80&w=600',
-    handle: 'boxy-heavyweight-hoodie',
-    inStock: true,
-    size: 'L',
-  },
-  {
-    id: 'w2',
-    title: 'Raw Edge Carpenter Denim Pant',
-    category: 'Bottoms',
-    price: 5499,
-    originalPrice: 6999,
-    image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&q=80&w=600',
-    handle: 'raw-edge-carpenter-denim',
-    inStock: true,
-    size: '32',
-  },
-  {
-    id: 'w3',
-    title: 'Oversized Distressed Graphic Tee',
-    category: 'T-Shirts',
-    price: 2499,
-    originalPrice: 2999,
-    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=600',
-    handle: 'oversized-distressed-tee',
-    inStock: false,
-    size: 'M',
-  },
-  {
-    id: 'w4',
-    title: 'Tactical Utility Multi-Pocket Vest',
-    category: 'Outerwear',
-    price: 4299,
-    originalPrice: 5299,
-    image: 'https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&q=80&w=600',
-    handle: 'tactical-utility-vest',
-    inStock: true,
-    size: 'XL',
-  },
-];
-
 export default function WishlistGrid() {
-  const [items, setItems] = useState(INITIAL_WISHLIST);
+  const { wishlistItems: items, removeFromWishlist, addToCart, setIsCartDrawerOpen } = useStore();
   const [addedToast, setAddedToast] = useState(null);
 
   const handleRemove = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
+    removeFromWishlist(id);
   };
 
   const handleMoveToBag = (item) => {
+    addToCart(item, item.size || 'M', 'Standard', 1);
+    removeFromWishlist(item.id);
     setAddedToast(`Added ${item.title} to bag`);
+    setIsCartDrawerOpen(true);
     setTimeout(() => {
       setAddedToast(null);
     }, 3000);
@@ -137,7 +94,9 @@ export default function WishlistGrid() {
               </h3>
 
               <div className={styles.priceRow}>
-                <span className={styles.price}>₹{item.price.toLocaleString('en-IN')}</span>
+                <span className={styles.price}>
+                  ₹{(item.priceNum || (typeof item.price === 'number' ? item.price : parseInt(String(item.price || 0).replace(/\D/g, ''), 10) || 0)).toLocaleString('en-IN')}
+                </span>
                 {item.originalPrice && (
                   <span className={styles.originalPrice}>₹{item.originalPrice.toLocaleString('en-IN')}</span>
                 )}

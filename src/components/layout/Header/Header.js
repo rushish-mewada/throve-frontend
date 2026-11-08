@@ -4,51 +4,25 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useStore } from '@/context/StoreContext';
 import styles from './Header.module.css';
 
 export default function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMenuClosing, setIsMenuClosing] = useState(false);
-  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isCartClosing, setIsCartClosing] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: 'Sleeveless Tailored Mini Dress',
-      variant: 'Size: M | Color: Navy',
-      price: 4800,
-      qty: 1,
-      image: '/products/navy-tailored-mini-dress/front.jpg',
-    },
-    {
-      id: 2,
-      name: 'Overlapping Mandarin Shirt',
-      variant: 'Size: L | Color: Espresso Brown',
-      price: 3900,
-      qty: 1,
-      image: '/products/asymmetric-mandarin-shirt/front.jpg',
-    },
-  ]);
 
-  const updateCartQty = (id, delta) => {
-    setCartItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          const newQty = Math.max(1, item.qty + delta);
-          return { ...item, qty: newQty };
-        }
-        return item;
-      })
-    );
-  };
-
-  const removeCartItem = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const totalCartCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
-  const cartSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
+  const {
+    cartItems,
+    cartCount,
+    cartSubtotal,
+    isCartDrawerOpen,
+    setIsCartDrawerOpen,
+    updateCartQty,
+    removeFromCart,
+    wishlistCount,
+  } = useStore();
 
   const isLinkActive = (path) => {
     if (!pathname) return false;
@@ -169,10 +143,11 @@ export default function Header() {
             </svg>
           </Link>
           
-          <Link href="/wishlist" aria-label="Wishlist" className={styles.iconBtn}>
+          <Link href="/wishlist" aria-label="Wishlist" className={styles.iconBtn} style={{ position: 'relative' }}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
+            {wishlistCount > 0 && <span className={styles.cartBadge}>{wishlistCount}</span>}
           </Link>
           
           <button 
@@ -185,7 +160,7 @@ export default function Header() {
               <line x1="3" y1="6" x2="21" y2="6"/>
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
-            <span className={styles.cartBadge}>{totalCartCount}</span>
+            <span className={styles.cartBadge}>{cartCount}</span>
           </button>
         </div>
 
@@ -248,7 +223,7 @@ export default function Header() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.cartHeader}>
-              <span className={styles.cartTitle}>Your Cart ({totalCartCount})</span>
+              <span className={styles.cartTitle}>Your Cart ({cartCount})</span>
               <button 
                 className={styles.closeBtn} 
                 onClick={closeCart}
@@ -277,15 +252,15 @@ export default function Header() {
                 cartItems.map((item) => (
                   <div key={item.id} className={styles.cartItem}>
                     <div className={styles.cartItemImage}>
-                      <Image src={item.image} alt={item.name} fill sizes="90px" style={{ objectFit: 'cover' }} />
+                      <Image src={item.image} alt={item.title || item.name} fill sizes="90px" style={{ objectFit: 'cover' }} />
                     </div>
                     <div className={styles.cartItemDetails}>
                       <div className={styles.cartItemTop}>
-                        <span className={styles.cartItemName}>{item.name}</span>
+                        <span className={styles.cartItemName}>{item.title || item.name}</span>
                         <button
                           className={styles.removeBtn}
                           aria-label="Remove item"
-                          onClick={() => removeCartItem(item.id)}
+                          onClick={() => removeFromCart(item.id)}
                         >
                           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                             <line x1="18" y1="6" x2="6" y2="18"/>
@@ -300,7 +275,7 @@ export default function Header() {
                           <span>{item.qty}</span>
                           <button onClick={() => updateCartQty(item.id, 1)} aria-label="Increase quantity">+</button>
                         </div>
-                        <span className={styles.cartItemPrice}>₹ {(item.price * item.qty).toLocaleString('en-IN')}</span>
+                        <span className={styles.cartItemPrice}>₹ {((item.priceNum || item.price || 0) * item.qty).toLocaleString('en-IN')}</span>
                       </div>
                     </div>
                   </div>

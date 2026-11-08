@@ -1,9 +1,12 @@
 "use client";
 import { useState, useTransition } from 'react';
+import Image from 'next/image';
+import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
 import { processCheckoutAction } from '@/actions/checkout';
 
 export default function CheckoutPage() {
+  const { cartItems, cartSubtotal, clearCart } = useStore();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('user@example.com');
   const [firstName, setFirstName] = useState('');
@@ -32,6 +35,7 @@ export default function CheckoutPage() {
       });
 
       if (res.success) {
+        clearCart();
         setOrderConfirmed(res);
       } else {
         alert(res.error || 'Failed to place order');
@@ -261,29 +265,35 @@ export default function CheckoutPage() {
 
       <div className={styles.rightCol}>
         <div className={styles.summaryItems}>
-          <div className={styles.summaryItem}>
-            <div className={styles.itemImageWrapper}>
-              <div className={styles.itemImage}></div>
-              <span className={styles.itemBadge}>1</span>
-            </div>
-            <div className={styles.itemInfo}>
-              <h4>Sleeveless Tailored Mini Dress</h4>
-              <p>Navy / M</p>
-            </div>
-            <span className={styles.itemPrice}>₹4,800.00</span>
-          </div>
-          
-          <div className={styles.summaryItem}>
-            <div className={styles.itemImageWrapper}>
-              <div className={styles.itemImage}></div>
-              <span className={styles.itemBadge}>1</span>
-            </div>
-            <div className={styles.itemInfo}>
-              <h4>Overlapping Mandarin Shirt</h4>
-              <p>Espresso Brown / L</p>
-            </div>
-            <span className={styles.itemPrice}>₹3,900.00</span>
-          </div>
+          {cartItems.length === 0 ? (
+            <p style={{ color: '#666666', fontSize: '0.9rem' }}>No items in checkout</p>
+          ) : (
+            cartItems.map((item) => (
+              <div key={item.id} className={styles.summaryItem}>
+                <div className={styles.itemImageWrapper}>
+                  <div className={styles.itemImage} style={{ position: 'relative', overflow: 'hidden' }}>
+                    {item.image && (
+                      <Image
+                        src={item.image}
+                        alt={item.title || item.name}
+                        fill
+                        sizes="64px"
+                        style={{ objectFit: 'cover' }}
+                      />
+                    )}
+                  </div>
+                  <span className={styles.itemBadge}>{item.qty}</span>
+                </div>
+                <div className={styles.itemInfo}>
+                  <h4>{item.title || item.name}</h4>
+                  <p>{item.variant}</p>
+                </div>
+                <span className={styles.itemPrice}>
+                  ₹{(((item.priceNum || item.price || 0) * item.qty)).toLocaleString('en-IN')}.00
+                </span>
+              </div>
+            ))
+          )}
         </div>
 
         <div className={styles.couponBox}>
@@ -302,7 +312,7 @@ export default function CheckoutPage() {
         <div className={styles.totals}>
           <div className={styles.totalRow}>
             <span>Subtotal</span>
-            <span>₹4,300.00</span>
+            <span>₹{cartSubtotal.toLocaleString('en-IN')}.00</span>
           </div>
           <div className={styles.totalRow}>
             <span>Shipping</span>
@@ -310,7 +320,7 @@ export default function CheckoutPage() {
           </div>
           <div className={`${styles.totalRow} ${styles.finalTotal}`}>
             <span>Total</span>
-            <span className={styles.priceLarge}><span className={styles.currency}>INR</span> ₹4,300.00</span>
+            <span className={styles.priceLarge}><span className={styles.currency}>INR</span> ₹{cartSubtotal.toLocaleString('en-IN')}.00</span>
           </div>
         </div>
       </div>

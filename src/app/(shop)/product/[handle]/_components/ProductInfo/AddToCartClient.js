@@ -1,10 +1,12 @@
 "use client";
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useStore } from '@/context/StoreContext';
 import styles from './ProductInfo.module.css';
 
 export default function AddToCartClient({ variants, colors, product }) {
   const router = useRouter();
+  const { addToCart, setIsCartDrawerOpen } = useStore();
   const [selectedSize, setSelectedSize] = useState(variants[1] || variants[0]);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [isAdding, setIsAdding] = useState(false);
@@ -15,8 +17,10 @@ export default function AddToCartClient({ variants, colors, product }) {
     if (isAdding) return;
     setIsAdding(true);
     await new Promise((r) => setTimeout(r, 2000));
+    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1);
     setIsAdding(false);
     setAddedSuccess(true);
+    setIsCartDrawerOpen(true);
     setTimeout(() => setAddedSuccess(false), 3000);
   };
 
@@ -24,6 +28,7 @@ export default function AddToCartClient({ variants, colors, product }) {
     if (isCheckingOut) return;
     setIsCheckingOut(true);
     await new Promise((r) => setTimeout(r, 2000));
+    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1);
     router.push('/checkout');
   };
 

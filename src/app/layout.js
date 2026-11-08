@@ -3,6 +3,7 @@ import "./globals.css";
 import AnnouncementBar from "@/components/layout/AnnouncementBar/AnnouncementBar";
 import Header from "@/components/layout/Header/Header";
 import Footer from "@/components/layout/Footer/Footer";
+import { StoreProvider } from "@/context/StoreContext";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -25,10 +26,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} ${abhaya.variable}`}>
       <body>
-        <AnnouncementBar />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <StoreProvider>
+          <AnnouncementBar />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </StoreProvider>
       </body>
     </html>
   );

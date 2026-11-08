@@ -4,39 +4,18 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
-
-const INITIAL_CART_ITEMS = [
-  { id: 1, image: '/products/navy-tailored-mini-dress/main.jpg', title: 'Sleeveless Tailored Mini Dress', variant: 'Navy / M', priceNum: 4800, qty: 1 },
-  { id: 2, image: '/products/asymmetric-mandarin-shirt/main.jpg', title: 'Overlapping Mandarin Shirt', variant: 'Espresso Brown / L', priceNum: 3900, qty: 1 },
-];
 
 export default function CartPage() {
   const router = useRouter();
-  const [items, setItems] = useState(INITIAL_CART_ITEMS);
+  const { cartItems: items, updateCartQty: updateQty, removeFromCart: removeItem, cartSubtotal: subtotal } = useStore();
   const [couponCode, setCouponCode] = useState('');
   const [appliedDiscount, setAppliedDiscount] = useState(0);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [couponSuccess, setCouponSuccess] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const updateQty = (id, delta) => {
-    setItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          const newQty = Math.max(1, item.qty + delta);
-          return { ...item, qty: newQty };
-        }
-        return item;
-      })
-    );
-  };
-
-  const removeItem = (id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const subtotal = items.reduce((acc, item) => acc + item.priceNum * item.qty, 0);
   const total = Math.max(0, subtotal - appliedDiscount);
 
   const handleApplyCoupon = async () => {

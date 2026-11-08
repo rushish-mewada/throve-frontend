@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useStore } from "@/context/StoreContext";
 import styles from "./HeroSection.module.css";
 
 const PRODUCTS = [
@@ -117,152 +118,13 @@ const PRODUCTS = [
       },
     ],
   },
-  {
-    id: "p4",
-    image: "/images/hero/prod1.png",
-    title: "Olive Knit Polo Selection",
-    description:
-      "Modern minimalist aesthetic featuring lightweight unstructured outerwear and structured tailored trousers for seasonal versatility.",
-    hotspots: [
-      {
-        id: "h4_1",
-        title: "Olive Polo Shirt",
-        collection: "Summer collection 2025",
-        price: "₹ 44,000",
-        rating: "4.8",
-        color: "Olive",
-        colorDots: ["#556b2f", "#6e473b", "#d4b896"],
-        dotTop: "26%",
-        dotLeft: "46%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "h4_2",
-        title: "Cream Tailored Trousers",
-        collection: "Summer collection 2025",
-        price: "₹ 66,000",
-        rating: "4.9",
-        color: "Cream",
-        colorDots: ["#f5f5dc", "#1a1a1a", "#6e473b"],
-        dotTop: "60%",
-        dotLeft: "50%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
-  {
-    id: "p5",
-    image: "/images/hero/prod3.png",
-    title: "Resort Tailored Navy Outfit",
-    description:
-      "Refined leisure wear with layered fine-gauge knits and classic pleated tailoring for warm evening gatherings.",
-    hotspots: [
-      {
-        id: "p5_1",
-        title: "Resort Polo Shirt",
-        collection: "Resort Collection 2025",
-        price: "₹ 49,000",
-        rating: "4.9",
-        color: "Off White",
-        colorDots: ["#f5f5dc", "#1b2a4a", "#6e473b"],
-        dotTop: "28%",
-        dotLeft: "48%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "p5_2",
-        title: "Pleated Navy Trousers",
-        collection: "Resort Collection 2025",
-        price: "₹ 78,000",
-        rating: "4.8",
-        color: "Navy",
-        colorDots: ["#1b2a4a", "#d4b896", "#ffffff"],
-        dotTop: "62%",
-        dotLeft: "52%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
-  {
-    id: "p6",
-    image: "/images/hero/prod2.png",
-    title: "Summer Linen Casual Wear",
-    description:
-      "Lightweight, breathable linen separates ideal for warm climates and relaxed coastal weekends.",
-    hotspots: [
-      {
-        id: "p6_1",
-        title: "Linen Shirt",
-        collection: "Summer collection 2025",
-        price: "₹ 53,000",
-        rating: "4.8",
-        color: "White",
-        colorDots: ["#ffffff", "#1a1a1a", "#6e473b"],
-        dotTop: "32%",
-        dotLeft: "45%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "p6_2",
-        title: "Wide Pants",
-        collection: "Summer collection 2025",
-        price: "₹ 72,000",
-        rating: "4.7",
-        color: "Beige",
-        colorDots: ["#d4b896", "#2c3e50", "#faf8f5"],
-        dotTop: "64%",
-        dotLeft: "52%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
-  {
-    id: "p7",
-    image: "/images/hero/prod1.png",
-    title: "Classic Summer Polo Edition",
-    description:
-      "Timeless tailoring reinvented with contemporary silhouettes and signature detailing for everyday luxury.",
-    hotspots: [
-      {
-        id: "p7_1",
-        title: "Knit Polo",
-        collection: "Summer collection 2025",
-        price: "₹ 46,000",
-        rating: "4.9",
-        color: "Green",
-        colorDots: ["#556b2f", "#6e473b", "#d4b896"],
-        dotTop: "27%",
-        dotLeft: "44%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "p7_2",
-        title: "Pleated Trousers",
-        collection: "Summer collection 2025",
-        price: "₹ 69,000",
-        rating: "4.8",
-        color: "Cream",
-        colorDots: ["#f5f5dc", "#2c3e50", "#1a1a1a"],
-        dotTop: "61%",
-        dotLeft: "50%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
 ];
 
 // Fixed 7 relative slots: 3 items left (-3,-2,-1), 1 center (0), 3 items right (1,2,3)
 const OFFSETS = [-3, -2, -1, 0, 1, 2, 3];
 
 export default function HeroSlider() {
+  const { isInWishlist, toggleWishlist } = useStore();
   const NUM_DOM_ELEMENTS = 9;
   const [offsetBase, setOffsetBase] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -372,14 +234,30 @@ export default function HeroSlider() {
                       >
                         {hs.title}
                       </Link>
-                      <button className={styles.wishlistBtn} aria-label="Add to wishlist">
+                      <button
+                        type="button"
+                        className={styles.wishlistBtn}
+                        aria-label="Add to wishlist"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          toggleWishlist({
+                            id: hs.id,
+                            title: hs.title,
+                            price: hs.price,
+                            handle: hs.handle,
+                            image: prod.image,
+                          });
+                        }}
+                      >
                         <svg
                           width="15"
                           height="15"
                           viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
+                          fill={isInWishlist(hs.id || hs.handle) ? "#ef4444" : "none"}
+                          stroke={isInWishlist(hs.id || hs.handle) ? "#ef4444" : "currentColor"}
                           strokeWidth="1.8"
+                          style={{ transition: "fill 0.2s ease, stroke 0.2s ease" }}
                         >
                           <path
                             d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
