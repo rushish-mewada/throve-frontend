@@ -16,7 +16,17 @@
 }
 
 .header {
-  margin-bottom: 48px;
+  margin-bottom: 40px;
+}
+
+.logoLink {
+  display: inline-block;
+  margin-bottom: 20px;
+  transition: opacity 0.2s ease;
+}
+
+.logoLink:hover {
+  opacity: 0.8;
 }
 
 .header h2 {
@@ -33,6 +43,18 @@
   color: #888888;
   display: flex;
   gap: 8px;
+  align-items: center;
+}
+
+.breadcrumbLink {
+  color: #888888;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.breadcrumbLink:hover {
+  color: #111111;
+  text-decoration: underline;
 }
 
 .breadcrumbs span:last-child {

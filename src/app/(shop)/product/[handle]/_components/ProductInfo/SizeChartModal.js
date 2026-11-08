@@ -167,3 +167,4 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
     </div>
   );
 }
+

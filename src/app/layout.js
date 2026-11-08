@@ -1,8 +1,6 @@
 import { Poppins, Abhaya_Libre } from "next/font/google";
 import "./globals.css";
-import AnnouncementBar from "@/components/layout/AnnouncementBar/AnnouncementBar";
-import Header from "@/components/layout/Header/Header";
-import Footer from "@/components/layout/Footer/Footer";
+import AppChrome from "@/components/layout/AppChrome";
 import { StoreProvider } from "@/context/StoreContext";
 
 const poppins = Poppins({
@@ -27,10 +25,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className={`${poppins.variable} ${abhaya.variable}`}>
       <body>
         <StoreProvider>
-          <AnnouncementBar />
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <AppChrome>{children}</AppChrome>
         </StoreProvider>
       </body>
     </html>

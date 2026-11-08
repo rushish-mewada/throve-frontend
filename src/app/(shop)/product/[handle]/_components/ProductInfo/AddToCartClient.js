@@ -31,20 +31,22 @@ export default function AddToCartClient({ variants, colors, product }) {
   const handleCheckoutNow = async () => {
     if (isCheckingOut) return;
     setIsCheckingOut(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1);
+    setIsCartDrawerOpen(false);
+    await new Promise((r) => setTimeout(r, 600));
+    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1, false);
+    setIsCartDrawerOpen(false);
     router.push('/checkout');
   };
 
   return (
     <div className={styles.formContainer}>
-      
+
       {/* Colors */}
       <div className={styles.optionGroup}>
         <span className={styles.optionLabel}>Color: <span>{selectedColor?.name}</span></span>
         <div className={styles.swatchList}>
           {colors.map(color => (
-            <button 
+            <button
               key={color.id}
               className={`${styles.swatch} ${selectedColor?.id === color.id ? styles.swatchActive : ''}`}
               style={{ backgroundColor: color.hex }}
@@ -69,7 +71,7 @@ export default function AddToCartClient({ variants, colors, product }) {
         </div>
         <div className={styles.sizeList}>
           {variants.map(v => (
-            <button 
+            <button
               key={v.id}
               className={`${styles.sizeBtn} ${selectedSize?.id === v.id ? styles.sizeActive : ''}`}
               onClick={() => setSelectedSize(v)}
@@ -97,7 +99,23 @@ export default function AddToCartClient({ variants, colors, product }) {
           ) : addedSuccess ? (
             <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Added to Bag!</span>
           ) : (
-            "Add To Cart"
+            <>
+              <svg
+                width="17"
+                height="17"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              <span>Add To Cart</span>
+            </>
           )}
         </button>
 
@@ -114,7 +132,22 @@ export default function AddToCartClient({ variants, colors, product }) {
               <span>Securing Checkout...</span>
             </>
           ) : (
-            "Checkout Now"
+            <>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              <span>Checkout Now</span>
+            </>
           )}
         </button>
       </div>

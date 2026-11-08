@@ -1,6 +1,7 @@
 "use client";
 import { useState, useTransition } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
 import { processCheckoutAction } from '@/actions/checkout';
@@ -47,9 +48,17 @@ export default function CheckoutPage() {
     <main className={styles.checkoutLayout}>
       <div className={styles.leftCol}>
         <div className={styles.header}>
-          <h2>Throve</h2>
+          <Link href="/" className={styles.logoLink}>
+            <Image 
+              src="/assets/images/inline-logo.svg" 
+              alt="Throve" 
+              width={140} 
+              height={32} 
+              priority
+            />
+          </Link>
           <div className={styles.breadcrumbs}>
-            <span>Cart</span> &gt; <span>Information</span> &gt; <span>Shipping</span> &gt; <span>Payment</span>
+            <Link href="/cart" className={styles.breadcrumbLink}>Cart</Link> &gt; <span>Information</span> &gt; <span>Shipping</span> &gt; <span>Payment</span>
           </div>
         </div>
 

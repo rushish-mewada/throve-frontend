@@ -96,7 +96,7 @@ export function StoreProvider({ children }) {
   }, [wishlistItems, isMounted]);
 
   // Cart operations
-  const addToCart = (product, size = 'M', color = 'Standard', qty = 1) => {
+  const addToCart = (product, size = 'M', color = 'Standard', qty = 1, openDrawer = true) => {
     const sizeName = typeof size === 'object' ? size?.name || 'M' : size;
     const colorName = typeof color === 'object' ? color?.name || 'Standard' : color;
     const variantStr = `Size: ${sizeName} | Color: ${colorName}`;
@@ -132,7 +132,9 @@ export function StoreProvider({ children }) {
       ];
     });
 
-    setIsCartDrawerOpen(true);
+    if (openDrawer) {
+      setIsCartDrawerOpen(true);
+    }
   };
 
   const removeFromCart = (cartItemId) => {
