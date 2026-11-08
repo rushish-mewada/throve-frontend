@@ -6,7 +6,7 @@ import { useStore } from '@/context/StoreContext';
 import styles from './ProductGrid.module.css';
 
 export default function ProductGrid({ title, products, seeAllLink }) {
-  const { isInWishlist, toggleWishlist } = useStore();
+  const { isInWishlist, toggleWishlist, addToCart } = useStore();
 
   return (
     <section className={styles.section}>
@@ -26,28 +26,55 @@ export default function ProductGrid({ title, products, seeAllLink }) {
             <div key={product.id} className={styles.productCard}>
               <div className={styles.imageContainer}>
                 <div className={styles.badge}>Virtual try-on</div>
-                <button
-                  type="button"
-                  className={styles.wishlistBtn}
-                  aria-label="Add to wishlist"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleWishlist(product);
-                  }}
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill={isWishlisted ? "#ef4444" : "none"}
-                    stroke={isWishlisted ? "#ef4444" : "currentColor"}
-                    strokeWidth="1.5"
-                    style={{ transition: "fill 0.2s ease, stroke 0.2s ease" }}
+                <div className={styles.cardActions}>
+                  <button
+                    type="button"
+                    className={styles.wishlistBtn}
+                    aria-label="Add to wishlist"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      toggleWishlist(product);
+                    }}
                   >
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill={isWishlisted ? "#ef4444" : "none"}
+                      stroke={isWishlisted ? "#ef4444" : "currentColor"}
+                      strokeWidth="1.8"
+                      style={{ transition: "fill 0.2s ease, stroke 0.2s ease" }}
+                    >
+                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.quickCartBtn}
+                    aria-label="Add to cart"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addToCart(product, 'M', 'Standard', 1);
+                    }}
+                  >
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                      <line x1="3" y1="6" x2="21" y2="6" />
+                      <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                  </button>
+                </div>
               
               <Link href={`/product/${product.handle || 'classic-jacket'}`} aria-label={product.title}>
                 <Image
