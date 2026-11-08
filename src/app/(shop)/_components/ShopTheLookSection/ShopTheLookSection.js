@@ -11,7 +11,7 @@ const LOOKS = [
     lookTitle: 'Shop The Look · Look 01',
     description:
       'The S/S 25 Inaugural Collection explores sculpted sweetheart lines and sweeping circular flare tailoring. A balanced silhouette combining delicate feminine curves with bold architectural proportions.',
-    lookbookImage: '/products/high-waisted-flare-pants/right tilted.jpg',
+    lookbookImage: '/images/lookbook/lookbook-01.jpg',
     products: [
       {
         id: 'throve_lp_04',
@@ -19,9 +19,10 @@ const LOOKS = [
         price: '₹ 2,900',
         rating: '4.8',
         images: [
-          '/products/scalloped-sweetheart-top/right tilted.jpg',
           '/products/scalloped-sweetheart-top/front.jpg',
+          '/products/scalloped-sweetheart-top/right tilted.jpg',
           '/products/scalloped-sweetheart-top/right.jpg',
+          '/products/scalloped-sweetheart-top/back.jpg',
         ],
         colors: ['#E8B4B8'],
         handle: 'scalloped-sweetheart-top',
@@ -32,8 +33,8 @@ const LOOKS = [
         price: '₹ 3,950',
         rating: '4.9',
         images: [
-          '/products/high-waisted-flare-pants/front.jpg',
           '/products/high-waisted-flare-pants/right.jpg',
+          '/products/high-waisted-flare-pants/front.jpg',
           '/products/high-waisted-flare-pants/back.jpg',
         ],
         colors: ['#C47E85'],
@@ -46,7 +47,7 @@ const LOOKS = [
     lookTitle: 'Shop The Look · Look 02',
     description:
       'S/S 25 Sartorial Edition. Featuring an asymmetric overlapping mandarin collar shirt in rich espresso brown paired with tailored ivory cream pleated trousers with turn-up cuffs.',
-    lookbookImage: '/products/pleated-formal-pants/right.jpg',
+    lookbookImage: '/images/lookbook/lookbook-02.jpg',
     products: [
       {
         id: 'throve_lp_02',
@@ -54,8 +55,8 @@ const LOOKS = [
         price: '₹ 3,900',
         rating: '4.9',
         images: [
-          '/products/asymmetric-mandarin-shirt/left tilted.jpg',
           '/products/asymmetric-mandarin-shirt/front.jpg',
+          '/products/asymmetric-mandarin-shirt/left tilted.jpg',
           '/products/asymmetric-mandarin-shirt/back.jpg',
         ],
         colors: ['#4A2E18'],
@@ -81,7 +82,7 @@ const LOOKS = [
     lookTitle: 'Shop The Look · Look 03',
     description:
       'Inaugural dresses cut with architectural princess seams, crisp asymmetric collars, and custom geometric hardware. Versatile luxury designed for contemporary evening events.',
-    lookbookImage: '/products/navy-tailored-mini-dress/right tilted.jpg',
+    lookbookImage: '/images/lookbook/lookbook-03.jpg',
     products: [
       {
         id: 'throve_lp_01',
@@ -89,9 +90,9 @@ const LOOKS = [
         price: '₹ 4,800',
         rating: '4.9',
         images: [
-          '/products/navy-tailored-mini-dress/left.jpg',
           '/products/navy-tailored-mini-dress/front.jpg',
-          '/products/navy-tailored-mini-dress/main.jpg',
+          '/products/navy-tailored-mini-dress/left.jpg',
+          '/products/navy-tailored-mini-dress/right tilted.jpg',
         ],
         colors: ['#1C2841'],
         handle: 'navy-tailored-mini-dress',
@@ -102,8 +103,8 @@ const LOOKS = [
         price: '₹ 4,900',
         rating: '4.9',
         images: [
-          '/products/sleeveless-princess-sheath-dress/right.jpg',
           '/products/sleeveless-princess-sheath-dress/front.jpg',
+          '/products/sleeveless-princess-sheath-dress/right.jpg',
           '/products/sleeveless-princess-sheath-dress/back.jpg',
         ],
         colors: ['#FAF7F2'],
