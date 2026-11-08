@@ -46,7 +46,7 @@ export default function AboutPage() {
           </div>
           <div className={styles.imageContent}>
             <Image
-              src="/products/sleeveless-princess-sheath-dress/main.jpg"
+              src="/products/sleeveless-princess-sheath-dress/main.jpg?v=3"
               alt="Throve Atelier Tailoring"
               fill
               style={{ objectFit: 'cover' }}

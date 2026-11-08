@@ -8,7 +8,7 @@
   height: 60vh;
   min-height: 400px;
   background-color: #111111;
-  background-image: linear-gradient(rgba(17, 17, 17, 0.75), rgba(17, 17, 17, 0.75)), url('/products/navy-tailored-mini-dress/main.jpg');
+  background-image: linear-gradient(rgba(17, 17, 17, 0.75), rgba(17, 17, 17, 0.75)), url('/products/navy-tailored-mini-dress/main.jpg?v=3');
   background-size: cover;
   background-position: center;
   display: flex;

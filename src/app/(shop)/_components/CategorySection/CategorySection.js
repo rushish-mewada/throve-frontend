@@ -6,37 +6,37 @@ const CATEGORIES = [
   {
     id: 'c1',
     name: 'Dresses',
-    image: '/products/navy-tailored-mini-dress/front.jpg',
+    image: '/products/navy-tailored-mini-dress/front.jpg?v=3',
     href: '/collections/women',
   },
   {
     id: 'c2',
     name: 'Tailored Shirts',
-    image: '/products/asymmetric-mandarin-shirt/front.jpg',
+    image: '/products/asymmetric-mandarin-shirt/front.jpg?v=3',
     href: '/collections/men',
   },
   {
     id: 'c3',
     name: 'Formal Trousers',
-    image: '/products/pleated-formal-pants/front.jpg',
+    image: '/products/pleated-formal-pants/front.jpg?v=3',
     href: '/collections/men',
   },
   {
     id: 'c4',
     name: 'Sweetheart Tops',
-    image: '/products/scalloped-sweetheart-top/front.jpg',
+    image: '/products/scalloped-sweetheart-top/front.jpg?v=3',
     href: '/collections/women',
   },
   {
     id: 'c5',
     name: 'Flare Pants',
-    image: '/products/high-waisted-flare-pants/front.jpg',
+    image: '/products/high-waisted-flare-pants/front.jpg?v=3',
     href: '/collections/women',
   },
   {
     id: 'c6',
     name: 'Sheath Dresses',
-    image: '/products/sleeveless-princess-sheath-dress/front.jpg',
+    image: '/products/sleeveless-princess-sheath-dress/front.jpg?v=3',
     href: '/collections/women',
   },
 ];

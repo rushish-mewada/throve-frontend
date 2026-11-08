@@ -9,7 +9,7 @@ import styles from "./HeroSection.module.css";
 const PRODUCTS = [
   {
     id: "p1",
-    image: "/images/hero/prod1.png",
+    image: "/images/hero/prod1.png?v=3",
     title: "Green Polo & Pleated Trousers",
     description:
       "Step into the season with style and confidence. Designed for comfort, performance, and timeless appeal, our new jacket is crafted with premium materials that balance function and fashion.",
@@ -46,7 +46,7 @@ const PRODUCTS = [
   },
   {
     id: "p2",
-    image: "/images/hero/prod2.png",
+    image: "/images/hero/prod2.png?v=3",
     title: "Scalloped Top & Flare Pants",
     description:
       "Sculpted contours and dramatic proportions. High-waisted circular flare trousers paired with our signature scalloped sweetheart bodice top.",
@@ -83,7 +83,7 @@ const PRODUCTS = [
   },
   {
     id: "p3",
-    image: "/images/hero/prod3.png",
+    image: "/images/hero/prod3.png?v=3",
     title: "Tailored Mini & Sheath Dresses",
     description:
       "Embrace architectural eveningwear with our Inaugural Dress Line. Asymmetric collar lines, princess seam sculpting, and bespoke metal detailing.",

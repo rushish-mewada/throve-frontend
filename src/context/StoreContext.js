@@ -10,7 +10,7 @@ const INITIAL_CART = [
     variant: 'Size: M | Color: Navy',
     priceNum: 4800,
     qty: 1,
-    image: '/products/navy-tailored-mini-dress/front.jpg',
+    image: '/products/navy-tailored-mini-dress/front.jpg?v=3',
     handle: 'navy-tailored-mini-dress',
   },
   {
@@ -20,7 +20,7 @@ const INITIAL_CART = [
     variant: 'Size: L | Color: Espresso Brown',
     priceNum: 3900,
     qty: 1,
-    image: '/products/asymmetric-mandarin-shirt/front.jpg',
+    image: '/products/asymmetric-mandarin-shirt/front.jpg?v=3',
     handle: 'asymmetric-mandarin-shirt',
   },
 ];
@@ -32,7 +32,7 @@ const INITIAL_WISHLIST = [
     category: 'Tops',
     price: '₹ 2,900',
     priceNum: 2900,
-    image: '/products/scalloped-sweetheart-top/front.jpg',
+    image: '/products/scalloped-sweetheart-top/front.jpg?v=3',
     handle: 'scalloped-sweetheart-top',
     inStock: true,
   },
@@ -42,7 +42,7 @@ const INITIAL_WISHLIST = [
     category: 'Trousers',
     price: '₹ 4,200',
     priceNum: 4200,
-    image: '/products/pleated-formal-pants/front.jpg',
+    image: '/products/pleated-formal-pants/front.jpg?v=3',
     handle: 'pleated-formal-pants',
     inStock: true,
   },
@@ -103,7 +103,7 @@ export function StoreProvider({ children }) {
     const priceNum = typeof product.priceNum === 'number'
       ? product.priceNum
       : parseInt(String(product.price || '').replace(/[^\d]/g, ''), 10) || 4500;
-    const imageSrc = product.image || (Array.isArray(product.images) ? product.images[0] : '/products/navy-tailored-mini-dress/front.jpg');
+    const imageSrc = product.image || (Array.isArray(product.images) ? product.images[0] : '/products/navy-tailored-mini-dress/front.jpg?v=3');
 
     setCartItems((prev) => {
       const existingIdx = prev.findIndex(
@@ -174,7 +174,7 @@ export function StoreProvider({ children }) {
       const priceNum = typeof product.priceNum === 'number'
         ? product.priceNum
         : parseInt(String(product.price || '').replace(/[^\d]/g, ''), 10) || 4500;
-      const imageSrc = product.image || (Array.isArray(product.images) ? product.images[0] : '/products/navy-tailored-mini-dress/front.jpg');
+      const imageSrc = product.image || (Array.isArray(product.images) ? product.images[0] : '/products/navy-tailored-mini-dress/front.jpg?v=3');
 
       return [
         ...prev,
