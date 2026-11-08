@@ -57,7 +57,7 @@ export default async function ProductPage({ params }) {
       
       <div className={styles.topSection}>
         <div className={styles.galleryColumn}>
-          <ProductGallery images={product.images} />
+          <ProductGallery images={product.images} product={product} />
         </div>
         <div className={styles.infoColumn}>
           <ProductInfo product={product} />

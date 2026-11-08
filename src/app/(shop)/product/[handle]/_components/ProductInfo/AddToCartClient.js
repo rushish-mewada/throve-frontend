@@ -2,13 +2,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './ProductInfo.module.css';
-import DecartLucyVtonModal from '../DecartLucyVton/DecartLucyVtonModal';
 
 export default function AddToCartClient({ variants, colors, product }) {
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState(variants[1] || variants[0]);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
-  const [isVtonOpen, setIsVtonOpen] = useState(false);
 
   return (
     <div className={styles.formContainer}>
@@ -48,19 +46,6 @@ export default function AddToCartClient({ variants, colors, product }) {
         </div>
       </div>
 
-      {/* Throve VTON Trigger */}
-      <div className={styles.vtonTriggerSection}>
-        <button 
-          type="button" 
-          className={styles.vtonBtn} 
-          onClick={() => setIsVtonOpen(true)}
-        >
-          <span className={styles.vtonIcon}>✨</span>
-          <span className={styles.vtonText}>Virtual Try-On · Live Stream</span>
-          <span className={styles.vtonBadge}>THROVE VTON</span>
-        </button>
-      </div>
-
       {/* Actions */}
       <div className={styles.actions}>
         <button
@@ -78,13 +63,6 @@ export default function AddToCartClient({ variants, colors, product }) {
           Checkout Now
         </button>
       </div>
-
-      {/* VTON Modal */}
-      <DecartLucyVtonModal 
-        isOpen={isVtonOpen} 
-        onClose={() => setIsVtonOpen(false)} 
-        product={product} 
-      />
     </div>
   );
 }
