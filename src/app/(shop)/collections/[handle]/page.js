@@ -1,60 +1,449 @@
 import CollectionHeader from './_components/CollectionHeader/CollectionHeader';
-import Filters from './_components/Filters/Filters';
-import CollectionGrid from './_components/CollectionGrid/CollectionGrid';
-import CollectionSort from './_components/CollectionSort/CollectionSort';
+import CollectionClient from './_components/CollectionClient/CollectionClient';
 import styles from './page.module.css';
 
-// Dummy data for the Collection
-const dummyCategory = {
-  title: "Women's Collection",
-  description: "Explore the latest trends in women's fashion. From elegant outerwear to everyday essentials.",
-  count: 142
+const COLLECTIONS_DATA = {
+  men: {
+    category: {
+      title: "Men's Collection",
+      description: "Sharp silhouettes, structured overcoats, tailored blazers, and luxury knitwear engineered for modern men.",
+      count: 12,
+    },
+    filterCategories: ['All Men', 'Blazers & Outerwear', 'Tailored Shirts', 'Polo & Knitwear', 'Trousers', 'Footwear'],
+    products: [
+      {
+        id: 'm1',
+        title: 'Structured Wool Overcoat',
+        price: '₹ 185,000',
+        priceNum: 185000,
+        rating: '4.9',
+        category: 'Blazers & Outerwear',
+        image: 'https://images.unsplash.com/photo-1544441893-675973e31985?w=800&auto=format&fit=crop&q=80',
+        colors: ['#111111', '#5c4033', '#1C2841'],
+        sizes: ['M', 'L', 'XL', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm2',
+        title: 'Classic Suede Harrington',
+        price: '₹ 139,600',
+        priceNum: 139600,
+        rating: '4.8',
+        category: 'Blazers & Outerwear',
+        image: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=800&auto=format&fit=crop&q=80',
+        colors: ['#5c4033', '#cbbda7', '#5f1e24'],
+        sizes: ['S', 'M', 'L', '8', '10'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm3',
+        title: 'Double-Breasted Wool Blazer',
+        price: '₹ 145,000',
+        priceNum: 145000,
+        rating: '4.9',
+        category: 'Blazers & Outerwear',
+        image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=80',
+        colors: ['#1C2841', '#111111'],
+        sizes: ['M', 'L', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm4',
+        title: 'Cashmere Cable-Knit Crewneck',
+        price: '₹ 78,500',
+        priceNum: 78500,
+        rating: '4.7',
+        category: 'Polo & Knitwear',
+        image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&auto=format&fit=crop&q=80',
+        colors: ['#cbbda7', '#ffffff', '#1C2841'],
+        sizes: ['S', 'M', 'L', 'XL', '8', '10'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm5',
+        title: 'Supima Cotton Poplin Shirt',
+        price: '₹ 38,000',
+        priceNum: 38000,
+        rating: '4.6',
+        category: 'Tailored Shirts',
+        image: 'https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800&auto=format&fit=crop&q=80',
+        colors: ['#ffffff', '#1C2841'],
+        sizes: ['S', 'M', 'L', '6', '8', '10'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm6',
+        title: 'Pleated Relaxed Trouser',
+        price: '₹ 52,000',
+        priceNum: 52000,
+        rating: '4.8',
+        category: 'Trousers',
+        image: 'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800&auto=format&fit=crop&q=80',
+        colors: ['#111111', '#5c4033', '#cbbda7'],
+        sizes: ['10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm7',
+        title: 'Minimalist Merino Polo',
+        price: '₹ 45,000',
+        priceNum: 45000,
+        rating: '4.7',
+        category: 'Polo & Knitwear',
+        image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?w=800&auto=format&fit=crop&q=80',
+        colors: ['#111111', '#ffffff'],
+        sizes: ['M', 'L', 'XL', '8', '10'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm8',
+        title: 'Tailored Band-Collar Shirt',
+        price: '₹ 42,000',
+        priceNum: 42000,
+        rating: '4.5',
+        category: 'Tailored Shirts',
+        image: 'https://images.unsplash.com/photo-1603252109303-2751441dd157?w=800&auto=format&fit=crop&q=80',
+        colors: ['#ffffff', '#111111', '#cbbda7'],
+        sizes: ['S', 'M', 'L', '6', '8'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm9',
+        title: 'Wool Flannel Straight Pants',
+        price: '₹ 58,000',
+        priceNum: 58000,
+        rating: '4.8',
+        category: 'Trousers',
+        image: 'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=800&auto=format&fit=crop&q=80',
+        colors: ['#1C2841', '#111111'],
+        sizes: ['12', '14', '16'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm10',
+        title: 'Shearling Aviator Jacket',
+        price: '₹ 220,000',
+        priceNum: 220000,
+        rating: '5.0',
+        category: 'Blazers & Outerwear',
+        image: 'https://images.unsplash.com/photo-1520975916090-3105956dac38?w=800&auto=format&fit=crop&q=80',
+        colors: ['#5c4033', '#111111'],
+        sizes: ['M', 'L', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm11',
+        title: 'Hand-Burnished Derby Shoes',
+        price: '₹ 82,000',
+        priceNum: 82000,
+        rating: '4.9',
+        category: 'Footwear',
+        image: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?w=800&auto=format&fit=crop&q=80',
+        colors: ['#111111', '#5c4033'],
+        sizes: ['8', '10', '12'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'm12',
+        title: 'Silk Blend Evening Shirt',
+        price: '₹ 62,000',
+        priceNum: 62000,
+        rating: '4.7',
+        category: 'Tailored Shirts',
+        image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&auto=format&fit=crop&q=80',
+        colors: ['#111111', '#ffffff', '#5f1e24'],
+        sizes: ['S', 'M', 'L', '8', '10'],
+        handle: 'classic-jacket',
+      },
+    ],
+  },
+  women: {
+    category: {
+      title: "Women's Collection",
+      description: "Explore the latest trends in women's fashion. From elegant outerwear to everyday essentials.",
+      count: 12,
+    },
+    filterCategories: ['All Women', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'],
+    products: [
+      {
+        id: 'w1',
+        title: 'Long Sleeve Jacket',
+        price: '₹ 139,600',
+        priceNum: 139600,
+        rating: '4.8',
+        category: 'Outerwear',
+        image: 'https://placehold.co/400x500/e0e0e0/666666.png?text=Long+Sleeve+Jacket',
+        colors: ['#5c4033', '#cbbda7', '#5f1e24'],
+        sizes: ['6', '8', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w2',
+        title: 'Cashmere Belted Trench',
+        price: '₹ 185,000',
+        priceNum: 185000,
+        rating: '4.9',
+        category: 'Outerwear',
+        image: 'https://placehold.co/400x500/d5d5d5/666666.png?text=Cashmere+Trench',
+        colors: ['#cbbda7', '#111111', '#5f1e24'],
+        sizes: ['8', '10', '12', '14', '16'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w3',
+        title: 'Silk Chiffon Evening Blouse',
+        price: '₹ 48,000',
+        priceNum: 48000,
+        rating: '4.7',
+        category: 'Shirts & Tops',
+        image: 'https://placehold.co/400x500/cccccc/666666.png?text=Silk+Blouse',
+        colors: ['#ffffff', '#cbbda7', '#5f1e24'],
+        sizes: ['6', '8', '10', '12'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w4',
+        title: 'Pleated A-Line Midi Skirt',
+        price: '₹ 56,000',
+        priceNum: 56000,
+        rating: '4.8',
+        category: 'Bottoms',
+        image: 'https://placehold.co/400x500/e5e5e5/666666.png?text=Midi+Skirt',
+        colors: ['#111111', '#5c4033'],
+        sizes: ['6', '8', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w5',
+        title: 'Tailored Linen Blazer',
+        price: '₹ 112,000',
+        priceNum: 112000,
+        rating: '4.9',
+        category: 'Outerwear',
+        image: 'https://placehold.co/400x500/e0e0e0/666666.png?text=Linen+Blazer',
+        colors: ['#ffffff', '#cbbda7', '#1C2841'],
+        sizes: ['8', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w6',
+        title: 'Sculpted Wool Slip Dress',
+        price: '₹ 95,000',
+        priceNum: 95000,
+        rating: '4.8',
+        category: 'Dresses',
+        image: 'https://placehold.co/400x500/d5d5d5/666666.png?text=Slip+Dress',
+        colors: ['#111111', '#5f1e24', '#ffffff'],
+        sizes: ['6', '8', '10', '12'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w7',
+        title: 'Oversized Poplin Shirt',
+        price: '₹ 36,000',
+        priceNum: 36000,
+        rating: '4.6',
+        category: 'Shirts & Tops',
+        image: 'https://placehold.co/400x500/cccccc/666666.png?text=Poplin+Shirt',
+        colors: ['#ffffff', '#1C2841'],
+        sizes: ['6', '8', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w8',
+        title: 'High-Waisted Wide Leg Trouser',
+        price: '₹ 62,000',
+        priceNum: 62000,
+        rating: '4.7',
+        category: 'Bottoms',
+        image: 'https://placehold.co/400x500/e5e5e5/666666.png?text=Wide+Trouser',
+        colors: ['#111111', '#cbbda7', '#5c4033'],
+        sizes: ['8', '10', '12', '14', '16'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w9',
+        title: 'Merino Ribbed Knit Mockneck',
+        price: '₹ 54,000',
+        priceNum: 54000,
+        rating: '4.8',
+        category: 'Shirts & Tops',
+        image: 'https://placehold.co/400x500/e0e0e0/666666.png?text=Ribbed+Knit',
+        colors: ['#cbbda7', '#111111', '#ffffff'],
+        sizes: ['6', '8', '10', '12'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w10',
+        title: 'Crepe De Chine Wrap Gown',
+        price: '₹ 165,000',
+        priceNum: 165000,
+        rating: '5.0',
+        category: 'Dresses',
+        image: 'https://placehold.co/400x500/d5d5d5/666666.png?text=Wrap+Gown',
+        colors: ['#5f1e24', '#111111'],
+        sizes: ['8', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w11',
+        title: 'Nappa Leather Crossbody Bag',
+        price: '₹ 75,000',
+        priceNum: 75000,
+        rating: '4.9',
+        category: 'Accessories',
+        image: 'https://placehold.co/400x500/cccccc/666666.png?text=Leather+Bag',
+        colors: ['#111111', '#5c4033', '#cbbda7'],
+        sizes: ['OS'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'w12',
+        title: 'Structured Boxy Denim Jacket',
+        price: '₹ 89,000',
+        priceNum: 89000,
+        rating: '4.7',
+        category: 'Outerwear',
+        image: 'https://placehold.co/400x500/e5e5e5/666666.png?text=Boxy+Denim',
+        colors: ['#1C2841', '#ffffff'],
+        sizes: ['6', '8', '10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+    ],
+  },
+  sale: {
+    category: {
+      title: "Seasonal Privilege Sale",
+      description: "Curated archive releases and seasonal privileges with limited availability.",
+      count: 8,
+    },
+    filterCategories: ['All Sale', 'Outerwear', 'Shirts & Tops', 'Bottoms', 'Footwear'],
+    products: [
+      {
+        id: 's1',
+        title: 'Archive Double-Breasted Trench',
+        price: '₹ 95,000',
+        priceNum: 95000,
+        rating: '4.9',
+        category: 'Outerwear',
+        image: 'https://placehold.co/400x500/e0e0e0/666666.png?text=Archive+Trench',
+        colors: ['#cbbda7', '#111111'],
+        sizes: ['8', '10', '12'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 's2',
+        title: 'Silk Blend Evening Shirt',
+        price: '₹ 38,000',
+        priceNum: 38000,
+        rating: '4.7',
+        category: 'Shirts & Tops',
+        image: 'https://placehold.co/400x500/d5d5d5/666666.png?text=Silk+Shirt',
+        colors: ['#ffffff', '#111111'],
+        sizes: ['S', 'M', 'L'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 's3',
+        title: 'Pleated Flannel Trousers',
+        price: '₹ 34,000',
+        priceNum: 34000,
+        rating: '4.8',
+        category: 'Bottoms',
+        image: 'https://placehold.co/400x500/cccccc/666666.png?text=Flannel+Pants',
+        colors: ['#1C2841', '#111111'],
+        sizes: ['10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 's4',
+        title: 'Burnished Calfskin Oxford',
+        price: '₹ 45,000',
+        priceNum: 45000,
+        rating: '4.8',
+        category: 'Footwear',
+        image: 'https://placehold.co/400x500/e5e5e5/666666.png?text=Oxford+Shoe',
+        colors: ['#5c4033', '#111111'],
+        sizes: ['8', '10'],
+        handle: 'classic-jacket',
+      },
+    ],
+  },
+  'new-arrivals': {
+    category: {
+      title: "New Arrivals",
+      description: "The newest expressions of Throve craftsmanship. Fresh cuts, premium fabrics, and runway silhouettes.",
+      count: 10,
+    },
+    filterCategories: ['All Arrivals', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Trousers'],
+    products: [
+      {
+        id: 'na1',
+        title: 'Structured Suede Harrington',
+        price: '₹ 139,600',
+        priceNum: 139600,
+        rating: '4.9',
+        category: 'Outerwear',
+        image: 'https://placehold.co/400x500/e0e0e0/666666.png?text=Suede+Harrington',
+        colors: ['#5c4033', '#cbbda7', '#5f1e24'],
+        sizes: ['S', 'M', 'L', '8', '10'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'na2',
+        title: 'Sculpted Wool Slip Dress',
+        price: '₹ 95,000',
+        priceNum: 95000,
+        rating: '4.8',
+        category: 'Dresses',
+        image: 'https://placehold.co/400x500/d5d5d5/666666.png?text=Wool+Slip+Dress',
+        colors: ['#111111', '#ffffff'],
+        sizes: ['6', '8', '10', '12'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'na3',
+        title: 'Minimalist Merino Polo',
+        price: '₹ 45,000',
+        priceNum: 45000,
+        rating: '4.7',
+        category: 'Shirts & Tops',
+        image: 'https://placehold.co/400x500/cccccc/666666.png?text=Merino+Polo',
+        colors: ['#5c4033', '#111111'],
+        sizes: ['M', 'L', 'XL'],
+        handle: 'classic-jacket',
+      },
+      {
+        id: 'na4',
+        title: 'Pleated Straight Leg Pants',
+        price: '₹ 58,000',
+        priceNum: 58000,
+        rating: '4.8',
+        category: 'Trousers',
+        image: 'https://placehold.co/400x500/e5e5e5/666666.png?text=Pleated+Pants',
+        colors: ['#111111', '#1C2841'],
+        sizes: ['10', '12', '14'],
+        handle: 'classic-jacket',
+      },
+    ],
+  },
 };
-
-const dummyProducts = Array.from({ length: 12 }).map((_, i) => ({
-  id: i,
-  image: `https://placehold.co/400x500/e0e0e0/666666.png?text=Item+${i+1}`,
-  title: 'Classic Jacket',
-  rating: '4.8',
-  price: '₹ 139,600',
-  colors: ['#5c4033', '#cbbda7', '#800000']
-}));
 
 export default async function CollectionPage({ params }) {
   const resolvedParams = await params;
+  const rawHandle = (resolvedParams?.handle || 'women').toLowerCase();
+  
+  // Resolve matched data, or fallback to women
+  const collectionData = COLLECTIONS_DATA[rawHandle] || COLLECTIONS_DATA.women;
+
   return (
     <main className={styles.plpLayout}>
-      <CollectionHeader category={dummyCategory} />
-      
-      <div className={styles.mainContent}>
-        <aside className={styles.sidebar}>
-          <Filters />
-        </aside>
-        
-        <div className={styles.gridContainer}>
-          <div className={styles.toolbar}>
-            <span className={styles.productCount}>Showing 1-12 of {dummyCategory.count} results</span>
-            <div className={styles.sortDropdown}>
-              <span>Sort by:</span>
-              <CollectionSort />
-            </div>
-          </div>
-          
-          <CollectionGrid products={dummyProducts} />
-          
-          <div className={styles.pagination}>
-            <button className={styles.pageBtn}>Previous</button>
-            <div className={styles.pageNumbers}>
-              <span className={styles.activePage}>1</span>
-              <span>2</span>
-              <span>3</span>
-              <span>...</span>
-              <span>12</span>
-            </div>
-            <button className={styles.pageBtn}>Next</button>
-          </div>
-        </div>
-      </div>
+      <CollectionHeader category={collectionData.category} />
+      <CollectionClient
+        initialCategory={collectionData.category}
+        initialProducts={collectionData.products}
+        filterCategories={collectionData.filterCategories}
+      />
     </main>
   );
 }

@@ -25,14 +25,20 @@ const sortOptions = [
   }
 ];
 
-export default function CollectionSort() {
-  const [sortValue, setSortValue] = useState('featured');
+export default function CollectionSort({ value = 'featured', onChange }) {
+  const [internalValue, setInternalValue] = useState(value);
+  const activeValue = value !== undefined ? value : internalValue;
+
+  const handleChange = (newVal) => {
+    setInternalValue(newVal);
+    if (onChange) onChange(newVal);
+  };
 
   return (
     <Dropdown 
       options={sortOptions} 
-      value={sortValue} 
-      onChange={(val) => setSortValue(val)} 
+      value={activeValue} 
+      onChange={handleChange} 
     />
   );
 }

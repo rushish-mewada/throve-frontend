@@ -92,6 +92,12 @@
   border-color: #111111;
 }
 
+.sizeBtnActive {
+  background: #111111 !important;
+  color: #ffffff !important;
+  border-color: #111111 !important;
+}
+
 .colorGrid {
   display: flex;
   flex-wrap: wrap;
@@ -104,4 +110,44 @@
   border-radius: 50%;
   border: 1px solid #dddddd;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.colorBtn:hover {
+  transform: scale(1.08);
+}
+
+.colorBtnActive {
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #111111;
+}
+
+.clearBtn {
+  background: none;
+  border: none;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  color: #ff3f6c;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  margin-bottom: 12px;
+  text-align: left;
+}
+
+.checkmarkChecked {
+  background-color: #111111 !important;
+  border-color: #111111 !important;
+  position: relative;
+}
+
+.checkmarkChecked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }

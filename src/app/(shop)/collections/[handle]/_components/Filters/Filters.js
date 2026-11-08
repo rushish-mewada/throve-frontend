@@ -2,22 +2,52 @@
 import { useState } from 'react';
 import styles from './Filters.module.css';
 
-export default function Filters() {
+export default function Filters({
+  categories = ['All Women', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'],
+  selectedCategory = '',
+  onSelectCategory,
+  selectedPriceRanges = [],
+  onTogglePriceRange,
+  selectedSizes = [],
+  onToggleSize,
+  selectedColors = [],
+  onToggleColor,
+  onClearAll,
+  hasActiveFilters = false,
+}) {
   const [openSections, setOpenSections] = useState({
     categories: true,
     price: true,
     size: true,
-    color: true
+    color: true,
   });
 
   const toggleSection = (section) => {
-    setOpenSections(prev => ({ ...prev, [section]: !prev[section] }));
+    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
   };
+
+  const priceOptions = [
+    'Under ₹50,000',
+    '₹50,000 - ₹100,000',
+    '₹100,000 - ₹150,000',
+    'Over ₹150,000',
+  ];
+
+  const sizeOptions = ['S', 'M', 'L', 'XL', '6', '8', '10', '12', '14', '16'];
+  const colorOptions = ['#111111', '#ffffff', '#cbbda7', '#5f1e24', '#1C2841', '#5c4033'];
 
   return (
     <div className={styles.filtersWrapper}>
-      <h3 className={styles.filterTitle}>Filters</h3>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <h3 className={styles.filterTitle} style={{ border: 'none', margin: 0, padding: 0 }}>Filters</h3>
+        {hasActiveFilters && (
+          <button type="button" className={styles.clearBtn} onClick={onClearAll}>
+            Clear All
+          </button>
+        )}
+      </div>
 
+      {/* Categories */}
       <div className={styles.filterGroup}>
         <div className={styles.filterHeader} onClick={() => toggleSection('categories')}>
           <h4>Categories</h4>
@@ -25,17 +55,29 @@ export default function Filters() {
         </div>
         {openSections.categories && (
           <div className={styles.filterContent}>
-            {['All Women', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'].map(item => (
-              <label key={item} className={styles.checkboxLabel}>
-                <input type="checkbox" />
-                <span className={styles.checkmark}></span>
-                {item}
-              </label>
-            ))}
+            {categories.map((item) => {
+              const isSelected = selectedCategory === item || (!selectedCategory && item.startsWith('All'));
+              return (
+                <label
+                  key={item}
+                  className={styles.checkboxLabel}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onSelectCategory) onSelectCategory(item);
+                  }}
+                >
+                  <span className={`${styles.checkmark} ${isSelected ? styles.checkmarkChecked : ''}`} />
+                  <span style={{ fontWeight: isSelected ? 600 : 400, color: isSelected ? '#111111' : '#555555' }}>
+                    {item}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         )}
       </div>
 
+      {/* Price */}
       <div className={styles.filterGroup}>
         <div className={styles.filterHeader} onClick={() => toggleSection('price')}>
           <h4>Price</h4>
@@ -43,17 +85,29 @@ export default function Filters() {
         </div>
         {openSections.price && (
           <div className={styles.filterContent}>
-            {['Under ₹1,000', '₹1,000 - ₹2,500', '₹2,500 - ₹5,000', 'Over ₹5,000'].map(item => (
-              <label key={item} className={styles.checkboxLabel}>
-                <input type="checkbox" />
-                <span className={styles.checkmark}></span>
-                {item}
-              </label>
-            ))}
+            {priceOptions.map((item) => {
+              const isChecked = selectedPriceRanges.includes(item);
+              return (
+                <label
+                  key={item}
+                  className={styles.checkboxLabel}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (onTogglePriceRange) onTogglePriceRange(item);
+                  }}
+                >
+                  <span className={`${styles.checkmark} ${isChecked ? styles.checkmarkChecked : ''}`} />
+                  <span style={{ fontWeight: isChecked ? 600 : 400, color: isChecked ? '#111111' : '#555555' }}>
+                    {item}
+                  </span>
+                </label>
+              );
+            })}
           </div>
         )}
       </div>
 
+      {/* Size */}
       <div className={styles.filterGroup}>
         <div className={styles.filterHeader} onClick={() => toggleSection('size')}>
           <h4>Size</h4>
@@ -61,13 +115,24 @@ export default function Filters() {
         </div>
         {openSections.size && (
           <div className={styles.sizeGrid}>
-            {['6', '8', '10', '12', '14', '16', '18', '20'].map(size => (
-              <button key={size} className={styles.sizeBtn}>{size}</button>
-            ))}
+            {sizeOptions.map((size) => {
+              const isSelected = selectedSizes.includes(size);
+              return (
+                <button
+                  type="button"
+                  key={size}
+                  className={`${styles.sizeBtn} ${isSelected ? styles.sizeBtnActive : ''}`}
+                  onClick={() => onToggleSize && onToggleSize(size)}
+                >
+                  {size}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
       
+      {/* Color */}
       <div className={styles.filterGroup}>
         <div className={styles.filterHeader} onClick={() => toggleSection('color')}>
           <h4>Color</h4>
@@ -75,9 +140,19 @@ export default function Filters() {
         </div>
         {openSections.color && (
           <div className={styles.colorGrid}>
-            {['#111111', '#ffffff', '#cbbda7', '#5f1e24', '#1C2841', '#f5a623'].map(color => (
-              <button key={color} className={styles.colorBtn} style={{ backgroundColor: color }} />
-            ))}
+            {colorOptions.map((color) => {
+              const isSelected = selectedColors.includes(color);
+              return (
+                <button
+                  type="button"
+                  key={color}
+                  className={`${styles.colorBtn} ${isSelected ? styles.colorBtnActive : ''}`}
+                  style={{ backgroundColor: color }}
+                  onClick={() => onToggleColor && onToggleColor(color)}
+                  aria-label={`Filter by color ${color}`}
+                />
+              );
+            })}
           </div>
         )}
       </div>
