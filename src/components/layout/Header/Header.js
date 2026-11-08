@@ -3,13 +3,25 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import styles from './Header.module.css';
 
 export default function Header() {
+  const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isCartClosing, setIsCartClosing] = useState(false);
+
+  const isLinkActive = (path) => {
+    if (!pathname) return false;
+    if (path === '/women') return pathname === '/women' || pathname.startsWith('/collections/women');
+    if (path === '/men') return pathname === '/men' || pathname.startsWith('/collections/men');
+    if (path === '/sale') return pathname === '/sale' || pathname.startsWith('/collections/sale');
+    if (path === '/new-arrival') return pathname === '/new-arrival' || pathname.startsWith('/collections/new-arrival');
+    if (path === '/about') return pathname === '/about';
+    return pathname === path;
+  };
 
   const closeMenu = () => {
     setIsMenuClosing(true);
@@ -72,11 +84,36 @@ export default function Header() {
 
         {/* Navigation */}
         <nav className={styles.nav}>
-          <Link href="/women" className={styles.navLinkActive}>Women</Link>
-          <Link href="/men" className={styles.navLink}>Men</Link>
-          <Link href="/sale" className={styles.navLinkSale}>Sale</Link>
-          <Link href="/new-arrival" className={styles.navLink}>New arrival</Link>
-          <Link href="/about" className={styles.navLink}>About us</Link>
+          <Link
+            href="/women"
+            className={isLinkActive('/women') ? styles.navLinkActive : styles.navLink}
+          >
+            Women
+          </Link>
+          <Link
+            href="/men"
+            className={isLinkActive('/men') ? styles.navLinkActive : styles.navLink}
+          >
+            Men
+          </Link>
+          <Link
+            href="/sale"
+            className={`${styles.navLinkSale} ${isLinkActive('/sale') ? styles.navLinkActive : ''}`}
+          >
+            Sale
+          </Link>
+          <Link
+            href="/new-arrival"
+            className={isLinkActive('/new-arrival') ? styles.navLinkActive : styles.navLink}
+          >
+            New arrival
+          </Link>
+          <Link
+            href="/about"
+            className={isLinkActive('/about') ? styles.navLinkActive : styles.navLink}
+          >
+            About us
+          </Link>
         </nav>
 
         {/* Actions */}
