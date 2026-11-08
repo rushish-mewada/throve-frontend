@@ -10,6 +10,7 @@ const nextConfig = {
     }
   },
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'http',
@@ -22,6 +23,26 @@ const nextConfig = {
         hostname: '**',
       }
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/products/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+          { key: 'Expires', value: '0' },
+        ],
+      },
+      {
+        source: '/images/:path*',
+        headers: [
+          { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate, proxy-revalidate' },
+          { key: 'Pragma', value: 'no-cache' },
+          { key: 'Expires', value: '0' },
+        ],
+      },
+    ];
   },
   async redirects() {
     return [
