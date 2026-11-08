@@ -3,12 +3,42 @@ import Link from 'next/link';
 import styles from './CategorySection.module.css';
 
 const CATEGORIES = [
-  { id: 'c1', name: 'Jacket', image: 'https://placehold.co/400x400/e0e0e0/666666.png?text=Jacket', href: '/collections/jackets' },
-  { id: 'c2', name: 'T-Shirt', image: 'https://placehold.co/400x400/e0e0e0/666666.png?text=T-Shirt', href: '/collections/t-shirts' },
-  { id: 'c3', name: 'Shirt', image: 'https://placehold.co/400x400/e0e0e0/666666.png?text=Shirt', href: '/collections/shirts' },
-  { id: 'c4', name: 'Denim', image: 'https://placehold.co/400x400/e0e0e0/666666.png?text=Denim', href: '/collections/denim' },
-  { id: 'c5', name: 'Cargo', image: 'https://placehold.co/400x400/e0e0e0/666666.png?text=Cargo', href: '/collections/cargo' },
-  { id: 'c6', name: 'Trousers', image: 'https://placehold.co/400x400/e0e0e0/666666.png?text=Trousers', href: '/collections/trousers' },
+  {
+    id: 'c1',
+    name: 'Dresses',
+    image: '/products/navy-tailored-mini-dress/front.jpg',
+    href: '/collections/women',
+  },
+  {
+    id: 'c2',
+    name: 'Tailored Shirts',
+    image: '/products/asymmetric-mandarin-shirt/front.jpg',
+    href: '/collections/men',
+  },
+  {
+    id: 'c3',
+    name: 'Formal Trousers',
+    image: '/products/pleated-formal-pants/front.jpg',
+    href: '/collections/men',
+  },
+  {
+    id: 'c4',
+    name: 'Sweetheart Tops',
+    image: '/products/scalloped-sweetheart-top/front.jpg',
+    href: '/collections/women',
+  },
+  {
+    id: 'c5',
+    name: 'Flare Pants',
+    image: '/products/high-waisted-flare-pants/front.jpg',
+    href: '/collections/women',
+  },
+  {
+    id: 'c6',
+    name: 'Sheath Dresses',
+    image: '/products/sleeveless-princess-sheath-dress/front.jpg',
+    href: '/collections/women',
+  },
 ];
 
 export default function CategorySection() {

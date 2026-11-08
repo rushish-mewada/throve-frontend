@@ -216,3 +216,4 @@ export function getProductsByCategory(category) {
     (p) => p.category.toLowerCase() === category.toLowerCase()
   );
 }
+
