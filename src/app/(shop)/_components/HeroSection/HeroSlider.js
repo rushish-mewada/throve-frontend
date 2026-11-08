@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import styles from "./HeroSection.module.css";
 
 const PRODUCTS = [
@@ -14,138 +15,105 @@ const PRODUCTS = [
     hotspots: [
       {
         id: "h1_1",
-        title: "Brown Jacket",
-        collection: "Summer collection 2025",
-        price: "₹ 139,600",
-        rating: "4.8",
-        color: "Brown",
-        colorDots: ["#6e473b", "#d4b896", "#6b1d24"],
+        title: "Overlapping Mandarin Shirt",
+        collection: "First Launch · S/S 25",
+        price: "₹ 3,900",
+        rating: "4.9",
+        color: "Espresso Brown",
+        colorDots: ["#4A2E18", "#111111"],
         dotTop: "24%",
         dotLeft: "42%",
         cardSide: "left",
         cardTop: "12%",
+        handle: "asymmetric-mandarin-shirt",
       },
       {
         id: "h1_2",
-        title: "Brown Jacket",
-        collection: "Summer collection 2025",
-        price: "₹ 139,600",
+        title: "Pleated Formal Pants",
+        collection: "First Launch · S/S 25",
+        price: "₹ 4,200",
         rating: "4.8",
-        color: "Brown",
-        colorDots: ["#6e473b", "#d4b896", "#6b1d24"],
-        dotTop: "32%",
-        dotLeft: "58%",
-        cardSide: "right",
-        cardTop: "10%",
-      },
-      {
-        id: "h1_3",
-        title: "Brown Jacket",
-        collection: "Summer collection 2025",
-        price: "₹ 139,600",
-        rating: "4.8",
-        color: "Brown",
-        colorDots: ["#6e473b", "#d4b896", "#6b1d24"],
+        color: "Ivory Cream",
+        colorDots: ["#F5F2EB", "#111111"],
         dotTop: "54%",
         dotLeft: "52%",
         cardSide: "right",
         cardTop: "48%",
+        handle: "pleated-formal-pants",
       },
     ],
   },
   {
     id: "p2",
     image: "/images/hero/prod2.png",
-    title: "Linen Shirt & Wide Pants",
+    title: "Scalloped Top & Flare Pants",
     description:
-      "Discover our relaxed tailoring. Premium breathable linen shirt paired with wide-leg trousers and a classic striped knit draped for effortless elegance.",
+      "Sculpted contours and dramatic proportions. High-waisted circular flare trousers paired with our signature scalloped sweetheart bodice top.",
     hotspots: [
       {
         id: "h2_1",
-        title: "Relaxed Linen Shirt",
-        collection: "Summer collection 2025",
-        price: "₹ 52,000",
-        rating: "4.9",
-        color: "Off White",
-        colorDots: ["#faf8f5", "#1a1a1a", "#6e473b"],
+        title: "Scalloped Sweetheart Top",
+        collection: "First Launch · S/S 25",
+        price: "₹ 2,900",
+        rating: "4.8",
+        color: "Blush Pink",
+        colorDots: ["#E8B4B8", "#111111"],
         dotTop: "30%",
         dotLeft: "44%",
         cardSide: "left",
         cardTop: "14%",
+        handle: "scalloped-sweetheart-top",
       },
       {
         id: "h2_2",
-        title: "Striped Knit Sweater",
-        collection: "Summer collection 2025",
-        price: "₹ 86,000",
-        rating: "4.8",
-        color: "Navy Stripe",
-        colorDots: ["#1a1a3e", "#f5f5dc", "#6e473b"],
-        dotTop: "24%",
-        dotLeft: "56%",
-        cardSide: "right",
-        cardTop: "10%",
-      },
-      {
-        id: "h2_3",
-        title: "Wide-Leg Trousers",
-        collection: "Summer collection 2025",
-        price: "₹ 74,000",
-        rating: "4.7",
-        color: "Beige",
-        colorDots: ["#d4b896", "#2c3e50", "#faf8f5"],
+        title: "High Waisted Flare Pants",
+        collection: "First Launch · S/S 25",
+        price: "₹ 3,950",
+        rating: "4.9",
+        color: "Dusty Rose",
+        colorDots: ["#C47E85", "#111111"],
         dotTop: "58%",
         dotLeft: "50%",
         cardSide: "right",
         cardTop: "48%",
+        handle: "high-waisted-flare-pants",
       },
     ],
   },
   {
     id: "p3",
     image: "/images/hero/prod3.png",
-    title: "Polo Shirt & Navy Trousers",
+    title: "Tailored Mini & Sheath Dresses",
     description:
-      "Embrace effortless luxury with our Resort Line. Tailored navy trousers and cream polo with draped sweater for high-end versatility during warm seasonal travels.",
+      "Embrace architectural eveningwear with our Inaugural Dress Line. Asymmetric collar lines, princess seam sculpting, and bespoke metal detailing.",
     hotspots: [
       {
         id: "h3_1",
-        title: "Cream Knit Polo",
-        collection: "Resort Collection 2025",
-        price: "₹ 48,000",
+        title: "Sleeveless Tailored Mini Dress",
+        collection: "First Launch · S/S 25",
+        price: "₹ 4,800",
         rating: "4.9",
-        color: "Cream",
-        colorDots: ["#f5f5dc", "#1b2a4a", "#6e473b"],
+        color: "Navy",
+        colorDots: ["#1C2841", "#111111"],
         dotTop: "28%",
         dotLeft: "45%",
         cardSide: "left",
         cardTop: "12%",
+        handle: "navy-tailored-mini-dress",
       },
       {
         id: "h3_2",
-        title: "Draped Knit Sweater",
-        collection: "Resort Collection 2025",
-        price: "₹ 92,000",
+        title: "Sleeveless Princess Sheath Dress",
+        collection: "First Launch · S/S 25",
+        price: "₹ 4,900",
         rating: "4.9",
-        color: "Navy",
-        colorDots: ["#1b2a4a", "#d4b896", "#ffffff"],
-        dotTop: "22%",
-        dotLeft: "54%",
+        color: "Soft Cream",
+        colorDots: ["#FAF7F2", "#111111"],
+        dotTop: "36%",
+        dotLeft: "58%",
         cardSide: "right",
-        cardTop: "10%",
-      },
-      {
-        id: "h3_3",
-        title: "Tailored Navy Trousers",
-        collection: "Resort Collection 2025",
-        price: "₹ 76,000",
-        rating: "4.8",
-        color: "Midnight Navy",
-        colorDots: ["#1b2a4a", "#d4b896", "#ffffff"],
-        dotTop: "56%",
-        dotLeft: "48%",
-        cardSide: "right",
-        cardTop: "48%",
+        cardTop: "14%",
+        handle: "sleeveless-princess-sheath-dress",
       },
     ],
   },
@@ -397,7 +365,13 @@ export default function HeroSlider() {
                     style={{ top: hs.cardTop }}
                   >
                     <div className={styles.cardHeader}>
-                      <span className={styles.cardTitle}>{hs.title}</span>
+                      <Link
+                        href={hs.handle ? `/product/${hs.handle}` : '/collections/new-arrivals'}
+                        className={styles.cardTitle}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
+                        {hs.title}
+                      </Link>
                       <button className={styles.wishlistBtn} aria-label="Add to wishlist">
                         <svg
                           width="15"
@@ -433,7 +407,11 @@ export default function HeroSlider() {
                           />
                         ))}
                       </div>
-                      <div className={styles.priceContainer}>
+                      <Link
+                        href={hs.handle ? `/product/${hs.handle}` : '/collections/new-arrivals'}
+                        className={styles.priceContainer}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                      >
                         <span className={styles.cardPrice}>{hs.price}</span>
                         <svg
                           width="11"
@@ -449,7 +427,7 @@ export default function HeroSlider() {
                             strokeLinejoin="round"
                           />
                         </svg>
-                      </div>
+                      </Link>
                     </div>
                   </div>
                 ))}

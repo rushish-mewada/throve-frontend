@@ -43,7 +43,7 @@ const CATEGORIES = [
 
 export default function CategorySection() {
   return (
-    <section className={styles.categorySection}>
+    <section id="explore" className={styles.categorySection}>
       <div className={styles.container}>
         <div className={styles.grid}>
           {CATEGORIES.map((category) => (

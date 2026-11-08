@@ -1,6 +1,35 @@
+"use client";
+
+import { useState } from 'react';
 import styles from './page.module.css';
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    orderNumber: '',
+    message: '',
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    // 2-second realistic submission simulation
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setIsSubmitting(false);
+    setIsSubmitted(true);
+    setFormData({ name: '', email: '', orderNumber: '', message: '' });
+  };
+
   return (
     <main className={styles.contactLayout}>
       <div className={styles.container}>
@@ -50,32 +79,107 @@ export default function ContactPage() {
           </div>
           
           <div className={styles.formCol}>
-            <form className={styles.contactForm}>
+            {isSubmitted && (
+              <div style={{
+                background: '#f0fdf4',
+                border: '1px solid #bbf7d0',
+                color: '#15803d',
+                padding: '14px 18px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '0.92rem',
+                lineHeight: 1.5
+              }}>
+                ✓ Thank you! Your message has been received. Our concierge team will reply within 24 hours.
+              </div>
+            )}
+            
+            <form className={styles.contactForm} onSubmit={handleSubmit}>
               <div className={styles.inputGroup}>
                 <label>Name</label>
-                <input type="text" placeholder="Your full name" className={styles.input} />
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Your full name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                />
               </div>
               
               <div className={styles.inputGroup}>
                 <label>Email</label>
-                <input type="email" placeholder="Your email address" className={styles.input} />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Your email address"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className={styles.input}
+                />
               </div>
               
               <div className={styles.inputGroup}>
                 <label>Order Number (Optional)</label>
-                <input type="text" placeholder="E.g. ORD-123456" className={styles.input} />
+                <input
+                  type="text"
+                  name="orderNumber"
+                  placeholder="E.g. ORD-123456"
+                  value={formData.orderNumber}
+                  onChange={handleChange}
+                  className={styles.input}
+                />
               </div>
               
               <div className={styles.inputGroup}>
                 <label>Message</label>
-                <textarea placeholder="How can we help you?" className={styles.textarea} rows="5"></textarea>
+                <textarea
+                  name="message"
+                  placeholder="How can we help you?"
+                  value={formData.message}
+                  onChange={handleChange}
+                  required
+                  className={styles.textarea}
+                  rows="5"
+                ></textarea>
               </div>
               
-              <button type="button" className={styles.primaryBtn}>Send Message</button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={styles.primaryBtn}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px',
+                  opacity: isSubmitting ? 0.75 : 1,
+                  cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                }}
+              >
+                {isSubmitting ? (
+                  <>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ animation: 'spin 1s linear infinite' }}>
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeDasharray="31.4" strokeDashoffset="10" opacity="0.4" />
+                    </svg>
+                    <span>Sending Message...</span>
+                  </>
+                ) : (
+                  'Send Message'
+                )}
+              </button>
             </form>
           </div>
         </div>
       </div>
+      <style jsx global>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </main>
   );
 }

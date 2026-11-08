@@ -10,9 +10,9 @@ export default function Footer() {
         <h3 className={styles.ctaSubheading}>FASHION FOR EVERY SEASON</h3>
         <h2 className={styles.ctaHeading}>Request More Information</h2>
         <p className={styles.ctaText}>
-          Throve is a luxury fashion brand
+          Modern architectural tailoring engineered for contemporary silhouettes. Discover our inaugural collection.
         </p>
-        <button className={styles.ctaButton}>Contact Us</button>
+        <Link href="/contact" className={styles.ctaButton}>Contact Us</Link>
       </div>
 
       {/* Main Footer Content */}
@@ -83,7 +83,7 @@ export default function Footer() {
 
       {/* Copyright */}
       <div className={styles.copyright}>
-        <p>&copy; 2025Throvefashion</p>
+        <p>&copy; {new Date().getFullYear()} THROVE Atelier. All rights reserved.</p>
       </div>
     </footer>
   );

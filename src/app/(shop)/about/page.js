@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './page.module.css';
 
 export default function AboutPage() {
@@ -6,8 +7,8 @@ export default function AboutPage() {
     <main className={styles.aboutLayout}>
       <div className={styles.heroSection}>
         <div className={styles.heroContent}>
-          <h1>Redefining Streetwear.</h1>
-          <p>Born in Mumbai. Built for the bold.</p>
+          <h1>Architectural Tailoring. Modern Luxury.</h1>
+          <p>Born from precision. Engineered for timeless distinction.</p>
         </div>
       </div>
       
@@ -16,14 +17,42 @@ export default function AboutPage() {
           <div className={styles.textContent}>
             <h2>Our Story</h2>
             <p>
-              Throve started in 2024 with a simple mission: to bridge the gap between high-end fashion and everyday streetwear in India. We grew tired of the generic, mass-produced fast fashion that flooded the market.
+              Throve was founded with a singular conviction: to create industrial-grade sartorial elegance where architectural form meets modern luxury craftsmanship.
             </p>
             <p>
-              Every piece we design is conceptualized in our Mumbai studio, using premium fabrics sourced ethically. We believe that what you wear is a direct extension of who you are. We don't just make clothes; we design armor for the modern creator.
+              Every garment begins in our studio with meticulous technical flat drafting, millimeter-precise tech packs, and sculptural pattern engineering. From asymmetric overlapped lapels and custom geometric metal hardware to contoured princess seams and deep front pleats, each piece is shaped for commanding poise.
             </p>
+            <p>
+              We reject fleeting, disposable trends. Instead, our inaugural S/S 25 collection offers deliberate silhouettes, structured drape, and tactile fabrics that redefine contemporary occasionwear.
+            </p>
+            <Link
+              href="/collections/new-arrivals"
+              style={{
+                display: 'inline-block',
+                marginTop: '16px',
+                padding: '14px 28px',
+                backgroundColor: '#111111',
+                color: '#ffffff',
+                textDecoration: 'none',
+                fontFamily: 'var(--font-poppins), sans-serif',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                letterSpacing: '0.5px',
+                borderRadius: '4px',
+              }}
+            >
+              Explore S/S 25 Collection &rarr;
+            </Link>
           </div>
           <div className={styles.imageContent}>
-            <Image src="https://placehold.co/600x800/111111/ffffff.png?text=Studio" alt="Throve Studio" fill style={{ objectFit: 'cover' }} />
+            <Image
+              src="/products/sleeveless-princess-sheath-dress/main.jpg"
+              alt="Throve Atelier Tailoring"
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              priority
+            />
           </div>
         </div>
         
@@ -31,16 +60,16 @@ export default function AboutPage() {
           <h2>Core Values</h2>
           <div className={styles.valuesGrid}>
             <div className={styles.valueCard}>
-              <h3>01. Quality First</h3>
-              <p>We use heavy-weight French terry cottons and premium blends that get better with every wash. No shortcuts.</p>
+              <h3>01. Architectural Precision</h3>
+              <p>Every silhouette is drafted from exact technical spec sheets. We calibrate seam curvatures, collar overlaps, and drape allowances to create flattering, structured contours.</p>
             </div>
             <div className={styles.valueCard}>
-              <h3>02. Ethical Production</h3>
-              <p>Our garments are produced in ethical factories with fair wages. We believe in transparency from thread to finish.</p>
+              <h3>02. Artisanal Fabrication</h3>
+              <p>We select tactile, high-density woven fabrics, textured poly-twills, fine cottons, and rich linings that retain structural integrity through repeated wear.</p>
             </div>
             <div className={styles.valueCard}>
-              <h3>03. Limited Drops</h3>
-              <p>We keep our production runs small to minimize waste and ensure exclusivity. When it's gone, it's gone.</p>
+              <h3>03. Limited Edition Drops</h3>
+              <p>Our debut collection is produced in small, limited numbers with individual atelier quality control, ensuring exclusivity and mindful production.</p>
             </div>
           </div>
         </div>

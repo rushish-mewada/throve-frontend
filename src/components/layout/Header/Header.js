@@ -12,6 +12,43 @@ export default function Header() {
   const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isCartClosing, setIsCartClosing] = useState(false);
+  const [cartItems, setCartItems] = useState([
+    {
+      id: 1,
+      name: 'Sleeveless Tailored Mini Dress',
+      variant: 'Size: M | Color: Navy',
+      price: 4800,
+      qty: 1,
+      image: '/products/navy-tailored-mini-dress/front.jpg',
+    },
+    {
+      id: 2,
+      name: 'Overlapping Mandarin Shirt',
+      variant: 'Size: L | Color: Espresso Brown',
+      price: 3900,
+      qty: 1,
+      image: '/products/asymmetric-mandarin-shirt/front.jpg',
+    },
+  ]);
+
+  const updateCartQty = (id, delta) => {
+    setCartItems((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          const newQty = Math.max(1, item.qty + delta);
+          return { ...item, qty: newQty };
+        }
+        return item;
+      })
+    );
+  };
+
+  const removeCartItem = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const totalCartCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
+  const cartSubtotal = cartItems.reduce((acc, item) => acc + item.price * item.qty, 0);
 
   const isLinkActive = (path) => {
     if (!pathname) return false;
@@ -148,7 +185,7 @@ export default function Header() {
               <line x1="3" y1="6" x2="21" y2="6"/>
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
-            <span className={styles.cartBadge}>2</span>
+            <span className={styles.cartBadge}>{totalCartCount}</span>
           </button>
         </div>
 
@@ -211,7 +248,7 @@ export default function Header() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.cartHeader}>
-              <span className={styles.cartTitle}>Your Cart (2)</span>
+              <span className={styles.cartTitle}>Your Cart ({totalCartCount})</span>
               <button 
                 className={styles.closeBtn} 
                 onClick={closeCart}
@@ -225,75 +262,91 @@ export default function Header() {
             </div>
             
             <div className={styles.cartItems}>
-              {/* Dummy Cart Item 1 */}
-              <div className={styles.cartItem}>
-                <div className={styles.cartItemImage}>
-                  <Image src="https://placehold.co/150x180/e0e0e0/666666.png?text=Item" alt="Cart item" fill sizes="90px" style={{objectFit: 'cover'}} />
+              {cartItems.length === 0 ? (
+                <div style={{ padding: '48px 16px', textAlign: 'center', color: '#666666' }}>
+                  <p style={{ fontSize: '1rem', marginBottom: '12px' }}>Your bag is currently empty.</p>
+                  <Link
+                    href="/collections/women"
+                    onClick={closeCart}
+                    style={{ color: '#111111', fontWeight: 600, textDecoration: 'underline' }}
+                  >
+                    Explore Collections →
+                  </Link>
                 </div>
-                <div className={styles.cartItemDetails}>
-                  <div className={styles.cartItemTop}>
-                    <span className={styles.cartItemName}>Brown Jacket</span>
-                    <button className={styles.removeBtn}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <span className={styles.cartItemVariant}>Size: M | Color: Brown</span>
-                  <div className={styles.cartItemBottom}>
-                    <div className={styles.quantitySelector}>
-                      <button>-</button>
-                      <span>1</span>
-                      <button>+</button>
+              ) : (
+                cartItems.map((item) => (
+                  <div key={item.id} className={styles.cartItem}>
+                    <div className={styles.cartItemImage}>
+                      <Image src={item.image} alt={item.name} fill sizes="90px" style={{ objectFit: 'cover' }} />
                     </div>
-                    <span className={styles.cartItemPrice}>₹ 139,600</span>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Dummy Cart Item 2 */}
-              <div className={styles.cartItem}>
-                <div className={styles.cartItemImage}>
-                  <Image src="https://placehold.co/150x180/e0e0e0/666666.png?text=Item" alt="Cart item" fill sizes="90px" style={{objectFit: 'cover'}} />
-                </div>
-                <div className={styles.cartItemDetails}>
-                  <div className={styles.cartItemTop}>
-                    <span className={styles.cartItemName}>Denim Shirt</span>
-                    <button className={styles.removeBtn}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                      </svg>
-                    </button>
-                  </div>
-                  <span className={styles.cartItemVariant}>Size: L | Color: Blue</span>
-                  <div className={styles.cartItemBottom}>
-                    <div className={styles.quantitySelector}>
-                      <button>-</button>
-                      <span>1</span>
-                      <button>+</button>
+                    <div className={styles.cartItemDetails}>
+                      <div className={styles.cartItemTop}>
+                        <span className={styles.cartItemName}>{item.name}</span>
+                        <button
+                          className={styles.removeBtn}
+                          aria-label="Remove item"
+                          onClick={() => removeCartItem(item.id)}
+                        >
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                          </svg>
+                        </button>
+                      </div>
+                      <span className={styles.cartItemVariant}>{item.variant}</span>
+                      <div className={styles.cartItemBottom}>
+                        <div className={styles.quantitySelector}>
+                          <button onClick={() => updateCartQty(item.id, -1)} aria-label="Decrease quantity">-</button>
+                          <span>{item.qty}</span>
+                          <button onClick={() => updateCartQty(item.id, 1)} aria-label="Increase quantity">+</button>
+                        </div>
+                        <span className={styles.cartItemPrice}>₹ {(item.price * item.qty).toLocaleString('en-IN')}</span>
+                      </div>
                     </div>
-                    <span className={styles.cartItemPrice}>₹ 89,000</span>
                   </div>
-                </div>
-              </div>
+                ))
+              )}
             </div>
 
             <div className={styles.cartFooter}>
               <div className={styles.subtotalRow}>
                 <span>Subtotal</span>
-                <span className={styles.subtotalPrice}>₹ 228,600</span>
+                <span className={styles.subtotalPrice}>₹ {cartSubtotal.toLocaleString('en-IN')}</span>
               </div>
               <p className={styles.taxNote}>Shipping, taxes, and discount codes calculated at checkout.</p>
-              <Link
-                href="/checkout"
-                onClick={closeCart}
-                className={styles.checkoutBtn}
-                style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
-              >
-                Checkout
-              </Link>
+              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                <Link
+                  href="/cart"
+                  onClick={closeCart}
+                  style={{
+                    flex: 1,
+                    padding: '12px 0',
+                    border: '1px solid #111111',
+                    background: '#ffffff',
+                    color: '#111111',
+                    borderRadius: '4px',
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    fontWeight: 600,
+                    fontSize: '13px',
+                  }}
+                >
+                  View Bag
+                </Link>
+                <Link
+                  href="/checkout"
+                  onClick={closeCart}
+                  className={styles.checkoutBtn}
+                  style={{
+                    flex: 1,
+                    textAlign: 'center',
+                    textDecoration: 'none',
+                    margin: 0,
+                  }}
+                >
+                  Checkout
+                </Link>
+              </div>
             </div>
           </div>
         </div>
