@@ -9,10 +9,10 @@ import styles from './ShopTheLookSection.module.css';
 const LOOKS = [
   {
     id: 'look_1',
-    lookTitle: 'Shop The Look · Look 01',
+    lookTitle: 'Shop The Look',
     description:
       'The S/S 25 Inaugural Collection explores sculpted sweetheart lines and sweeping circular flare tailoring. A balanced silhouette combining delicate feminine curves with bold architectural proportions.',
-    lookbookImage: '/images/lookbook/lookbook-01.jpg?v=3',
+    lookbookImage: '/images/lookbook/dusty-pink-palazzo.png?v=5',
     products: [
       {
         id: 'throve_lp_04',
@@ -34,82 +34,12 @@ const LOOKS = [
         price: '₹ 3,950',
         rating: '4.9',
         images: [
-          '/products/high-waisted-flare-pants/right.jpg?v=3',
           '/products/high-waisted-flare-pants/front.jpg?v=3',
+          '/products/high-waisted-flare-pants/right.jpg?v=3',
           '/products/high-waisted-flare-pants/back.jpg?v=3',
         ],
         colors: ['#C47E85'],
         handle: 'high-waisted-flare-pants',
-      },
-    ],
-  },
-  {
-    id: 'look_2',
-    lookTitle: 'Shop The Look · Look 02',
-    description:
-      'S/S 25 Sartorial Edition. Featuring an asymmetric overlapping mandarin collar shirt in rich espresso brown paired with tailored ivory cream pleated trousers with turn-up cuffs.',
-    lookbookImage: '/images/lookbook/lookbook-02.jpg?v=3',
-    products: [
-      {
-        id: 'throve_lp_02',
-        title: 'Overlapping Mandarin Shirt',
-        price: '₹ 3,900',
-        rating: '4.9',
-        images: [
-          '/products/asymmetric-mandarin-shirt/front.jpg?v=3',
-          '/products/asymmetric-mandarin-shirt/left tilted.jpg?v=3',
-          '/products/asymmetric-mandarin-shirt/back.jpg?v=3',
-        ],
-        colors: ['#4A2E18'],
-        handle: 'asymmetric-mandarin-shirt',
-      },
-      {
-        id: 'throve_lp_03',
-        title: 'Pleated Straight Formal Pants',
-        price: '₹ 4,200',
-        rating: '4.8',
-        images: [
-          '/products/pleated-formal-pants/front.jpg?v=3',
-          '/products/pleated-formal-pants/right.jpg?v=3',
-          '/products/pleated-formal-pants/back.jpg?v=3',
-        ],
-        colors: ['#F5F2EB'],
-        handle: 'pleated-formal-pants',
-      },
-    ],
-  },
-  {
-    id: 'look_3',
-    lookTitle: 'Shop The Look · Look 03',
-    description:
-      'Inaugural dresses cut with architectural princess seams, crisp asymmetric collars, and custom geometric hardware. Versatile luxury designed for contemporary evening events.',
-    lookbookImage: '/images/lookbook/lookbook-03.jpg?v=3',
-    products: [
-      {
-        id: 'throve_lp_01',
-        title: 'Sleeveless Tailored Mini Dress',
-        price: '₹ 4,800',
-        rating: '4.9',
-        images: [
-          '/products/navy-tailored-mini-dress/front.jpg?v=3',
-          '/products/navy-tailored-mini-dress/left.jpg?v=3',
-          '/products/navy-tailored-mini-dress/right tilted.jpg?v=3',
-        ],
-        colors: ['#1C2841'],
-        handle: 'navy-tailored-mini-dress',
-      },
-      {
-        id: 'throve_lp_05',
-        title: 'Sleeveless Princess Line Dress',
-        price: '₹ 4,900',
-        rating: '4.9',
-        images: [
-          '/products/sleeveless-princess-sheath-dress/front.jpg?v=3',
-          '/products/sleeveless-princess-sheath-dress/right.jpg?v=3',
-          '/products/sleeveless-princess-sheath-dress/back.jpg?v=3',
-        ],
-        colors: ['#FAF7F2'],
-        handle: 'sleeveless-princess-sheath-dress',
       },
     ],
   },
@@ -177,28 +107,30 @@ export default function ShopTheLookSection() {
                 {currentLook.description}
               </p>
               
-              <div className={styles.sliderControls}>
-                <button
-                  type="button"
-                  className={styles.circleBtn}
-                  aria-label="Previous Look"
-                  onClick={handlePrev}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M15 18L9 12L15 6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className={styles.circleBtn}
-                  aria-label="Next Look"
-                  onClick={handleNext}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M9 18L15 12L9 6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-              </div>
+              {LOOKS.length > 1 && (
+                <div className={styles.sliderControls}>
+                  <button
+                    type="button"
+                    className={styles.circleBtn}
+                    aria-label="Previous Look"
+                    onClick={handlePrev}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M15 18L9 12L15 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.circleBtn}
+                    aria-label="Next Look"
+                    onClick={handleNext}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M9 18L15 12L9 6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className={styles.productsGrid}>
