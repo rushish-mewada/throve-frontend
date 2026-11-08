@@ -9,7 +9,7 @@ const COLLECTIONS_DATA = {
       description: "Sharp silhouettes, structured overcoats, tailored blazers, and luxury knitwear engineered for modern men.",
       count: 12,
     },
-    filterCategories: ['All Men', 'Blazers & Outerwear', 'Tailored Shirts', 'Polo & Knitwear', 'Trousers', 'Footwear'],
+    filterCategories: ['Blazers & Outerwear', 'Tailored Shirts', 'Polo & Knitwear', 'Trousers', 'Footwear'],
     products: [
       {
         id: 'm1',
@@ -163,7 +163,7 @@ const COLLECTIONS_DATA = {
       description: "Explore the latest trends in women's fashion. From elegant outerwear to everyday essentials.",
       count: 12,
     },
-    filterCategories: ['All Women', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'],
+    filterCategories: ['Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'],
     products: [
       {
         id: 'w1',
@@ -317,7 +317,7 @@ const COLLECTIONS_DATA = {
       description: "Curated archive releases and seasonal privileges with limited availability.",
       count: 8,
     },
-    filterCategories: ['All Sale', 'Outerwear', 'Shirts & Tops', 'Bottoms', 'Footwear'],
+    filterCategories: ['Outerwear', 'Shirts & Tops', 'Bottoms', 'Footwear'],
     products: [
       {
         id: 's1',
@@ -375,7 +375,7 @@ const COLLECTIONS_DATA = {
       description: "The newest expressions of Throve craftsmanship. Fresh cuts, premium fabrics, and runway silhouettes.",
       count: 10,
     },
-    filterCategories: ['All Arrivals', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Trousers'],
+    filterCategories: ['Outerwear', 'Shirts & Tops', 'Dresses', 'Trousers'],
     products: [
       {
         id: 'na1',

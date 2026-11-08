@@ -7,7 +7,7 @@ import CollectionSort from '../CollectionSort/CollectionSort';
 import styles from '../../page.module.css';
 
 export default function CollectionClient({ initialCategory, initialProducts, filterCategories }) {
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
@@ -15,10 +15,12 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
   const [currentPage, setCurrentPage] = useState(1);
   const [isFiltering, setIsFiltering] = useState(false);
 
-  // Toggle Category
-  const handleSelectCategory = (cat) => {
+  // Toggle Category (if none selected, shows all products by default)
+  const handleToggleCategory = (cat) => {
     setIsFiltering(true);
-    setSelectedCategory((prev) => (prev === cat || cat.startsWith('All') ? '' : cat));
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
     setCurrentPage(1);
     setTimeout(() => setIsFiltering(false), 300);
   };
@@ -56,7 +58,7 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
   // Clear All
   const handleClearAll = () => {
     setIsFiltering(true);
-    setSelectedCategory('');
+    setSelectedCategories([]);
     setSelectedPriceRanges([]);
     setSelectedSizes([]);
     setSelectedColors([]);
@@ -66,7 +68,7 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
   };
 
   const hasActiveFilters =
-    Boolean(selectedCategory) ||
+    selectedCategories.length > 0 ||
     selectedPriceRanges.length > 0 ||
     selectedSizes.length > 0 ||
     selectedColors.length > 0;
@@ -75,10 +77,10 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
   const filteredProducts = useMemo(() => {
     let result = [...initialProducts];
 
-    // 1. Filter by category
-    if (selectedCategory && !selectedCategory.startsWith('All')) {
-      result = result.filter(
-        (p) => p.category?.toLowerCase() === selectedCategory.toLowerCase()
+    // 1. Filter by category (show all by default when none selected)
+    if (selectedCategories.length > 0) {
+      result = result.filter((p) =>
+        selectedCategories.some((cat) => cat.toLowerCase() === p.category?.toLowerCase())
       );
     }
 
@@ -119,7 +121,7 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
     }
 
     return result;
-  }, [initialProducts, selectedCategory, selectedPriceRanges, selectedSizes, selectedColors, sortValue]);
+  }, [initialProducts, selectedCategories, selectedPriceRanges, selectedSizes, selectedColors, sortValue]);
 
   const itemsPerPage = 8;
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / itemsPerPage));
@@ -133,8 +135,8 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
       <aside className={styles.sidebar}>
         <Filters
           categories={filterCategories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={handleSelectCategory}
+          selectedCategories={selectedCategories}
+          onToggleCategory={handleToggleCategory}
           selectedPriceRanges={selectedPriceRanges}
           onTogglePriceRange={handleTogglePriceRange}
           selectedSizes={selectedSizes}
@@ -235,3 +237,4 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
     </div>
   );
 }
+

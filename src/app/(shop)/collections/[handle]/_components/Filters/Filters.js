@@ -3,9 +3,11 @@ import { useState } from 'react';
 import styles from './Filters.module.css';
 
 export default function Filters({
-  categories = ['All Women', 'Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'],
+  categories = ['Outerwear', 'Shirts & Tops', 'Dresses', 'Bottoms', 'Accessories'],
   selectedCategory = '',
+  selectedCategories = [],
   onSelectCategory,
+  onToggleCategory,
   selectedPriceRanges = [],
   onTogglePriceRange,
   selectedSizes = [],
@@ -56,14 +58,20 @@ export default function Filters({
         {openSections.categories && (
           <div className={styles.filterContent}>
             {categories.map((item) => {
-              const isSelected = selectedCategory === item || (!selectedCategory && item.startsWith('All'));
+              const isSelected = selectedCategories.length > 0
+                ? selectedCategories.includes(item)
+                : selectedCategory === item;
               return (
                 <label
                   key={item}
                   className={styles.checkboxLabel}
                   onClick={(e) => {
                     e.preventDefault();
-                    if (onSelectCategory) onSelectCategory(item);
+                    if (onToggleCategory) {
+                      onToggleCategory(item);
+                    } else if (onSelectCategory) {
+                      onSelectCategory(item);
+                    }
                   }}
                 >
                   <span className={`${styles.checkmark} ${isSelected ? styles.checkmarkChecked : ''}`} />
