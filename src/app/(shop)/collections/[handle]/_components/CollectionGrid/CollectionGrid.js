@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import styles from './CollectionGrid.module.css';
 
 export default function CollectionGrid({ products }) {
@@ -14,18 +15,26 @@ export default function CollectionGrid({ products }) {
               </svg>
             </button>
             
-            <Image
-              src={product.image}
-              alt={product.title}
-              fill
-              style={{ objectFit: 'cover' }}
-              sizes="(max-width: 768px) 50vw, 33vw"
-            />
+            <Link href={`/product/${product.handle || 'classic-jacket'}`} aria-label={product.title}>
+              <Image
+                src={product.image}
+                alt={product.title}
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 768px) 50vw, 33vw"
+              />
+            </Link>
           </div>
 
           <div className={styles.productInfo}>
             <div className={styles.infoTop}>
-              <span className={styles.productTitle}>{product.title}</span>
+              <Link
+                href={`/product/${product.handle || 'classic-jacket'}`}
+                className={styles.productTitle}
+                style={{ textDecoration: 'none' }}
+              >
+                {product.title}
+              </Link>
               <span className={styles.productRating}>★ {product.rating}</span>
             </div>
             <div className={styles.infoBottom}>

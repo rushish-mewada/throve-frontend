@@ -64,11 +64,11 @@ export default async function ProductPage({ params }) {
         </div>
       </div>
       
-      <ProductGrid title="Related Product" products={dummyRelatedProducts} seeAllLink="#" />
+      <ProductGrid title="Related Product" products={dummyRelatedProducts} seeAllLink="/collections/women" />
       
       <ProductReviews />
 
-      <ProductGrid title="Popular this week" products={dummyRelatedProducts} seeAllLink="#" />
+      <ProductGrid title="Popular this week" products={dummyRelatedProducts} seeAllLink="/collections/women" />
     </main>
   );
 }

@@ -1,9 +1,11 @@
 "use client";
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './ProductInfo.module.css';
 import DecartLucyVtonModal from '../DecartLucyVton/DecartLucyVtonModal';
 
 export default function AddToCartClient({ variants, colors, product }) {
+  const router = useRouter();
   const [selectedSize, setSelectedSize] = useState(variants[1] || variants[0]);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
   const [isVtonOpen, setIsVtonOpen] = useState(false);
@@ -61,8 +63,20 @@ export default function AddToCartClient({ variants, colors, product }) {
 
       {/* Actions */}
       <div className={styles.actions}>
-        <button className={styles.addToCartBtn}>Add To Cart</button>
-        <button className={styles.checkoutNowBtn}>Checkout Now</button>
+        <button
+          type="button"
+          className={styles.addToCartBtn}
+          onClick={() => router.push('/cart')}
+        >
+          Add To Cart
+        </button>
+        <button
+          type="button"
+          className={styles.checkoutNowBtn}
+          onClick={() => router.push('/checkout')}
+        >
+          Checkout Now
+        </button>
       </div>
 
       {/* VTON Modal */}

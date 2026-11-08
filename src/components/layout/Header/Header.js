@@ -81,12 +81,12 @@ export default function Header() {
 
         {/* Actions */}
         <div className={styles.actions}>
-          <button aria-label="Search" className={styles.iconBtn}>
+          <Link href="/search" aria-label="Search" className={styles.iconBtn}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="11" cy="11" r="7"/>
               <path d="M20 20L16 16"/>
             </svg>
-          </button>
+          </Link>
           
           <Link href="/account" aria-label="Account" className={styles.iconBtn}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -249,7 +249,14 @@ export default function Header() {
                 <span className={styles.subtotalPrice}>₹ 228,600</span>
               </div>
               <p className={styles.taxNote}>Shipping, taxes, and discount codes calculated at checkout.</p>
-              <button className={styles.checkoutBtn}>Checkout</button>
+              <Link
+                href="/checkout"
+                onClick={closeCart}
+                className={styles.checkoutBtn}
+                style={{ display: 'block', textAlign: 'center', textDecoration: 'none' }}
+              >
+                Checkout
+              </Link>
             </div>
           </div>
         </div>

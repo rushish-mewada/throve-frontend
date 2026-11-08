@@ -71,13 +71,15 @@ export default function NewArrivalsSection() {
                   </svg>
                 </button>
 
-                <Image
-                  src={product.images[0]}
-                  alt={product.title}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                />
+                <Link href={`/product/${product.handle || 'classic-jacket'}`} aria-label={product.title}>
+                  <Image
+                    src={product.images[0]}
+                    alt={product.title}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                </Link>
 
                 {/* Dots Placeholder */}
                 <div className={styles.imageDots}>
@@ -90,7 +92,13 @@ export default function NewArrivalsSection() {
 
               <div className={styles.productInfo}>
                 <div className={styles.infoTop}>
-                  <span className={styles.productTitle}>{product.title}</span>
+                  <Link
+                    href={`/product/${product.handle || 'classic-jacket'}`}
+                    className={styles.productTitle}
+                    style={{ textDecoration: 'none' }}
+                  >
+                    {product.title}
+                  </Link>
                   <span className={styles.productRating}>★ {product.rating}</span>
                 </div>
                 <div className={styles.infoBottom}>

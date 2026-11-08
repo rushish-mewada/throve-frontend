@@ -25,13 +25,15 @@ export default function ProductGrid({ title, products, seeAllLink }) {
                 </svg>
               </button>
               
-              <Image
-                src={product.image}
-                alt={product.title}
-                fill
-                style={{ objectFit: 'cover' }}
-                sizes="(max-width: 768px) 50vw, 25vw"
-              />
+              <Link href={`/product/${product.handle || 'classic-jacket'}`} aria-label={product.title}>
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+              </Link>
 
               <div className={styles.imageDots}>
                 <span className={`${styles.dot} ${styles.dotActive}`}></span>
@@ -43,7 +45,13 @@ export default function ProductGrid({ title, products, seeAllLink }) {
 
             <div className={styles.productInfo}>
               <div className={styles.infoTop}>
-                <span className={styles.productTitle}>{product.title}</span>
+                <Link
+                  href={`/product/${product.handle || 'classic-jacket'}`}
+                  className={styles.productTitle}
+                  style={{ textDecoration: 'none' }}
+                >
+                  {product.title}
+                </Link>
                 <span className={styles.productRating}>★ {product.rating}</span>
               </div>
               <div className={styles.infoBottom}>
