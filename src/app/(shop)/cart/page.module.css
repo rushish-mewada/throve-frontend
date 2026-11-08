@@ -253,6 +253,33 @@
   background-color: #333333;
 }
 
+@keyframes radialSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: radialSpin 0.75s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.spinnerPink {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 63, 108, 0.25);
+  border-top-color: #ff3f6c;
+  border-radius: 50%;
+  animation: radialSpin 0.75s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
 .continueLink {
   display: block;
   text-align: center;

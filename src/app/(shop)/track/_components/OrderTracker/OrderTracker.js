@@ -22,7 +22,7 @@ export default function OrderTracker() {
 
     setIsLoading(true);
 
-    // Simulated lookup
+    // Simulated lookup with 2 secs processing
     setTimeout(() => {
       setIsLoading(false);
       setTrackingResult({
@@ -49,7 +49,7 @@ export default function OrderTracker() {
           },
         ],
       });
-    }, 600);
+    }, 2000);
   };
 
   return (
@@ -84,8 +84,20 @@ export default function OrderTracker() {
 
         {error && <p className={styles.errorMessage}>{error}</p>}
 
-        <button type="submit" disabled={isLoading} className={styles.submitBtn}>
-          {isLoading ? 'Verifying Dispatch...' : 'Track Shipment'}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={styles.submitBtn}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+        >
+          {isLoading ? (
+            <>
+              <span className={styles.spinner} />
+              <span>Scanning Logistics Network...</span>
+            </>
+          ) : (
+            'Track Shipment'
+          )}
         </button>
       </form>
 

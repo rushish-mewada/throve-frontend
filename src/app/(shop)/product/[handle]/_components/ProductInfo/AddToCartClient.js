@@ -7,6 +7,25 @@ export default function AddToCartClient({ variants, colors, product }) {
   const router = useRouter();
   const [selectedSize, setSelectedSize] = useState(variants[1] || variants[0]);
   const [selectedColor, setSelectedColor] = useState(colors[0]);
+  const [isAdding, setIsAdding] = useState(false);
+  const [addedSuccess, setAddedSuccess] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleAddToCart = async () => {
+    if (isAdding) return;
+    setIsAdding(true);
+    await new Promise((r) => setTimeout(r, 2000));
+    setIsAdding(false);
+    setAddedSuccess(true);
+    setTimeout(() => setAddedSuccess(false), 3000);
+  };
+
+  const handleCheckoutNow = async () => {
+    if (isCheckingOut) return;
+    setIsCheckingOut(true);
+    await new Promise((r) => setTimeout(r, 2000));
+    router.push('/checkout');
+  };
 
   return (
     <div className={styles.formContainer}>
@@ -51,16 +70,37 @@ export default function AddToCartClient({ variants, colors, product }) {
         <button
           type="button"
           className={styles.addToCartBtn}
-          onClick={() => router.push('/cart')}
+          onClick={handleAddToCart}
+          disabled={isAdding}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
         >
-          Add To Cart
+          {isAdding ? (
+            <>
+              <span className={styles.spinner} />
+              <span>Adding to Bag...</span>
+            </>
+          ) : addedSuccess ? (
+            <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Added to Bag!</span>
+          ) : (
+            "Add To Cart"
+          )}
         </button>
+
         <button
           type="button"
           className={styles.checkoutNowBtn}
-          onClick={() => router.push('/checkout')}
+          onClick={handleCheckoutNow}
+          disabled={isCheckingOut}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
         >
-          Checkout Now
+          {isCheckingOut ? (
+            <>
+              <span className={styles.spinnerDark} />
+              <span>Securing Checkout...</span>
+            </>
+          ) : (
+            "Checkout Now"
+          )}
         </button>
       </div>
     </div>

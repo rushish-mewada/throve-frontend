@@ -18,6 +18,8 @@ export default function CheckoutPage() {
 
   const handlePayNow = () => {
     startTransition(async () => {
+      // 2 seconds realistic payment gateway handshake & encryption
+      await new Promise((r) => setTimeout(r, 2000));
       const res = await processCheckoutAction({
         email,
         firstName: firstName || 'Customer',
@@ -167,13 +169,45 @@ export default function CheckoutPage() {
             <div className={styles.sectionBody}>
               {orderConfirmed ? (
                 <div style={{ padding: "16px 0", color: "#10b981", fontWeight: 600 }}>
-                  <p>✓ Order Placed Successfully!</p>
+                  <p style={{ fontSize: "1.1rem" }}>✓ Order Placed Successfully!</p>
                   <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px", marginTop: "4px" }}>
                     Order ID: <strong>{orderConfirmed.displayId}</strong> ({orderConfirmed.orderId})
                   </p>
-                  <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px" }}>
+                  <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px", marginTop: "2px" }}>
                     Amount: <strong>{orderConfirmed.totalFormatted}</strong> · Payment: {orderConfirmed.paymentMethod?.toUpperCase()}
                   </p>
+                  <div style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
+                    <a
+                      href="/track"
+                      style={{
+                        padding: "10px 18px",
+                        backgroundColor: "#111111",
+                        color: "#ffffff",
+                        borderRadius: "4px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        display: "inline-block"
+                      }}
+                    >
+                      Track Shipment →
+                    </a>
+                    <a
+                      href="/"
+                      style={{
+                        padding: "10px 18px",
+                        backgroundColor: "#f4f4f5",
+                        color: "#111111",
+                        borderRadius: "4px",
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        textDecoration: "none",
+                        display: "inline-block"
+                      }}
+                    >
+                      Back to Store
+                    </a>
+                  </div>
                 </div>
               ) : (
                 <>
@@ -207,8 +241,16 @@ export default function CheckoutPage() {
                     className={styles.payBtn} 
                     onClick={handlePayNow} 
                     disabled={isPending}
+                    style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                   >
-                    {isPending ? "Processing securely..." : "Pay now"}
+                    {isPending ? (
+                      <>
+                        <span className={styles.spinner} />
+                        <span>Authorizing Payment...</span>
+                      </>
+                    ) : (
+                      "Pay now"
+                    )}
                   </button>
                 </>
               )}
