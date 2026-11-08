@@ -250,7 +250,12 @@ export default function DecartLucyVtonModal({ isOpen, onClose, product }) {
               setTryOnResult(null);
             }}
           >
-            <span className={styles.tabIcon}>📹</span>
+            <span className={styles.tabIcon}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="23 7 16 12 23 17 23 7" />
+                <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+              </svg>
+            </span>
             Live Neural Stream
           </button>
           <button
@@ -260,7 +265,12 @@ export default function DecartLucyVtonModal({ isOpen, onClose, product }) {
               setTryOnResult(null);
             }}
           >
-            <span className={styles.tabIcon}>📸</span>
+            <span className={styles.tabIcon}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+            </span>
             Upload Full-Body Photo
           </button>
         </div>
@@ -340,7 +350,13 @@ export default function DecartLucyVtonModal({ isOpen, onClose, product }) {
                     style={{ display: "none" }}
                     onChange={handlePhotoUpload}
                   />
-                  <div className={styles.uploadIcon}>📷</div>
+                  <div className={styles.uploadIcon}>
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                      <circle cx="8.5" cy="8.5" r="1.5" />
+                      <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                  </div>
                   <p className={styles.uploadPrompt}>Upload your full-body photo</p>
                   <span className={styles.uploadHint}>Stand straight with full silhouette visible in neutral lighting</span>
                 </div>
