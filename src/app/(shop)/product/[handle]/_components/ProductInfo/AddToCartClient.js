@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import styles from './ProductInfo.module.css';
+import SizeChartModal from './SizeChartModal';
+import DeliveryTermsModal from './DeliveryTermsModal';
 
 export default function AddToCartClient({ variants, colors, product }) {
   const router = useRouter();
@@ -12,6 +14,8 @@ export default function AddToCartClient({ variants, colors, product }) {
   const [isAdding, setIsAdding] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
+  const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
   const handleAddToCart = async () => {
     if (isAdding) return;
@@ -55,7 +59,13 @@ export default function AddToCartClient({ variants, colors, product }) {
       <div className={styles.optionGroup}>
         <div className={styles.sizeHeader}>
           <span className={styles.optionLabel}>Size: <span>{selectedSize?.name}</span></span>
-          <button className={styles.sizeGuideBtn}>View Size Chart</button>
+          <button
+            type="button"
+            className={styles.sizeGuideBtn}
+            onClick={() => setIsSizeChartOpen(true)}
+          >
+            View Size Chart
+          </button>
         </div>
         <div className={styles.sizeList}>
           {variants.map(v => (
@@ -108,6 +118,29 @@ export default function AddToCartClient({ variants, colors, product }) {
           )}
         </button>
       </div>
+
+      {/* Delivery T&C Trigger */}
+      <div>
+        <button
+          type="button"
+          className={styles.deliveryLink}
+          onClick={() => setIsDeliveryOpen(true)}
+        >
+          Delivery T&C
+        </button>
+      </div>
+
+      {/* Modals */}
+      <SizeChartModal
+        isOpen={isSizeChartOpen}
+        onClose={() => setIsSizeChartOpen(false)}
+        product={product}
+      />
+
+      <DeliveryTermsModal
+        isOpen={isDeliveryOpen}
+        onClose={() => setIsDeliveryOpen(false)}
+      />
     </div>
   );
 }

@@ -277,11 +277,302 @@
 }
 
 .deliveryLink {
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
   font-family: var(--font-poppins), sans-serif;
   font-size: 0.85rem;
   color: #888888;
   text-decoration: underline;
   margin-top: 8px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  display: inline-block;
+}
+
+.deliveryLink:hover {
+  color: #111111;
+}
+
+/* Modals for Size Guide & Delivery Terms */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(17, 17, 17, 0.55);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modalCard {
+  width: 100%;
+  max-width: 580px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 16px;
+}
+
+.modalTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111111;
+  margin: 0;
+}
+
+.modalSubtitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  color: #666666;
+  margin: 4px 0 0 0;
+}
+
+.modalCloseBtn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: #666666;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: color 0.2s;
+}
+
+.modalCloseBtn:hover {
+  color: #111111;
+}
+
+/* Unit Toggle */
+.unitToggleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.unitLabel {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  color: #555555;
+  font-weight: 500;
+}
+
+.unitButtonGroup {
+  display: flex;
+  border: 1px solid #dddddd;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.unitBtn {
+  background: #ffffff;
+  border: none;
+  padding: 6px 14px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unitBtnActive {
+  background: #111111;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Size Table */
+.tableWrapper {
+  overflow-x: auto;
+  border: 1px solid #ebebeb;
+  border-radius: 6px;
+}
+
+.sizeTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+}
+
+.sizeTable th,
+.sizeTable td {
+  padding: 12px 14px;
+  text-align: center;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.sizeTable th {
+  background-color: #fafafa;
+  font-weight: 600;
+  color: #333333;
+}
+
+.thMeasure {
+  text-align: left !important;
+}
+
+.tdMeasure {
+  text-align: left !important;
+  font-weight: 600;
+  color: #111111;
+}
+
+.tdHighlight {
+  background-color: #faf9f6;
+  font-weight: 600;
+}
+
+/* Measurement Tips */
+.measurementTips {
+  display: flex;
+  gap: 12px;
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 14px 16px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: #444444;
+}
+
+.tipIcon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.tipText {
+  margin: 4px 0 0 0;
+  color: #666666;
+}
+
+/* Delivery Grid */
+.deliveryContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.deliveryGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.deliveryItem {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f2f2f2;
+}
+
+.deliveryItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.deliveryIcon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: #f7f7f7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deliveryItemTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111111;
+  margin: 0 0 4px 0;
+}
+
+.deliveryItemDesc {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #555555;
+  margin: 0;
+}
+
+/* Modal Footer */
+.modalFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 16px;
+  gap: 16px;
+}
+
+.footerNote {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.75rem;
+  color: #888888;
+  margin: 0;
+}
+
+.fullPolicyLink {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111111;
+  text-decoration: underline;
+}
+
+.fullPolicyLink:hover {
+  color: #555555;
+}
+
+.doneBtn {
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 10px 24px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.doneBtn:hover {
+  opacity: 0.85;
 }
 
 @media (max-width: 1024px) {

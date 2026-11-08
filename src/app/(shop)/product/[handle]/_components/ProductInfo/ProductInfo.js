@@ -31,10 +31,8 @@ export default function ProductInfo({ product }) {
         </p>
       </div>
 
-      {/* Client Component for interactivity (Color, Size, Buttons, VTON) */}
+      {/* Client Component for interactivity (Color, Size, Buttons, VTON, Size Guide, Delivery T&C) */}
       <AddToCartClient variants={product.variants} colors={product.colors} product={product} />
-
-      <Link href="#" className={styles.deliveryLink}>Delivery T&C</Link>
     </div>
   );
 }

@@ -182,9 +182,8 @@ export default function HeroSlider() {
           return (
             <div
               key={domIndex}
-              className={`${styles.carouselItem} ${slotClass} ${
-                isCenter ? styles.centerItem : ""
-              }`}
+              className={`${styles.carouselItem} ${slotClass} ${isCenter ? styles.centerItem : ""
+                }`}
               style={isWrapping ? { transition: "none" } : {}}
               onClick={() => {
                 if (!isCenter && offset >= -3 && offset <= 3) {
@@ -221,9 +220,8 @@ export default function HeroSlider() {
                 prod.hotspots.map((hs) => (
                   <div
                     key={hs.id}
-                    className={`${styles.hotspotCard} ${
-                      hs.cardSide === "left" ? styles.cardLeft : styles.cardRight
-                    }`}
+                    className={`${styles.hotspotCard} ${hs.cardSide === "left" ? styles.cardLeft : styles.cardRight
+                      }`}
                     style={{ top: hs.cardTop }}
                   >
                     <div className={styles.cardHeader}>
