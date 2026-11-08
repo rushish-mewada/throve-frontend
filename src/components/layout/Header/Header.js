@@ -289,22 +289,11 @@ export default function Header() {
                 <span className={styles.subtotalPrice}>₹ {cartSubtotal.toLocaleString('en-IN')}</span>
               </div>
               <p className={styles.taxNote}>Shipping, taxes, and discount codes calculated at checkout.</p>
-              <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+              <div className={styles.cartActions}>
                 <Link
                   href="/cart"
                   onClick={closeCart}
-                  style={{
-                    flex: 1,
-                    padding: '12px 0',
-                    border: '1px solid #111111',
-                    background: '#ffffff',
-                    color: '#111111',
-                    borderRadius: '4px',
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    fontWeight: 600,
-                    fontSize: '13px',
-                  }}
+                  className={styles.viewBagBtn}
                 >
                   View Bag
                 </Link>
@@ -312,12 +301,6 @@ export default function Header() {
                   href="/checkout"
                   onClick={closeCart}
                   className={styles.checkoutBtn}
-                  style={{
-                    flex: 1,
-                    textAlign: 'center',
-                    textDecoration: 'none',
-                    margin: 0,
-                  }}
                 >
                   Checkout
                 </Link>
