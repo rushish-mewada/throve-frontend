@@ -134,8 +134,9 @@ export default function CartPage() {
             )}
             <div className={styles.summaryRow}>
               <span>Estimated Shipping</span>
-              <span style={{ color: '#10b981' }}>FREE (Orders over ₹1,999)</span>
+              <span className={styles.freeBadge}>FREE</span>
             </div>
+            <p className={styles.shippingNotice}>✓ Complimentary Express Delivery on orders above ₹1,999</p>
             
             <div className={styles.divider}></div>
             
