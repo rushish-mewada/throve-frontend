@@ -40,13 +40,17 @@ export default function Filters({
 
   return (
     <div className={styles.filtersWrapper}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-        <h3 className={styles.filterTitle} style={{ border: 'none', margin: 0, padding: 0 }}>Filters</h3>
-        {hasActiveFilters && (
-          <button type="button" className={styles.clearBtn} onClick={onClearAll}>
-            Clear All
-          </button>
-        )}
+      <div className={styles.filtersHeader}>
+        <h3 className={styles.filterTitle}>Filters</h3>
+        <button
+          type="button"
+          className={`${styles.clearBtn} ${hasActiveFilters ? styles.clearBtnVisible : styles.clearBtnHidden}`}
+          onClick={onClearAll}
+          aria-hidden={!hasActiveFilters}
+          tabIndex={hasActiveFilters ? 0 : -1}
+        >
+          Clear All
+        </button>
       </div>
 
       {/* Categories */}
