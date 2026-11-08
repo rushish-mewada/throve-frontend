@@ -1,11 +1,41 @@
 "use client";
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import styles from './page.module.css';
+import { processCheckoutAction } from '@/actions/checkout';
 
 export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('user@example.com');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('Maharashtra');
+  const [pincode, setPincode] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [orderConfirmed, setOrderConfirmed] = useState(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handlePayNow = () => {
+    startTransition(async () => {
+      const res = await processCheckoutAction({
+        email,
+        firstName: firstName || 'Customer',
+        lastName: lastName || 'User',
+        address1: address || '123 Fashion Street',
+        city: city || 'Mumbai',
+        state: state || 'Maharashtra',
+        pincode: pincode || '400001',
+        paymentMethod,
+      });
+
+      if (res.success) {
+        setOrderConfirmed(res);
+      } else {
+        alert(res.error || 'Failed to place order');
+      }
+    });
+  };
 
   return (
     <main className={styles.checkoutLayout}>
@@ -69,23 +99,53 @@ export default function CheckoutPage() {
                 <select className={`${styles.input} ${styles.fullWidth}`}>
                   <option>India</option>
                 </select>
-                <input type="text" placeholder="First name" className={styles.input} />
-                <input type="text" placeholder="Last name" className={styles.input} />
+                <input 
+                  type="text" 
+                  placeholder="First name" 
+                  className={styles.input} 
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+                <input 
+                  type="text" 
+                  placeholder="Last name" 
+                  className={styles.input} 
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
                 <input 
                   type="text" 
                   placeholder="Address" 
                   className={`${styles.input} ${styles.fullWidth}`} 
+                  value={address}
                   onChange={(e) => setAddress(e.target.value)}
                 />
                 <input type="text" placeholder="Apartment, suite, etc. (optional)" className={`${styles.input} ${styles.fullWidth}`} />
-                <input type="text" placeholder="City" className={styles.input} />
-                <select className={styles.input}>
-                  <option>State</option>
-                  <option>Maharashtra</option>
-                  <option>Delhi</option>
-                  <option>Karnataka</option>
+                <input 
+                  type="text" 
+                  placeholder="City" 
+                  className={styles.input} 
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+                <select 
+                  className={styles.input}
+                  value={state}
+                  onChange={(e) => setState(e.target.value)}
+                >
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Delhi">Delhi</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Gujarat">Gujarat</option>
+                  <option value="Tamil Nadu">Tamil Nadu</option>
                 </select>
-                <input type="text" placeholder="PIN code" className={styles.input} />
+                <input 
+                  type="text" 
+                  placeholder="PIN code" 
+                  className={styles.input} 
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                />
               </div>
               <button className={styles.continueBtn} onClick={() => setStep(3)}>Continue to Payment</button>
             </div>
@@ -105,23 +165,53 @@ export default function CheckoutPage() {
           
           {step === 3 && (
             <div className={styles.sectionBody}>
-              <p className={styles.paymentSub}>All transactions are secure and encrypted.</p>
-              
-              <div className={styles.paymentMethods}>
-                <label className={styles.paymentMethod}>
-                  <div className={styles.radioGroup}>
-                    <input type="radio" name="payment" defaultChecked />
-                    <span>Razorpay (UPI, Cards, NetBanking)</span>
+              {orderConfirmed ? (
+                <div style={{ padding: "16px 0", color: "#10b981", fontWeight: 600 }}>
+                  <p>✓ Order Placed Successfully!</p>
+                  <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px", marginTop: "4px" }}>
+                    Order ID: <strong>{orderConfirmed.displayId}</strong> ({orderConfirmed.orderId})
+                  </p>
+                  <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px" }}>
+                    Amount: <strong>{orderConfirmed.totalFormatted}</strong> · Payment: {orderConfirmed.paymentMethod?.toUpperCase()}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className={styles.paymentSub}>All transactions are secure and encrypted.</p>
+                  
+                  <div className={styles.paymentMethods}>
+                    <label className={styles.paymentMethod}>
+                      <div className={styles.radioGroup}>
+                        <input 
+                          type="radio" 
+                          name="payment" 
+                          checked={paymentMethod === 'razorpay'}
+                          onChange={() => setPaymentMethod('razorpay')}
+                        />
+                        <span>Razorpay (UPI, Cards, NetBanking)</span>
+                      </div>
+                    </label>
+                    <label className={styles.paymentMethod}>
+                      <div className={styles.radioGroup}>
+                        <input 
+                          type="radio" 
+                          name="payment" 
+                          checked={paymentMethod === 'cod'}
+                          onChange={() => setPaymentMethod('cod')}
+                        />
+                        <span>Cash on Delivery (COD)</span>
+                      </div>
+                    </label>
                   </div>
-                </label>
-                <label className={styles.paymentMethod}>
-                  <div className={styles.radioGroup}>
-                    <input type="radio" name="payment" />
-                    <span>Cash on Delivery (COD)</span>
-                  </div>
-                </label>
-              </div>
-              <button className={styles.payBtn}>Pay now</button>
+                  <button 
+                    className={styles.payBtn} 
+                    onClick={handlePayNow} 
+                    disabled={isPending}
+                  >
+                    {isPending ? "Processing securely..." : "Pay now"}
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>

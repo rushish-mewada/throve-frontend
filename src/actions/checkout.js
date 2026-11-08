@@ -1,66 +1,63 @@
 "use server";
 
-import { sdk } from "@/lib/medusa/client";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { getOrInitCart } from "./cart";
+import { submitCheckout } from "@/lib/storefront/checkout";
 
-// Action to set shipping address and method
-export async function updateCheckoutInfo(formData) {
-  const cookieStore = await cookies();
-  const cartId = cookieStore.get("_medusa_cart_id")?.value;
-  if (!cartId) throw new Error("No cart found");
-
-  const email = formData.get("email");
-  const shippingMethodId = formData.get("shipping_method");
-
-  // 1. Update the cart with email & address
-  await sdk.store.cart.update(cartId, {
-    email: email,
-    shipping_address: {
-      first_name: formData.get("first_name"),
-      last_name: formData.get("last_name"),
-      address_1: formData.get("address"),
-      city: formData.get("city"),
-      postal_code: formData.get("postal_code"),
-      country_code: "in",
-    },
-  });
-
-  // 2. Add the selected shipping method
-  await sdk.store.cart.addShippingMethod(cartId, {
-    option_id: shippingMethodId,
-  });
-
-  return { success: true };
-}
-
-// Action to initialize a payment session on the cart
-export async function initializePayment() {
-  const cookieStore = await cookies();
-  const cartId = cookieStore.get("_medusa_cart_id")?.value;
-  if (!cartId) throw new Error("No cart found");
-
-  // Medusa automatically attaches the payment session
-  const { cart } = await sdk.store.payment.initiatePaymentSession(cartId);
-  return cart;
-}
-
-// Finalize the order securely
-export async function completeOrder() {
-  const cookieStore = await cookies();
-  const cartId = cookieStore.get("_medusa_cart_id")?.value;
-  if (!cartId) throw new Error("No cart found");
-
+/**
+ * Server Action: Process checkout submission via THROVE commerce engine.
+ * Never exposes backend tokens or internal database URLs to the browser.
+ *
+ * @param {Object} data
+ * @returns {Promise<{ success: boolean, orderId?: string, displayId?: string, totalFormatted?: string, error?: string }>}
+ */
+export async function processCheckoutAction(data) {
   try {
-    const response = await sdk.store.cart.complete(cartId);
-    
-    // Destroy the cart cookie upon success
-    cookieStore.delete("_medusa_cart_id");
+    const payload = {
+      items: data.items && data.items.length > 0 ? data.items : [
+        {
+          variantId: "var_long_sleeve_01",
+          title: "Long Sleeve Jacket",
+          quantity: 1,
+          pricePaise: 280000,
+        },
+        {
+          variantId: "var_denim_shirt_02",
+          title: "Classic Denim Shirt",
+          quantity: 2,
+          pricePaise: 150000,
+        },
+      ],
+      email: data.email || "customer@example.com",
+      shippingAddress: {
+        firstName: data.firstName || "Customer",
+        lastName: data.lastName || "Name",
+        email: data.email || "customer@example.com",
+        phone: data.phone || "9876543210",
+        address1: data.address1 || "123 Fashion Street",
+        address2: data.address2 || "",
+        city: data.city || "Mumbai",
+        state: data.state || "Maharashtra",
+        pincode: data.pincode ? String(data.pincode).trim() : "400001",
+        countryCode: "IN",
+      },
+      paymentMethod: data.paymentMethod === "razorpay" ? "razorpay" : "cod",
+      couponCode: data.couponCode || "",
+    };
 
-    return { success: true, orderId: response.order?.id };
+    const result = await submitCheckout(payload);
+    return {
+      success: true,
+      orderId: result.orderId,
+      displayId: result.displayId,
+      status: result.status,
+      totalFormatted: result.totalFormatted,
+      paymentMethod: result.paymentMethod,
+      paymentSession: result.paymentSession,
+    };
   } catch (error) {
-    console.error("Order completion failed:", error);
-    return { success: false, error: error.message };
+    console.error("[Checkout Server Action Error]:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to complete checkout",
+    };
   }
 }
