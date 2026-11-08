@@ -9,10 +9,10 @@ import styles from "./HeroSection.module.css";
 const PRODUCTS = [
   {
     id: "p1",
-    image: "/images/hero/prod1.png?v=3",
-    title: "Green Polo & Pleated Trousers",
+    image: "/images/hero/slide4.png?v=4",
+    title: "Overlapping Mandarin Shirt & Pleated Pants",
     description:
-      "Step into the season with style and confidence. Designed for comfort, performance, and timeless appeal, our new jacket is crafted with premium materials that balance function and fashion.",
+      "Step into the season with style and confidence. Designed for comfort, performance, and timeless appeal, crafted with premium materials that balance function and fashion.",
     hotspots: [
       {
         id: "h1_1",
@@ -46,7 +46,7 @@ const PRODUCTS = [
   },
   {
     id: "p2",
-    image: "/images/hero/prod2.png?v=3",
+    image: "/images/hero/slide2.png?v=4",
     title: "Scalloped Top & Flare Pants",
     description:
       "Sculpted contours and dramatic proportions. High-waisted circular flare trousers paired with our signature scalloped sweetheart bodice top.",
@@ -83,8 +83,8 @@ const PRODUCTS = [
   },
   {
     id: "p3",
-    image: "/images/hero/prod3.png?v=3",
-    title: "Tailored Mini & Sheath Dresses",
+    image: "/images/hero/slide5.png?v=4",
+    title: "Sleeveless Tailored Mini Dress",
     description:
       "Embrace architectural eveningwear with our Inaugural Dress Line. Asymmetric collar lines, princess seam sculpting, and bespoke metal detailing.",
     hotspots: [
@@ -94,16 +94,25 @@ const PRODUCTS = [
         collection: "First Launch · S/S 25",
         price: "₹ 4,800",
         rating: "4.9",
-        color: "Navy",
+        color: "Deep Navy",
         colorDots: ["#1C2841", "#111111"],
-        dotTop: "28%",
-        dotLeft: "45%",
+        dotTop: "32%",
+        dotLeft: "48%",
         cardSide: "left",
-        cardTop: "12%",
+        cardTop: "16%",
         handle: "navy-tailored-mini-dress",
       },
+    ],
+  },
+  {
+    id: "p4",
+    image: "/images/hero/slide1.png?v=4",
+    title: "Sleeveless Princess Sheath Dress",
+    description:
+      "Sculpted in pure soft cream luxury fabric with geometric contours and subtle princess seams, designed for contemporary luxury occasions.",
+    hotspots: [
       {
-        id: "h3_2",
+        id: "h4_1",
         title: "Sleeveless Princess Sheath Dress",
         collection: "First Launch · S/S 25",
         price: "₹ 4,900",
@@ -111,10 +120,70 @@ const PRODUCTS = [
         color: "Soft Cream",
         colorDots: ["#FAF7F2", "#111111"],
         dotTop: "36%",
-        dotLeft: "58%",
+        dotLeft: "48%",
         cardSide: "right",
-        cardTop: "14%",
+        cardTop: "18%",
         handle: "sleeveless-princess-sheath-dress",
+      },
+    ],
+  },
+  {
+    id: "p5",
+    image: "/images/hero/slide3.png?v=4",
+    title: "Pleated Formal Pants & Linen",
+    description:
+      "Tailored ivory cream trousers with double front pleats and structured turn-up cuffs, bringing an effortless Italian Riviera aesthetic to contemporary Indian menswear.",
+    hotspots: [
+      {
+        id: "h5_1",
+        title: "Pleated Formal Pants",
+        collection: "First Launch · S/S 25",
+        price: "₹ 4,200",
+        rating: "4.8",
+        color: "Ivory Cream",
+        colorDots: ["#F5F2EB", "#111111"],
+        dotTop: "52%",
+        dotLeft: "50%",
+        cardSide: "left",
+        cardTop: "40%",
+        handle: "pleated-formal-pants",
+      },
+    ],
+  },
+  {
+    id: "p6",
+    image: "/images/hero/slide6.png?v=4",
+    title: "High Waisted Circular Flare Pants",
+    description:
+      "Dramatic circular flare silhouette tailored from premium lightweight breathable linen. Designed to elongate the figure with exceptional movement.",
+    hotspots: [
+      {
+        id: "h6_1",
+        title: "High Waisted Flare Pants",
+        collection: "First Launch · S/S 25",
+        price: "₹ 3,950",
+        rating: "4.9",
+        color: "Dusty Rose",
+        colorDots: ["#C47E85", "#111111"],
+        dotTop: "58%",
+        dotLeft: "52%",
+        cardSide: "right",
+        cardTop: "48%",
+        handle: "high-waisted-flare-pants",
+      },
+      {
+        id: "h6_2",
+        title: "Scalloped Sweetheart Top",
+        collection: "First Launch · S/S 25",
+        price: "₹ 2,900",
+        rating: "4.8",
+        color: "Blush Pink",
+        colorDots: ["#E8B4B8", "#111111"],
+        dotTop: "26%",
+        dotLeft: "44%",
+        cardSide: "left",
+        cardTop: "14%",
+        handle: "scalloped-sweetheart-top",
       },
     ],
   },
