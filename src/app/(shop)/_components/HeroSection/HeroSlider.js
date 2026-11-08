@@ -8,10 +8,10 @@ import styles from "./HeroSection.module.css";
 const PRODUCTS = [
   {
     id: "p1",
-    image: "/images/hero/prod1.png",
-    title: "Green Polo & Pleated Trousers",
+    image: "/images/hero/hero-mandarin-shirt.png",
+    title: "Overlapping Mandarin Shirt",
     description:
-      "Step into the season with style and confidence. Designed for comfort, performance, and timeless appeal, our new jacket is crafted with premium materials that balance function and fashion.",
+      "Architectural asymmetric diagonal placket with signature black hardware, high-stand collar, and relaxed drop-shoulder tailoring in rich espresso brown.",
     hotspots: [
       {
         id: "h1_1",
@@ -21,239 +21,126 @@ const PRODUCTS = [
         rating: "4.9",
         color: "Espresso Brown",
         colorDots: ["#4A2E18", "#111111"],
-        dotTop: "24%",
-        dotLeft: "42%",
+        dotTop: "34%",
+        dotLeft: "48%",
         cardSide: "left",
-        cardTop: "12%",
+        cardTop: "14%",
         handle: "asymmetric-mandarin-shirt",
       },
+    ],
+  },
+  {
+    id: "p2",
+    image: "/images/hero/hero-pleated-pants.png",
+    title: "Pleated Formal Pants",
+    description:
+      "Double forward knife pleats, extended waist tab, and clean turn-up cuffs cut from structured ivory suiting cloth for an effortless silhouette.",
+    hotspots: [
       {
-        id: "h1_2",
+        id: "h2_1",
         title: "Pleated Formal Pants",
         collection: "First Launch · S/S 25",
         price: "₹ 4,200",
         rating: "4.8",
         color: "Ivory Cream",
         colorDots: ["#F5F2EB", "#111111"],
-        dotTop: "54%",
+        dotTop: "56%",
         dotLeft: "52%",
         cardSide: "right",
-        cardTop: "48%",
+        cardTop: "46%",
         handle: "pleated-formal-pants",
       },
     ],
   },
   {
-    id: "p2",
-    image: "/images/hero/prod2.png",
-    title: "Scalloped Top & Flare Pants",
+    id: "p3",
+    image: "/images/hero/hero-scalloped-top.png",
+    title: "Scalloped Sweetheart Top",
     description:
-      "Sculpted contours and dramatic proportions. High-waisted circular flare trousers paired with our signature scalloped sweetheart bodice top.",
+      "Sculpted sweetheart neckline with subtle scalloped curvature, precision vertical contour seams, and tailored shoulder straps in dusty blush pink.",
     hotspots: [
       {
-        id: "h2_1",
+        id: "h3_1",
         title: "Scalloped Sweetheart Top",
         collection: "First Launch · S/S 25",
         price: "₹ 2,900",
         rating: "4.8",
         color: "Blush Pink",
         colorDots: ["#E8B4B8", "#111111"],
-        dotTop: "30%",
-        dotLeft: "44%",
+        dotTop: "32%",
+        dotLeft: "46%",
         cardSide: "left",
         cardTop: "14%",
         handle: "scalloped-sweetheart-top",
       },
+    ],
+  },
+  {
+    id: "p4",
+    image: "/images/hero/hero-flare-pants.png",
+    title: "High Waisted Flare Pants",
+    description:
+      "Architectural wide-leg flare trousers with an ultra-high sculpted waistband, fluid circular hem movement, and tailored side pockets.",
+    hotspots: [
       {
-        id: "h2_2",
+        id: "h4_1",
         title: "High Waisted Flare Pants",
         collection: "First Launch · S/S 25",
         price: "₹ 3,950",
         rating: "4.9",
         color: "Dusty Rose",
         colorDots: ["#C47E85", "#111111"],
-        dotTop: "58%",
-        dotLeft: "50%",
+        dotTop: "52%",
+        dotLeft: "52%",
         cardSide: "right",
-        cardTop: "48%",
+        cardTop: "42%",
         handle: "high-waisted-flare-pants",
       },
     ],
   },
   {
-    id: "p3",
-    image: "/images/hero/prod3.png",
-    title: "Tailored Mini & Sheath Dresses",
+    id: "p5",
+    image: "/images/hero/hero-mini-dress.png",
+    title: "Sleeveless Tailored Mini Dress",
     description:
-      "Embrace architectural eveningwear with our Inaugural Dress Line. Asymmetric collar lines, princess seam sculpting, and bespoke metal detailing.",
+      "Architectural structured shift dress in deep midnight navy, featuring an asymmetric angular collar, princess seams, and engraved metallic buttons.",
     hotspots: [
       {
-        id: "h3_1",
+        id: "h5_1",
         title: "Sleeveless Tailored Mini Dress",
         collection: "First Launch · S/S 25",
         price: "₹ 4,800",
         rating: "4.9",
         color: "Navy",
         colorDots: ["#1C2841", "#111111"],
-        dotTop: "28%",
-        dotLeft: "45%",
+        dotTop: "30%",
+        dotLeft: "46%",
         cardSide: "left",
         cardTop: "12%",
         handle: "navy-tailored-mini-dress",
       },
+    ],
+  },
+  {
+    id: "p6",
+    image: "/images/hero/hero-princess-dress.png",
+    title: "Sleeveless Princess Sheath Dress",
+    description:
+      "Form-sculpting sheath silhouette in soft cream with an origami foldover collar, twin statement hardware, and longitudinal contouring.",
+    hotspots: [
       {
-        id: "h3_2",
+        id: "h6_1",
         title: "Sleeveless Princess Sheath Dress",
         collection: "First Launch · S/S 25",
         price: "₹ 4,900",
         rating: "4.9",
         color: "Soft Cream",
         colorDots: ["#FAF7F2", "#111111"],
-        dotTop: "36%",
-        dotLeft: "58%",
+        dotTop: "28%",
+        dotLeft: "52%",
         cardSide: "right",
         cardTop: "14%",
         handle: "sleeveless-princess-sheath-dress",
-      },
-    ],
-  },
-  {
-    id: "p4",
-    image: "/images/hero/prod1.png",
-    title: "Olive Knit Polo Selection",
-    description:
-      "Modern minimalist aesthetic featuring lightweight unstructured outerwear and structured tailored trousers for seasonal versatility.",
-    hotspots: [
-      {
-        id: "h4_1",
-        title: "Olive Polo Shirt",
-        collection: "Summer collection 2025",
-        price: "₹ 44,000",
-        rating: "4.8",
-        color: "Olive",
-        colorDots: ["#556b2f", "#6e473b", "#d4b896"],
-        dotTop: "26%",
-        dotLeft: "46%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "h4_2",
-        title: "Cream Tailored Trousers",
-        collection: "Summer collection 2025",
-        price: "₹ 66,000",
-        rating: "4.9",
-        color: "Cream",
-        colorDots: ["#f5f5dc", "#1a1a1a", "#6e473b"],
-        dotTop: "60%",
-        dotLeft: "50%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
-  {
-    id: "p5",
-    image: "/images/hero/prod3.png",
-    title: "Resort Tailored Navy Outfit",
-    description:
-      "Refined leisure wear with layered fine-gauge knits and classic pleated tailoring for warm evening gatherings.",
-    hotspots: [
-      {
-        id: "p5_1",
-        title: "Resort Polo Shirt",
-        collection: "Resort Collection 2025",
-        price: "₹ 49,000",
-        rating: "4.9",
-        color: "Off White",
-        colorDots: ["#f5f5dc", "#1b2a4a", "#6e473b"],
-        dotTop: "28%",
-        dotLeft: "48%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "p5_2",
-        title: "Pleated Navy Trousers",
-        collection: "Resort Collection 2025",
-        price: "₹ 78,000",
-        rating: "4.8",
-        color: "Navy",
-        colorDots: ["#1b2a4a", "#d4b896", "#ffffff"],
-        dotTop: "62%",
-        dotLeft: "52%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
-  {
-    id: "p6",
-    image: "/images/hero/prod2.png",
-    title: "Summer Linen Casual Wear",
-    description:
-      "Lightweight, breathable linen separates ideal for warm climates and relaxed coastal weekends.",
-    hotspots: [
-      {
-        id: "p6_1",
-        title: "Linen Shirt",
-        collection: "Summer collection 2025",
-        price: "₹ 53,000",
-        rating: "4.8",
-        color: "White",
-        colorDots: ["#ffffff", "#1a1a1a", "#6e473b"],
-        dotTop: "32%",
-        dotLeft: "45%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "p6_2",
-        title: "Wide Pants",
-        collection: "Summer collection 2025",
-        price: "₹ 72,000",
-        rating: "4.7",
-        color: "Beige",
-        colorDots: ["#d4b896", "#2c3e50", "#faf8f5"],
-        dotTop: "64%",
-        dotLeft: "52%",
-        cardSide: "right",
-        cardTop: "14%",
-      },
-    ],
-  },
-  {
-    id: "p7",
-    image: "/images/hero/prod1.png",
-    title: "Classic Summer Polo Edition",
-    description:
-      "Timeless tailoring reinvented with contemporary silhouettes and signature detailing for everyday luxury.",
-    hotspots: [
-      {
-        id: "p7_1",
-        title: "Knit Polo",
-        collection: "Summer collection 2025",
-        price: "₹ 46,000",
-        rating: "4.9",
-        color: "Green",
-        colorDots: ["#556b2f", "#6e473b", "#d4b896"],
-        dotTop: "27%",
-        dotLeft: "44%",
-        cardSide: "left",
-        cardTop: "12%",
-      },
-      {
-        id: "p7_2",
-        title: "Pleated Trousers",
-        collection: "Summer collection 2025",
-        price: "₹ 69,000",
-        rating: "4.8",
-        color: "Cream",
-        colorDots: ["#f5f5dc", "#2c3e50", "#1a1a1a"],
-        dotTop: "61%",
-        dotLeft: "50%",
-        cardSide: "right",
-        cardTop: "14%",
       },
     ],
   },
@@ -320,9 +207,8 @@ export default function HeroSlider() {
           return (
             <div
               key={domIndex}
-              className={`${styles.carouselItem} ${slotClass} ${
-                isCenter ? styles.centerItem : ""
-              }`}
+              className={`${styles.carouselItem} ${slotClass} ${isCenter ? styles.centerItem : ""
+                }`}
               style={isWrapping ? { transition: "none" } : {}}
               onClick={() => {
                 if (!isCenter && offset >= -3 && offset <= 3) {
@@ -359,9 +245,8 @@ export default function HeroSlider() {
                 prod.hotspots.map((hs) => (
                   <div
                     key={hs.id}
-                    className={`${styles.hotspotCard} ${
-                      hs.cardSide === "left" ? styles.cardLeft : styles.cardRight
-                    }`}
+                    className={`${styles.hotspotCard} ${hs.cardSide === "left" ? styles.cardLeft : styles.cardRight
+                      }`}
                     style={{ top: hs.cardTop }}
                   >
                     <div className={styles.cardHeader}>
