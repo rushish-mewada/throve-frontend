@@ -96,7 +96,10 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
             onClick={onClose}
             aria-label="Close size guide"
           >
-            ✕
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
           </button>
         </div>
 
@@ -147,7 +150,24 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
 
         {/* Measurement Tips */}
         <div className={styles.measurementTips}>
-          <div className={styles.tipIcon}>📏</div>
+          <div className={styles.tipIcon}>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M21.3 15.3l-6.6 6.6c-.4.4-1 .4-1.4 0l-11-11c-.4-.4-.4-1 0-1.4l6.6-6.6c.4-.4 1-.4 1.4 0l11 11c.4.4.4 1 0 1.4z" />
+              <path d="M7.5 4.5L10 7" />
+              <path d="M10.5 7.5L12 9" />
+              <path d="M13.5 10.5L16 13" />
+              <path d="M16.5 13.5L18 15" />
+            </svg>
+          </div>
           <div>
             <strong>How to Measure:</strong>
             <p className={styles.tipText}>{data.tips}</p>
