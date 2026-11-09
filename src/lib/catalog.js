@@ -1,4 +1,5 @@
 // Launch Products Catalog from Tech Packs & Official Photoshoots
+// All items configured for First Drop Pre-Order Edition (Zero Upfront Payment / COD)
 export const LAUNCH_PRODUCTS = [
   {
     id: 'throve_lp_01',
@@ -13,6 +14,9 @@ export const LAUNCH_PRODUCTS = [
     priceNum: 4800,
     rating: '4.9',
     sold: '420',
+    comingSoon: true,
+    preOrder: true,
+    statusText: 'Coming Soon · Pre-Order Only',
     description: 'Sleeveless, tailored mini dress crafted with an asymmetrical overlapped collar, antique gunmetal front button closure, and precision princess seams for a contoured fit and clean A-line hem.',
     images: [
       '/products/navy-tailored-mini-dress/main.jpg?v=3',
@@ -46,6 +50,9 @@ export const LAUNCH_PRODUCTS = [
     priceNum: 3900,
     rating: '4.9',
     sold: '388',
+    comingSoon: true,
+    preOrder: true,
+    statusText: 'Coming Soon · Pre-Order Only',
     description: "Signature men's shirt tailored from premium textured cotton. Features a structured mandarin collar with an architectural overlapping neckline placket, bespoke geometric buttons, and angled cuffs.",
     images: [
       '/products/asymmetric-mandarin-shirt/main.jpg?v=3',
@@ -80,6 +87,9 @@ export const LAUNCH_PRODUCTS = [
     priceNum: 4200,
     rating: '4.8',
     sold: '294',
+    comingSoon: true,
+    preOrder: true,
+    statusText: 'Coming Soon · Pre-Order Only',
     description: 'Tailored straight-leg formal pants engineered with deep front pleats, an extended tab waistband, side slant pockets, and a classic 2-inch turn-up cuff hem.',
     images: [
       '/products/pleated-formal-pants/main.jpg?v=3',
@@ -113,6 +123,9 @@ export const LAUNCH_PRODUCTS = [
     priceNum: 2900,
     rating: '4.8',
     sold: '512',
+    comingSoon: true,
+    preOrder: true,
+    statusText: 'Coming Soon · Pre-Order Only',
     description: 'Sculpted cropped bodice top defined by an elegant scalloped sweetheart neckline, structured wide shoulder straps, vertical contouring seams, and an exposed back metal zipper.',
     images: [
       '/products/scalloped-sweetheart-top/main.jpg?v=3',
@@ -147,6 +160,9 @@ export const LAUNCH_PRODUCTS = [
     priceNum: 4900,
     rating: '4.9',
     sold: '340',
+    comingSoon: true,
+    preOrder: true,
+    statusText: 'Coming Soon · Pre-Order Only',
     description: 'Architectural sheath dress in tailored cream wool-blend. Features an asymmetric lapel shirt collar, twin custom geometric button accents, and continuous princess seam contours through a knee-length hem.',
     images: [
       '/products/sleeveless-princess-sheath-dress/main.jpg?v=3',
@@ -180,6 +196,9 @@ export const LAUNCH_PRODUCTS = [
     priceNum: 3950,
     rating: '4.9',
     sold: '465',
+    comingSoon: true,
+    preOrder: true,
+    statusText: 'Coming Soon · Pre-Order Only',
     description: "High-waisted women's palazzo flare trousers designed with an ultra-high extended waistband, belt loops, double front pleats, and dramatic circular drape leg openings.",
     images: [
       '/products/high-waisted-flare-pants/main.jpg?v=3',

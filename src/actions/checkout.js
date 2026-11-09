@@ -39,7 +39,7 @@ export async function processCheckoutAction(data) {
         pincode: data.pincode ? String(data.pincode).trim() : "400001",
         countryCode: "IN",
       },
-      paymentMethod: data.paymentMethod === "razorpay" ? "razorpay" : "cod",
+      paymentMethod: "cod",
       couponCode: data.couponCode || "",
     };
 

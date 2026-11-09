@@ -7,7 +7,24 @@ export default function ProductInfo({ product }) {
     <div className={styles.infoContainer}>
       
       {/* Title & Collection */}
-      <p className={styles.collectionName}>{product.collection}</p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+        <p className={styles.collectionName} style={{ margin: 0 }}>{product.collection}</p>
+        <span
+          style={{
+            fontSize: '11px',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            padding: '2px 8px',
+            borderRadius: '12px',
+            backgroundColor: '#fef3c7',
+            color: '#92400e',
+            border: '1px solid #fde68a',
+          }}
+        >
+          Coming Soon · Pre-Order Only
+        </span>
+      </div>
       <h1 className={styles.title}>{product.title}</h1>
       
       {/* Price & Sales */}

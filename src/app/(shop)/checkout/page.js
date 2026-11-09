@@ -224,29 +224,27 @@ export default function CheckoutPage() {
                 </div>
               ) : (
                 <>
-                  <p className={styles.paymentSub}>All transactions are secure and encrypted.</p>
+                  <p className={styles.paymentSub}>
+                    <strong>Pre-Order Edition:</strong> Pay zero rupees today. 100% Cash on Delivery (COD) upon doorstep arrival.
+                  </p>
                   
                   <div className={styles.paymentMethods}>
-                    <label className={styles.paymentMethod}>
+                    <label className={styles.paymentMethod} style={{ borderColor: '#111111', backgroundColor: '#fcfcfc', cursor: 'default' }}>
                       <div className={styles.radioGroup}>
                         <input 
                           type="radio" 
                           name="payment" 
-                          checked={paymentMethod === 'razorpay'}
-                          onChange={() => setPaymentMethod('razorpay')}
+                          checked={true}
+                          readOnly
                         />
-                        <span>Razorpay (UPI, Cards, NetBanking)</span>
-                      </div>
-                    </label>
-                    <label className={styles.paymentMethod}>
-                      <div className={styles.radioGroup}>
-                        <input 
-                          type="radio" 
-                          name="payment" 
-                          checked={paymentMethod === 'cod'}
-                          onChange={() => setPaymentMethod('cod')}
-                        />
-                        <span>Cash on Delivery (COD)</span>
+                        <div>
+                          <span style={{ fontWeight: 600, display: 'block', color: '#111111' }}>
+                            Cash on Delivery (COD) · Zero Upfront Payment
+                          </span>
+                          <span style={{ fontSize: '12px', color: '#71717a', marginTop: '2px', display: 'block' }}>
+                            Your pre-order will be tailored and dispatched with priority. Pay via Cash or UPI QR only when your parcel arrives.
+                          </span>
+                        </div>
                       </div>
                     </label>
                   </div>
@@ -259,10 +257,10 @@ export default function CheckoutPage() {
                     {isPending ? (
                       <>
                         <span className={styles.spinner} />
-                        <span>Authorizing Payment...</span>
+                        <span>Confirming Pre-Order...</span>
                       </>
                     ) : (
-                      "Pay now"
+                      "Confirm Pre-Order (Pay on Delivery)"
                     )}
                   </button>
                 </>

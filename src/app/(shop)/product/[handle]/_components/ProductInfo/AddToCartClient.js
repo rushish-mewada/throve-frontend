@@ -82,6 +82,35 @@ export default function AddToCartClient({ variants, colors, product }) {
         </div>
       </div>
 
+      {/* Pre-Order Exclusive Notice Banner */}
+      <div
+        style={{
+          padding: '12px 14px',
+          borderRadius: '8px',
+          backgroundColor: '#fafaf9',
+          border: '1px solid #e7e5e4',
+          fontSize: '12px',
+          color: '#44403c',
+          lineHeight: 1.5,
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'flex-start',
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+        <div>
+          <strong style={{ color: '#1c1917', display: 'block', marginBottom: '2px' }}>
+            First Edition · Pre-Order Only
+          </strong>
+          <span>
+            This bespoke style is in limited handcrafted production. Reserve your piece today with <strong>Zero Upfront Payment</strong> — 100% Cash on Delivery (COD) upon doorstep delivery.
+          </span>
+        </div>
+      </div>
+
       {/* Actions */}
       <div className={styles.actions}>
         <button
@@ -94,10 +123,10 @@ export default function AddToCartClient({ variants, colors, product }) {
           {isAdding ? (
             <>
               <span className={styles.spinner} />
-              <span>Adding to Bag...</span>
+              <span>Reserving in Bag...</span>
             </>
           ) : addedSuccess ? (
-            <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Added to Bag!</span>
+            <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Reserved in Bag!</span>
           ) : (
             <>
               <svg
@@ -114,7 +143,7 @@ export default function AddToCartClient({ variants, colors, product }) {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <span>Add To Cart</span>
+              <span>Pre-Order to Bag</span>
             </>
           )}
         </button>
@@ -129,7 +158,7 @@ export default function AddToCartClient({ variants, colors, product }) {
           {isCheckingOut ? (
             <>
               <span className={styles.spinnerDark} />
-              <span>Securing Checkout...</span>
+              <span>Securing Pre-Order...</span>
             </>
           ) : (
             <>
@@ -146,7 +175,7 @@ export default function AddToCartClient({ variants, colors, product }) {
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-              <span>Checkout Now</span>
+              <span>Pre-Order Now (COD)</span>
             </>
           )}
         </button>
