@@ -1,29 +1,38 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { LAUNCH_PRODUCTS } from '@/lib/catalog';
 import styles from './page.module.css';
-
-// Dummy data for the Search Results
-const dummyProducts = Array.from({ length: 8 }).map((_, i) => ({
-  id: i,
-  image: `https://placehold.co/400x500/e0e0e0/666666.png?text=Search+Result+${i+1}`,
-  title: 'Throve Essential Hoodie',
-  rating: '4.9',
-  price: '₹ 4,500',
-  colors: ['#000000', '#333333']
-}));
 
 export default async function SearchPage({ searchParams }) {
   const resolvedSearchParams = await searchParams;
-  const query = resolvedSearchParams?.q || '';
-  const resultCount = query ? dummyProducts.length : 0;
+  const rawQuery = (resolvedSearchParams?.q || '').trim();
+  const queryLower = rawQuery.toLowerCase();
+  const tokens = queryLower.split(/\s+/).filter(Boolean);
+
+  const matchedProducts = !rawQuery
+    ? []
+    : LAUNCH_PRODUCTS.filter((product) => {
+        const title = (product.title || '').toLowerCase();
+        const category = (product.category || '').toLowerCase();
+        const subcategory = (product.subcategory || '').toLowerCase();
+        const desc = (product.description || '').toLowerCase();
+        const collection = (product.collection || '').toLowerCase();
+        const handle = (product.handle || '').toLowerCase();
+        const fullCorpus = `${title} ${category} ${subcategory} ${collection} ${handle} ${desc}`;
+
+        // All tokens must match
+        return tokens.every((token) => fullCorpus.includes(token));
+      });
+
+  const resultCount = matchedProducts.length;
 
   return (
     <main className={styles.searchLayout}>
       <div className={styles.header}>
-        {query ? (
+        {rawQuery ? (
           <>
-            <h1>Search Results for "{query}"</h1>
-            <p>{resultCount} items found</p>
+            <h1>Search Results for "{rawQuery}"</h1>
+            <p>{resultCount} {resultCount === 1 ? 'item' : 'items'} found</p>
           </>
         ) : (
           <>
@@ -34,7 +43,7 @@ export default async function SearchPage({ searchParams }) {
       </div>
       
       <div className={styles.mainContent}>
-        {!query ? (
+        {!rawQuery ? (
           <div className={styles.emptyState}>
             <form className={styles.searchForm}>
               <input type="text" name="q" placeholder="Search for jackets, shirts, etc..." className={styles.searchInput} />
@@ -44,8 +53,8 @@ export default async function SearchPage({ searchParams }) {
         ) : resultCount === 0 ? (
           <div className={styles.emptyState}>
             <h2>No results found</h2>
-            <p>We couldn't find any items matching "{query}". Try checking your spelling or using different keywords.</p>
-            <Link href="/collections/all" className={styles.primaryBtn}>Shop All</Link>
+            <p>We couldn't find any items matching "{rawQuery}". Try checking your spelling or using different keywords.</p>
+            <Link href="/collections" className={styles.primaryBtn}>Shop All</Link>
           </div>
         ) : (
           <div className={styles.gridContainer}>
@@ -68,29 +77,33 @@ export default async function SearchPage({ searchParams }) {
             </div>
             
             <div className={styles.productGrid}>
-              {dummyProducts.map((product) => (
-                <Link href={`/product/search-item-${product.id}`} key={product.id} className={styles.productCard}>
-                  <div className={styles.imageWrapper}>
-                    <Image src={product.image} alt={product.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 50vw, 25vw" />
-                  </div>
-                  <div className={styles.productInfo}>
-                    <div className={styles.productTop}>
-                      <h3>{product.title}</h3>
-                      <div className={styles.rating}>
-                        <span>★</span> {product.rating}
+              {matchedProducts.map((product) => {
+                const img = product.images?.[0] || product.image || '/products/asymmetric-mandarin-shirt/main.jpg';
+                const colors = product.colorHexes || ['#000000'];
+                return (
+                  <Link href={`/product/${product.handle}`} key={product.id} className={styles.productCard}>
+                    <div className={styles.imageWrapper}>
+                      <Image src={img} alt={product.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 50vw, 25vw" />
+                    </div>
+                    <div className={styles.productInfo}>
+                      <div className={styles.productTop}>
+                        <h3>{product.title}</h3>
+                        <div className={styles.rating}>
+                          <span>★</span> {product.rating}
+                        </div>
+                      </div>
+                      <div className={styles.productBottom}>
+                        <span className={styles.price}>{product.price}</span>
+                        <div className={styles.colorDots}>
+                          {colors.map((color, idx) => (
+                            <span key={idx} className={styles.dot} style={{ backgroundColor: color }} />
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <div className={styles.productBottom}>
-                      <span className={styles.price}>{product.price}</span>
-                      <div className={styles.colorDots}>
-                        {product.colors.map((color, idx) => (
-                          <span key={idx} className={styles.dot} style={{ backgroundColor: color }}></span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           </div>
         )}

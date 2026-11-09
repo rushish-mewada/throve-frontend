@@ -78,20 +78,23 @@ export default function FloatingSearch({ isOpen, onClose }) {
         return { product, score: 100 };
       }
 
-      // 2. All tokens match across the product corpus
+      // 2. Exact phrase match across core info (category, subcategory, collection, handle)
+      const coreInfo = `${title} ${category} ${subcategory} ${collection} ${handle}`;
+      if (coreInfo.includes(raw)) {
+        return { product, score: 90 };
+      }
+
+      // 3. All tokens MUST match across the product corpus (Strict AND matching)
+      // Every typed word must be found somewhere in the product info
       const allTokensMatch = tokens.every((token) => fullCorpus.includes(token));
       if (allTokensMatch) {
-        // Boost if tokens match in title
+        // Boost score based on how many tokens appear in title or category
         const titleTokensMatch = tokens.filter((t) => title.includes(t)).length;
-        return { product, score: 80 + titleTokensMatch * 5 };
+        const categoryTokensMatch = tokens.filter((t) => category.includes(t) || subcategory.includes(t)).length;
+        return { product, score: 70 + (titleTokensMatch * 10) + (categoryTokensMatch * 5) };
       }
 
-      // 3. Partial match if multi-word query (at least one word matches)
-      const matchingTokens = tokens.filter((token) => fullCorpus.includes(token));
-      if (matchingTokens.length > 0 && tokens.length > 1) {
-        return { product, score: 40 + matchingTokens.length * 10 };
-      }
-
+      // If not all tokens match, do not return false-positive partial matches
       return { product, score: 0 };
     });
 
