@@ -527,6 +527,47 @@
     width: 14px;
     height: 14px;
   }
+
+  /* Hotspot Cards inside viewport on Mobile */
+  .hotspotCard {
+    width: clamp(124px, 35vw, 142px);
+    padding: 7px 9px;
+    border-radius: 8px;
+    gap: 2px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  .cardLeft {
+    right: calc(50% + 34px);
+    left: auto;
+  }
+
+  .cardRight {
+    left: calc(50% + 34px);
+    right: auto;
+  }
+
+  .cardTitle {
+    font-size: 0.72rem;
+    line-height: 1.2;
+  }
+
+  .cardCollection {
+    font-size: 0.6rem;
+  }
+
+  .cardMeta {
+    font-size: 0.6rem;
+  }
+
+  .cardPrice {
+    font-size: 0.72rem;
+  }
+
+  .wishlistBtn svg {
+    width: 12px;
+    height: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -554,9 +595,15 @@
     font-size: 1.45rem;
   }
   .hotspotCard {
-    width: 140px;
+    width: clamp(116px, 36vw, 132px);
     padding: 6px 8px;
-    transform: scale(0.85);
-    transform-origin: top left;
+  }
+  .cardLeft {
+    right: calc(50% + 26px);
+    left: auto;
+  }
+  .cardRight {
+    left: calc(50% + 26px);
+    right: auto;
   }
 }
