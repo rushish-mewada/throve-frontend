@@ -84,6 +84,66 @@ const COLLECTIONS_CONFIG = {
       handle: p.handle,
     })),
   },
+  dresses: {
+    category: {
+      title: "Architectural Dresses",
+      description: "Precision tailored mini & princess sheath silhouettes crafted for contemporary luxury occasions.",
+      count: 2,
+    },
+    filterCategories: ['Dresses'],
+    products: LAUNCH_PRODUCTS.filter((p) => p.subcategory === 'Dresses').map((p) => ({
+      id: p.id,
+      title: p.title,
+      price: p.price,
+      priceNum: p.priceNum,
+      rating: p.rating,
+      category: p.filterCategory,
+      image: p.images[0],
+      colors: p.colorHexes,
+      sizes: p.sizes,
+      handle: p.handle,
+    })),
+  },
+  shirts: {
+    category: {
+      title: "Tailored Shirts & Tops",
+      description: "Architectural overlapping collars, bespoke buttons, and sculpted sweetheart tailoring.",
+      count: 2,
+    },
+    filterCategories: ['Tailored Shirts', 'Shirts & Tops'],
+    products: LAUNCH_PRODUCTS.filter((p) => p.filterCategory === 'Tailored Shirts' || p.filterCategory === 'Shirts & Tops').map((p) => ({
+      id: p.id,
+      title: p.title,
+      price: p.price,
+      priceNum: p.priceNum,
+      rating: p.rating,
+      category: p.filterCategory,
+      image: p.images[0],
+      colors: p.colorHexes,
+      sizes: p.sizes,
+      handle: p.handle,
+    })),
+  },
+  trousers: {
+    category: {
+      title: "Tailored Trousers & Pants",
+      description: "Italian Riviera double-pleat formal trousers and sweeping high-waisted circular flare tailoring.",
+      count: 2,
+    },
+    filterCategories: ['Trousers', 'Bottoms'],
+    products: LAUNCH_PRODUCTS.filter((p) => p.filterCategory === 'Trousers' || p.filterCategory === 'Bottoms').map((p) => ({
+      id: p.id,
+      title: p.title,
+      price: p.price,
+      priceNum: p.priceNum,
+      rating: p.rating,
+      category: p.filterCategory,
+      image: p.images[0],
+      colors: p.colorHexes,
+      sizes: p.sizes,
+      handle: p.handle,
+    })),
+  },
 };
 
 export default async function CollectionPage({ params }) {
