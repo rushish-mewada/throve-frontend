@@ -277,36 +277,71 @@
 
 @media (max-width: 768px) {
   .shopTheLookSection {
-    padding: 40px 20px;
-  }
-  .productsGrid {
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-  .productCard {
-    flex: 0 0 calc(50% - 8px);
-  }
-  .title {
-    font-size: 2.2rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .shopTheLookSection {
     padding: 36px 16px;
   }
   .title {
-    font-size: 1.85rem;
+    font-size: 2rem;
   }
   .description {
     font-size: 0.85rem;
     line-height: 1.5;
   }
   .productsGrid {
+    flex-wrap: wrap;
     gap: 12px;
   }
   .productCard {
     flex: 0 0 calc(50% - 6px);
+  }
+  .imageContainer {
+    margin-bottom: 8px;
+  }
+  .badge {
+    top: 7px;
+    left: 7px;
+    padding: 2px 7px;
+    font-size: 0.58rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  .cardActions {
+    top: 7px;
+    right: 7px;
+    gap: 5px;
+  }
+  .wishlistBtn, .quickCartBtn {
+    width: 26px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .wishlistBtn svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  .quickCartBtn svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  .imageDots {
+    bottom: 7px;
+    gap: 4px;
+  }
+  .dot {
+    width: 4px;
+    height: 4px;
+    background-color: rgba(255, 255, 255, 0.65);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  }
+  .dotActive {
+    width: 12px;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #ffffff;
   }
   .infoTop {
     flex-direction: column;
@@ -328,5 +363,14 @@
   .productPrice {
     font-size: 0.82rem;
     font-weight: 600;
+  }
+}
+
+@media (max-width: 480px) {
+  .shopTheLookSection {
+    padding: 32px 14px;
+  }
+  .title {
+    font-size: 1.8rem;
   }
 }

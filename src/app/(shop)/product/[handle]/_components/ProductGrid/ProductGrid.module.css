@@ -196,4 +196,62 @@
   .title {
     font-size: 1.8rem;
   }
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .imageContainer {
+    margin-bottom: 8px;
+  }
+  .badge {
+    top: 7px;
+    left: 7px;
+    padding: 2px 7px;
+    font-size: 0.58rem;
+    font-weight: 500;
+    border-radius: 9999px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
+  .cardActions {
+    top: 7px;
+    right: 7px;
+    gap: 5px;
+  }
+  .wishlistBtn {
+    width: 26px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .wishlistBtn svg {
+    width: 13px !important;
+    height: 13px !important;
+  }
+  .productTitle {
+    font-size: 0.82rem;
+    line-height: 1.25;
+    min-height: 2.5em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .productPrice {
+    font-size: 0.82rem;
+  }
+  .infoTop,
+  .infoBottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.5rem;
+  }
 }
