@@ -25,7 +25,18 @@ export default function ProductGrid({ title, products, seeAllLink }) {
           return (
             <div key={product.id} className={styles.productCard}>
               <div className={styles.imageContainer}>
-                <div className={styles.badge}>Virtual try-on</div>
+                <Link
+                  href={`/product/${product.handle || ''}?vton=true`}
+                  className={styles.vtonBtn}
+                  aria-label="Virtual Try-On"
+                  title="Virtual Try-On"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M11 2.5a2.5 2.5 0 0 0-2.5 2.5c0 1.1.7 2 1.7 2.3L2.4 14.7A2 2 0 0 0 2 16v.2a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5V16a2 2 0 0 0-.4-1.3L12.5 7.3c.7-.2 1.3-.8 1.5-1.5" />
+                    <path d="M19 2l.8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2z" fill="currentColor" stroke="none" />
+                  </svg>
+                </Link>
                 <div className={styles.cardActions}>
                   <button
                     type="button"

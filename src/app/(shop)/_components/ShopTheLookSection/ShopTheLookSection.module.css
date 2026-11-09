@@ -102,18 +102,32 @@
   margin-bottom: 12px;
 }
 
-.badge {
+.vtonBtn {
   position: absolute;
   top: 12px;
   left: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
   background: rgba(255, 255, 255, 0.9);
-  padding: 4px 8px;
-  border-radius: 12px;
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
+  backdrop-filter: blur(4px);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #111111;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease;
   z-index: 10;
+  text-decoration: none;
+  padding: 0;
+}
+
+.vtonBtn:hover {
+  background: #ffffff;
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .cardActions {
@@ -296,16 +310,18 @@
   .imageContainer {
     margin-bottom: 8px;
   }
-  .badge {
+  .vtonBtn {
     top: 7px;
     left: 7px;
-    padding: 2px 7px;
-    font-size: 0.58rem;
-    font-weight: 500;
-    border-radius: 9999px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(4px);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    width: 26px;
+    height: 26px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+  .vtonBtn svg {
+    width: 13px !important;
+    height: 13px !important;
   }
   .cardActions {
     top: 7px;
