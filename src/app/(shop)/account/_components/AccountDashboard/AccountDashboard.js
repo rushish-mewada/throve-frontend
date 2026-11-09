@@ -2,12 +2,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useStore } from '@/context/StoreContext';
 import styles from './AccountDashboard.module.css';
 import Modal from '@/components/ui/Modal/Modal';
 
 export default function AccountDashboard({ user, orders, addresses }) {
   const [activeTab, setActiveTab] = useState('menu');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { logoutUser } = useStore();
+
+  const handleLogout = () => {
+    logoutUser();
+    window.location.href = "/account/login";
+  };
   
   // On desktop, we always want to show content. If state is 'menu', default to 'overview'.
   const displayTab = activeTab === 'menu' ? 'overview' : activeTab;
@@ -121,12 +128,17 @@ export default function AccountDashboard({ user, orders, addresses }) {
                 </button>
               ))}
               <div className={styles.navDivider}></div>
-              <Link href="/account/login" className={styles.logoutBtn}>
+              <button 
+                type="button" 
+                onClick={() => setShowLogoutModal(true)} 
+                className={styles.logoutBtn}
+                style={{ background: 'none', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', font: 'inherit' }}
+              >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line>
                 </svg>
                 <span>Log Out</span>
-              </Link>
+              </button>
             </nav>
           </aside>
 
@@ -365,7 +377,7 @@ export default function AccountDashboard({ user, orders, addresses }) {
         actions={
           <>
             <button onClick={() => setShowLogoutModal(false)} className={styles.outlineBtn}>Cancel</button>
-            <Link href="/account/login" className={styles.primaryBtnDelete}>Yes, Log Out</Link>
+            <button onClick={handleLogout} className={styles.primaryBtnDelete}>Yes, Log Out</button>
           </>
         }
       >

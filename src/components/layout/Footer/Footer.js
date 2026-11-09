@@ -34,7 +34,7 @@ export default function Footer() {
           <div className={styles.linkGroup}>
             <h3 className={styles.linkHeading}>Shop</h3>
             <Link href="/account" className={styles.linkItem}>My account</Link>
-            <Link href="/login" className={styles.linkItem}>Login</Link>
+            <Link href="/account/login" className={styles.linkItem}>Login</Link>
             <Link href="/wishlist" className={styles.linkItem}>Wishlist</Link>
             <Link href="/cart" className={styles.linkItem}>Cart</Link>
           </div>

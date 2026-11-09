@@ -1,9 +1,10 @@
 import "server-only";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import AccountDashboard from './_components/AccountDashboard/AccountDashboard';
 
 // Placeholder for DAL fetching
 const getAccountData = async () => {
-  // TODO: Fetch this data securely from Medusa DAL
   return {
     user: { name: 'Aryan Sharma', phone: '+91 98765 43210', email: 'aryan@example.com', tier: 'Throve Black VIP' },
     orders: [
@@ -17,6 +18,13 @@ const getAccountData = async () => {
 };
 
 export default async function AccountPage() {
+  const cookieStore = await cookies();
+  const session = cookieStore.get('throve_customer_session');
+
+  if (!session?.value) {
+    redirect('/account/login');
+  }
+
   const data = await getAccountData();
 
   return (

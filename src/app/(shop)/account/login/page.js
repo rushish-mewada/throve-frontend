@@ -1,12 +1,14 @@
 "use client";
 import { useState } from 'react';
 import Image from 'next/image';
+import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
 
 export default function LoginPage() {
   const [step, setStep] = useState(1); // 1: Phone, 2: OTP
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
+  const { loginUser } = useStore();
 
   const handleSendOtp = (e) => {
     e.preventDefault();
@@ -17,8 +19,14 @@ export default function LoginPage() {
 
   const handleVerify = (e) => {
     e.preventDefault();
-    // Simulate verification
+    // Verify & establish authenticated customer session
     if (otp.length === 6) {
+      loginUser({
+        name: 'Aryan Sharma',
+        phone: `+91 ${phone}`,
+        email: 'aryan@example.com',
+        tier: 'Throve Black VIP'
+      });
       window.location.href = "/account";
     }
   };
@@ -28,8 +36,8 @@ export default function LoginPage() {
       <div className={styles.imageCol}>
         <div className={styles.imageWrapper}>
           <Image 
-            src="https://placehold.co/800x1200/111111/ffffff.png?text=Throve+Editorial" 
-            alt="Throve Fashion" 
+            src="/products/asymmetric-mandarin-shirt/main.jpg" 
+            alt="Throve S/S 25 Editorial" 
             fill 
             style={{ objectFit: 'cover' }}
             priority

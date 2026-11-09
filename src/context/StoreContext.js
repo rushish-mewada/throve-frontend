@@ -2,57 +2,15 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const INITIAL_CART = [
-  {
-    id: 'cart-1',
-    productId: 'throve_lp_01',
-    title: 'Sleeveless Tailored Mini Dress',
-    variant: 'Size: M | Color: Navy',
-    priceNum: 4800,
-    qty: 1,
-    image: '/products/navy-tailored-mini-dress/front.jpg?v=3',
-    handle: 'navy-tailored-mini-dress',
-  },
-  {
-    id: 'cart-2',
-    productId: 'throve_lp_02',
-    title: 'Overlapping Mandarin Shirt',
-    variant: 'Size: L | Color: Espresso Brown',
-    priceNum: 3900,
-    qty: 1,
-    image: '/products/asymmetric-mandarin-shirt/front.jpg?v=3',
-    handle: 'asymmetric-mandarin-shirt',
-  },
-];
-
-const INITIAL_WISHLIST = [
-  {
-    id: 'throve_lp_04',
-    title: 'Scalloped Sweetheart Top',
-    category: 'Tops',
-    price: '₹ 2,900',
-    priceNum: 2900,
-    image: '/products/scalloped-sweetheart-top/front.jpg?v=3',
-    handle: 'scalloped-sweetheart-top',
-    inStock: true,
-  },
-  {
-    id: 'throve_lp_03',
-    title: 'Pleated Straight Formal Pants',
-    category: 'Trousers',
-    price: '₹ 4,200',
-    priceNum: 4200,
-    image: '/products/pleated-formal-pants/front.jpg?v=3',
-    handle: 'pleated-formal-pants',
-    inStock: true,
-  },
-];
+const INITIAL_CART = [];
+const INITIAL_WISHLIST = [];
 
 const StoreContext = createContext(null);
 
 export function StoreProvider({ children }) {
   const [cartItems, setCartItems] = useState(INITIAL_CART);
   const [wishlistItems, setWishlistItems] = useState(INITIAL_WISHLIST);
+  const [user, setUser] = useState(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -60,15 +18,31 @@ export function StoreProvider({ children }) {
   useEffect(() => {
     setIsMounted(true);
     try {
-      const savedCart = localStorage.getItem('throve_cart');
-      if (savedCart) {
-        const parsed = JSON.parse(savedCart);
-        if (Array.isArray(parsed)) setCartItems(parsed);
+      // 1. One-time clean-up of legacy initial demo items from user local storage
+      const demoCleaned = localStorage.getItem('throve_demo_cleaned_v3');
+      if (!demoCleaned) {
+        localStorage.removeItem('throve_cart');
+        localStorage.removeItem('throve_wishlist');
+        localStorage.setItem('throve_demo_cleaned_v3', 'true');
+        setCartItems([]);
+        setWishlistItems([]);
+      } else {
+        const savedCart = localStorage.getItem('throve_cart');
+        if (savedCart) {
+          const parsed = JSON.parse(savedCart);
+          if (Array.isArray(parsed)) setCartItems(parsed);
+        }
+        const savedWishlist = localStorage.getItem('throve_wishlist');
+        if (savedWishlist) {
+          const parsed = JSON.parse(savedWishlist);
+          if (Array.isArray(parsed)) setWishlistItems(parsed);
+        }
       }
-      const savedWishlist = localStorage.getItem('throve_wishlist');
-      if (savedWishlist) {
-        const parsed = JSON.parse(savedWishlist);
-        if (Array.isArray(parsed)) setWishlistItems(parsed);
+
+      // 2. Hydrate user session
+      const savedUser = localStorage.getItem('throve_customer');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
       }
     } catch {
       // Ignore parse errors
@@ -200,6 +174,28 @@ export function StoreProvider({ children }) {
     );
   };
 
+  const loginUser = (userData) => {
+    const customer = userData || {
+      name: 'Aryan Sharma',
+      phone: '+91 98765 43210',
+      email: 'aryan@example.com',
+      tier: 'Throve Black VIP'
+    };
+    setUser(customer);
+    try {
+      localStorage.setItem('throve_customer', JSON.stringify(customer));
+      document.cookie = "throve_customer_session=active; path=/; max-age=604800; SameSite=Lax";
+    } catch {}
+  };
+
+  const logoutUser = () => {
+    setUser(null);
+    try {
+      localStorage.removeItem('throve_customer');
+      document.cookie = "throve_customer_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    } catch {}
+  };
+
   const cartCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
   const cartSubtotal = cartItems.reduce((acc, item) => acc + item.priceNum * item.qty, 0);
   const wishlistCount = wishlistItems.length;
@@ -223,6 +219,10 @@ export function StoreProvider({ children }) {
         isInWishlist,
         toggleWishlist,
         removeFromWishlist,
+        user,
+        isLoggedIn: !!user,
+        loginUser,
+        logoutUser,
       }}
     >
       {children}

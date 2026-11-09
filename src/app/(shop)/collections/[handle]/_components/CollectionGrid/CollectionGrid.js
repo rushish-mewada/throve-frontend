@@ -76,45 +76,45 @@ export default function CollectionGrid({ products }) {
                   </svg>
                 </Link>
               </div>
-            
-            <Link href={`/product/${product.handle || 'classic-jacket'}`} aria-label={product.title}>
-              <Image
-                src={product.image}
-                alt={product.title}
-                fill
-                style={{ objectFit: 'cover' }}
-                sizes="(max-width: 768px) 50vw, 33vw"
-              />
-            </Link>
-          </div>
 
-          <div className={styles.productInfo}>
-            <div className={styles.infoTop}>
-              <Link
-                href={`/product/${product.handle || 'classic-jacket'}`}
-                className={styles.productTitle}
-                style={{ textDecoration: 'none' }}
-              >
-                {product.title}
+              <Link href={`/product/${product.handle || 'classic-jacket'}`} aria-label={product.title}>
+                <Image
+                  src={product.image}
+                  alt={product.title}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
               </Link>
-              <span className={styles.productRating}>★ {product.rating}</span>
             </div>
-            <div className={styles.infoBottom}>
-              <span className={styles.productPrice}>{product.price}</span>
-              <div className={styles.colorSwatches}>
-                {product.colors.map((color, i) => (
-                  <span 
-                    key={i} 
-                    style={{ backgroundColor: color }} 
-                    className={`${styles.swatch} ${i === 0 ? styles.swatchActive : ''}`} 
-                  />
-                ))}
+
+            <div className={styles.productInfo}>
+              <div className={styles.infoTop}>
+                <Link
+                  href={`/product/${product.handle || 'classic-jacket'}`}
+                  className={styles.productTitle}
+                  style={{ textDecoration: 'none' }}
+                >
+                  {product.title}
+                </Link>
+                <span className={styles.productRating}>★ {product.rating}</span>
+              </div>
+              <div className={styles.infoBottom}>
+                <span className={styles.productPrice}>{product.price}</span>
+                <div className={styles.colorSwatches}>
+                  {product.colors.map((color, i) => (
+                    <span
+                      key={i}
+                      style={{ backgroundColor: color }}
+                      className={`${styles.swatch} ${i === 0 ? styles.swatchActive : ''}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      );
-    })}
+        );
+      })}
     </div>
   );
 }

@@ -24,6 +24,8 @@ export default function Header() {
     updateCartQty,
     removeFromCart,
     wishlistCount,
+    isLoggedIn,
+    user,
   } = useStore();
 
   const isLinkActive = (path) => {
@@ -155,7 +157,12 @@ export default function Header() {
             </svg>
           </button>
           
-          <Link href="/account" aria-label="Account" className={styles.iconBtn}>
+          <Link 
+            href={isLoggedIn ? "/account" : "/account/login"} 
+            aria-label={isLoggedIn ? "My Account" : "Login"} 
+            title={isLoggedIn ? "My Account" : "Login"} 
+            className={styles.iconBtn}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
               <circle cx="12" cy="7" r="4"/>
@@ -179,7 +186,7 @@ export default function Header() {
               <line x1="3" y1="6" x2="21" y2="6"/>
               <path d="M16 10a4 4 0 0 1-8 0"/>
             </svg>
-            <span className={styles.cartBadge}>{cartCount}</span>
+            {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
           </button>
         </div>
 
@@ -294,7 +301,13 @@ export default function Header() {
             </nav>
 
             <div className={styles.mobileMenuFooter}>
-              <Link href="/account" className={styles.mobileSecondaryLink} onClick={closeMenu}>My Account</Link>
+              <Link 
+                href={isLoggedIn ? "/account" : "/account/login"} 
+                className={styles.mobileSecondaryLink} 
+                onClick={closeMenu}
+              >
+                {isLoggedIn ? "My Account" : "Login"}
+              </Link>
               <Link href="/wishlist" className={styles.mobileSecondaryLink} onClick={closeMenu}>Wishlist</Link>
               <Link href="/contact" className={styles.mobileSecondaryLink} onClick={closeMenu}>Contact Us</Link>
               <div className={styles.mobileSocials}>
