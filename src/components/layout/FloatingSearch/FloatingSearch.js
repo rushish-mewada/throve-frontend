@@ -243,3 +243,4 @@ export default function FloatingSearch({ isOpen, onClose }) {
     </div>
   );
 }
+

@@ -202,11 +202,10 @@ export default function Header() {
           <span className={styles.bottomNavLabel}>Home</span>
         </Link>
 
-        <button 
-          type="button"
-          className={`${styles.bottomNavItem} ${isMobileMenuOpen ? styles.bottomNavItemActive : ''}`}
-          onClick={() => setIsMobileMenuOpen(true)}
-          aria-label="Shop Categories"
+        <Link 
+          href="/collections" 
+          className={`${styles.bottomNavItem} ${pathname?.startsWith('/collections') ? styles.bottomNavItemActive : ''}`}
+          aria-label="Shop Collections"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
             <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -215,7 +214,7 @@ export default function Header() {
             <rect x="3" y="14" width="7" height="7" rx="1"/>
           </svg>
           <span className={styles.bottomNavLabel}>Shop</span>
-        </button>
+        </Link>
 
         <button 
           type="button"
