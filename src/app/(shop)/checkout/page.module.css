@@ -250,8 +250,13 @@
 }
 
 @keyframes radialSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spinner {
@@ -402,9 +407,12 @@
   .checkoutLayout {
     grid-template-columns: 1fr;
   }
-  .leftCol, .rightCol {
+
+  .leftCol,
+  .rightCol {
     padding: 32px 24px;
   }
+
   .rightCol {
     order: -1;
     border-left: none;
@@ -416,40 +424,52 @@
   .header h2 {
     font-size: 1.8rem;
   }
+
   .formGrid {
     grid-template-columns: 1fr;
   }
+
   .sectionHeader {
     padding: 16px;
   }
+
   .sectionBody {
     padding: 16px;
   }
+
   .summaryText {
     padding: 0 16px 16px 60px;
   }
+
   .stepTitle h3 {
     font-size: 1.05rem;
   }
-  .leftCol, .rightCol {
+
+  .leftCol,
+  .rightCol {
     padding: 24px 16px;
   }
+
   .summaryItems {
     max-height: 220px;
     overflow-y: auto;
     padding-right: 4px;
     gap: 16px;
   }
+
   .summaryItem {
     gap: 12px;
   }
+
   .discountRow {
     flex-direction: column;
   }
+
   .applyBtn {
     width: 100%;
     padding: 14px;
   }
+
   .priceLarge {
     font-size: 1.3rem;
   }
@@ -459,18 +479,23 @@
   .header {
     margin-bottom: 24px;
   }
+
   .header h2 {
     font-size: 1.5rem;
   }
+
   .stepNum {
     width: 24px;
     height: 24px;
     font-size: 0.8rem;
   }
+
   .stepTitle {
     gap: 10px;
   }
-  .continueBtn, .payBtn {
+
+  .continueBtn,
+  .payBtn {
     padding: 14px;
     font-size: 0.95rem;
   }
