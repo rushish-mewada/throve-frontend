@@ -123,10 +123,10 @@ export default function AddToCartClient({ variants, colors, product }) {
           {isAdding ? (
             <>
               <span className={styles.spinner} />
-              <span>Reserving in Bag...</span>
+              <span>Adding to Bag...</span>
             </>
           ) : addedSuccess ? (
-            <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Reserved in Bag!</span>
+            <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Added to Bag!</span>
           ) : (
             <>
               <svg
@@ -143,7 +143,7 @@ export default function AddToCartClient({ variants, colors, product }) {
                 <line x1="3" y1="6" x2="21" y2="6" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <span>Pre-Order to Bag</span>
+              <span>Add To Cart</span>
             </>
           )}
         </button>
