@@ -414,7 +414,7 @@
 
 @media (max-width: 768px) {
   .header h2 {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
   .formGrid {
     grid-template-columns: 1fr;
@@ -429,10 +429,19 @@
     padding: 0 16px 16px 60px;
   }
   .stepTitle h3 {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
   }
   .leftCol, .rightCol {
     padding: 24px 16px;
+  }
+  .summaryItems {
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+    gap: 16px;
+  }
+  .summaryItem {
+    gap: 12px;
   }
   .discountRow {
     flex-direction: column;
@@ -440,5 +449,29 @@
   .applyBtn {
     width: 100%;
     padding: 14px;
+  }
+  .priceLarge {
+    font-size: 1.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    margin-bottom: 24px;
+  }
+  .header h2 {
+    font-size: 1.5rem;
+  }
+  .stepNum {
+    width: 24px;
+    height: 24px;
+    font-size: 0.8rem;
+  }
+  .stepTitle {
+    gap: 10px;
+  }
+  .continueBtn, .payBtn {
+    padding: 14px;
+    font-size: 0.95rem;
   }
 }

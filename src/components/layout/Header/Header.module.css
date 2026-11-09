@@ -566,5 +566,60 @@
 @media (max-width: 480px) {
   .cartContent {
     max-width: 100%;
+    width: 100%;
+  }
+  .cartHeader {
+    padding: 16px 20px;
+  }
+  .cartTitle {
+    font-size: 1rem;
+  }
+  .cartItems {
+    padding: 16px 20px;
+    gap: 16px;
+  }
+  .cartItem {
+    gap: 12px;
+  }
+  .cartItemImage {
+    width: 76px;
+  }
+  .cartItemName {
+    font-size: 0.88rem;
+    line-height: 1.3;
+  }
+  .cartItemVariant {
+    font-size: 0.75rem;
+  }
+  .cartItemPrice {
+    font-size: 0.88rem;
+  }
+  .quantitySelector button {
+    width: 26px;
+    height: 26px;
+  }
+  .quantitySelector span {
+    font-size: 0.8rem;
+    width: 22px;
+  }
+  .cartFooter {
+    padding: 16px 20px 24px;
+  }
+  .subtotalRow {
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  .taxNote {
+    font-size: 0.75rem;
+    margin-bottom: 16px;
+  }
+  .cartActions {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .viewBagBtn,
+  .checkoutBtn {
+    padding: 12px;
+    font-size: 0.9rem;
   }
 }
