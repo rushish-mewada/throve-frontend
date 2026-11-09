@@ -12,8 +12,9 @@ const dummyProducts = Array.from({ length: 8 }).map((_, i) => ({
   colors: ['#000000', '#333333']
 }));
 
-export default function SearchPage({ searchParams }) {
-  const query = searchParams?.q || '';
+export default async function SearchPage({ searchParams }) {
+  const resolvedSearchParams = await searchParams;
+  const query = resolvedSearchParams?.q || '';
   const resultCount = query ? dummyProducts.length : 0;
 
   return (
