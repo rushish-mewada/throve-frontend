@@ -1,4 +1,4 @@
-const API_URL = process.env.STOREFRONT_API_URL || "http://127.0.0.1:3000";
+const API_URL = process.env.STOREFRONT_API_URL || "http://127.0.0.1:3001";
 const SECRET_KEY = process.env.STOREFRONT_SECRET_KEY || "sk_throve_test_key";
 const PUBLISHABLE_KEY = process.env.STOREFRONT_PUBLISHABLE_KEY || "pk_throve_test_key";
 

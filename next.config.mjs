@@ -1,12 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  allowedDevOrigins: ['192.168.0.101', 'localhost', '10.233.51.55'],
+  allowedDevOrigins: ['192.168.0.101', 'localhost', '10.233.51.55', '10.255.192.55'],
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
   experimental: {
     taint: true,
     serverActions: {
-      allowedOrigins: ['192.168.0.101', 'localhost', 'http://localhost'],
+      allowedOrigins: ['192.168.0.101', '10.255.192.55', 'localhost', 'http://localhost'],
     }
   },
   images: {

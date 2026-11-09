@@ -95,7 +95,8 @@
   gap: 8px;
 }
 
-.infoTop, .infoBottom {
+.infoTop,
+.infoBottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -148,20 +149,26 @@
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
+
   .imageContainer {
     margin-bottom: 8px;
   }
+
   .productTitle {
     font-size: 0.85rem;
   }
+
   .productPrice {
     font-size: 0.85rem;
   }
-  .infoTop, .infoBottom {
+
+  .infoTop,
+  .infoBottom {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
+
   .colorSwatches {
     margin-top: 4px;
   }
