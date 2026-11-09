@@ -52,19 +52,53 @@ export default function FloatingSearch({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // Filter products in real time
+  // Filter products in real time with smart tokenized matching and relevance scoring
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return [];
+    const raw = query.trim().toLowerCase();
+    if (!raw) return [];
 
-    return LAUNCH_PRODUCTS.filter((product) => {
-      const titleMatch = product.title?.toLowerCase().includes(q);
-      const categoryMatch = product.category?.toLowerCase().includes(q);
-      const subcategoryMatch = product.subcategory?.toLowerCase().includes(q);
-      const descMatch = product.description?.toLowerCase().includes(q);
-      const collectionMatch = product.collection?.toLowerCase().includes(q);
-      return titleMatch || categoryMatch || subcategoryMatch || descMatch || collectionMatch;
+    // Split query into tokens (e.g. "mandarin shirt" -> ["mandarin", "shirt"])
+    const tokens = raw.split(/\s+/).filter(Boolean);
+
+    // Score and filter each product
+    const scored = LAUNCH_PRODUCTS.map((product) => {
+      const title = (product.title || "").toLowerCase();
+      const category = (product.category || "").toLowerCase();
+      const subcategory = (product.subcategory || "").toLowerCase();
+      const desc = (product.description || "").toLowerCase();
+      const collection = (product.collection || "").toLowerCase();
+      const handle = (product.handle || "").toLowerCase();
+      const colors = (product.colors || []).map((c) => c.name || "").join(" ").toLowerCase();
+
+      // Combined corpus for multi-token check
+      const fullCorpus = `${title} ${category} ${subcategory} ${collection} ${colors} ${handle} ${desc}`;
+
+      // 1. Exact phrase match in title (Highest score)
+      if (title.includes(raw)) {
+        return { product, score: 100 };
+      }
+
+      // 2. All tokens match across the product corpus
+      const allTokensMatch = tokens.every((token) => fullCorpus.includes(token));
+      if (allTokensMatch) {
+        // Boost if tokens match in title
+        const titleTokensMatch = tokens.filter((t) => title.includes(t)).length;
+        return { product, score: 80 + titleTokensMatch * 5 };
+      }
+
+      // 3. Partial match if multi-word query (at least one word matches)
+      const matchingTokens = tokens.filter((token) => fullCorpus.includes(token));
+      if (matchingTokens.length > 0 && tokens.length > 1) {
+        return { product, score: 40 + matchingTokens.length * 10 };
+      }
+
+      return { product, score: 0 };
     });
+
+    return scored
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((item) => item.product);
   }, [query]);
 
   if (!isOpen && !isClosing) return null;
