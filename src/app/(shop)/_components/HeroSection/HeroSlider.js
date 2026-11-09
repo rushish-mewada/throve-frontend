@@ -222,11 +222,38 @@ export default function HeroSlider() {
   const nextSlide = () => setOffsetBase((prev) => prev - 1);
   const prevSlide = () => setOffsetBase((prev) => prev + 1);
 
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+
+  const handleTouchStart = (e) => {
+    if (e.targetTouches && e.targetTouches[0]) {
+      touchStartXRef.current = e.targetTouches[0].clientX;
+      touchStartYRef.current = e.targetTouches[0].clientY;
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    if (e.changedTouches && e.changedTouches[0]) {
+      const diffX = touchStartXRef.current - e.changedTouches[0].clientX;
+      const diffY = touchStartYRef.current - e.changedTouches[0].clientY;
+      // Trigger horizontal swipe only if user swiped more horizontally than vertically
+      if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+        if (diffX > 0) {
+          nextSlide();
+        } else {
+          prevSlide();
+        }
+      }
+    }
+  };
+
   return (
     <div
       className={styles.sliderWrapper}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Fixed 7 Slots Carousel Container */}
       <div className={styles.carouselContainer}>

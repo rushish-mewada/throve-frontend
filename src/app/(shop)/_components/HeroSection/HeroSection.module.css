@@ -453,16 +453,110 @@
 }
 
 @media (max-width: 768px) {
-  .slot_-2, .slot_-1, .slot_1, .slot_2 { display: none; }
-  .slot_0 { width: 300px; height: 80%; }
-  .bottomBar { flex-direction: column; gap: 16px; align-items: center; bottom: 20px; }
-  .descriptionBox { max-width: 100%; text-align: center; }
-  .title { font-size: 2rem; }
-  .exploreWrapper { bottom: 120px; } /* Push above bottom bar */
+  .slot_-3, .slot_3, .slot_-2, .slot_2 { display: none; }
+  .slot_0 {
+    width: 200px;
+    height: 72%;
+    bottom: 75px;
+  }
+  .slot_-1 {
+    transform: translateX(calc(-50% - 135px)) translateY(-80px) scale(0.68);
+    opacity: 0.4;
+    width: 130px;
+    height: 52%;
+    z-index: 4;
+    pointer-events: auto;
+  }
+  .slot_1 {
+    transform: translateX(calc(-50% + 135px)) translateY(-80px) scale(0.68);
+    opacity: 0.4;
+    width: 130px;
+    height: 52%;
+    z-index: 4;
+    pointer-events: auto;
+  }
+  .header {
+    top: 12px;
+    left: 16px;
+    right: 16px;
+  }
+  .subtitle {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+  .title {
+    font-size: 1.6rem;
+    line-height: 1.1;
+  }
+  .bottomBar {
+    left: 16px;
+    right: 16px;
+    bottom: 12px;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .descriptionBox {
+    max-width: calc(100% - 90px);
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(8px);
+    border-radius: 4px;
+    text-align: left;
+  }
+  .descriptionText {
+    font-size: 0.68rem;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .exploreWrapper {
+    bottom: 48px;
+  }
+  .exploreLink {
+    font-size: 0.78rem;
+  }
+  .navBtn {
+    width: 32px;
+    height: 32px;
+  }
+  .navBtn svg {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 @media (max-width: 480px) {
-  .slot_0 { width: 100%; padding: 0 24px; height: 75%; }
-  .hotspotCard { display: none; } /* Hide complex hover cards on very small screens */
-  .title { font-size: 1.8rem; }
+  .hero {
+    height: calc(100vh - 80px);
+    min-height: 480px;
+    max-height: 620px;
+  }
+  .slot_0 {
+    width: 180px;
+    height: 70%;
+    bottom: 70px;
+  }
+  .slot_-1 {
+    transform: translateX(calc(-50% - 115px)) translateY(-75px) scale(0.62);
+    width: 110px;
+    height: 48%;
+  }
+  .slot_1 {
+    transform: translateX(calc(-50% + 115px)) translateY(-75px) scale(0.62);
+    width: 110px;
+    height: 48%;
+  }
+  .title {
+    font-size: 1.45rem;
+  }
+  .hotspotCard {
+    width: 140px;
+    padding: 6px 8px;
+    transform: scale(0.85);
+    transform-origin: top left;
+  }
 }
