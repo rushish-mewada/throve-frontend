@@ -164,7 +164,83 @@ export default function Header() {
           </button>
         </div>
 
+        {/* Mobile Right Spacer for perfect logo centering */}
+        <div className={styles.mobileRightSpacer} aria-hidden="true" />
+
       </div>
+
+      {/* Floating Bottom Menu for Mobile View */}
+      <nav className={styles.floatingBottomBar} aria-label="Mobile Navigation">
+        <Link 
+          href="/" 
+          className={`${styles.bottomNavItem} ${pathname === '/' ? styles.bottomNavItemActive : ''}`}
+          aria-label="Home"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill={pathname === '/' ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.8">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span className={styles.bottomNavLabel}>Home</span>
+        </Link>
+
+        <button 
+          type="button"
+          className={`${styles.bottomNavItem} ${isMobileMenuOpen ? styles.bottomNavItemActive : ''}`}
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Shop Categories"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+          </svg>
+          <span className={styles.bottomNavLabel}>Shop</span>
+        </button>
+
+        <Link 
+          href="/search" 
+          className={`${styles.bottomNavItem} ${pathname === '/search' ? styles.bottomNavItemActive : ''}`}
+          aria-label="Search"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="M20 20L16 16"/>
+          </svg>
+          <span className={styles.bottomNavLabel}>Search</span>
+        </Link>
+
+        <Link 
+          href="/wishlist" 
+          className={`${styles.bottomNavItem} ${pathname === '/wishlist' ? styles.bottomNavItemActive : ''}`}
+          aria-label="Wishlist"
+        >
+          <div style={{ position: 'relative', display: 'flex' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill={pathname === '/wishlist' ? "#ef4444" : "none"} stroke={pathname === '/wishlist' ? "#ef4444" : "currentColor"} strokeWidth="1.8">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            {wishlistCount > 0 && <span className={styles.bottomNavBadge}>{wishlistCount}</span>}
+          </div>
+          <span className={styles.bottomNavLabel}>Wishlist</span>
+        </Link>
+
+        <button 
+          type="button"
+          className={`${styles.bottomNavItem} ${isCartDrawerOpen ? styles.bottomNavItemActive : ''}`}
+          onClick={() => setIsCartDrawerOpen(true)}
+          aria-label="Bag"
+        >
+          <div style={{ position: 'relative', display: 'flex' }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            {cartCount > 0 && <span className={styles.bottomNavBadge}>{cartCount}</span>}
+          </div>
+          <span className={styles.bottomNavLabel}>Bag</span>
+        </button>
+      </nav>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
