@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
+import FloatingSearch from '@/components/layout/FloatingSearch/FloatingSearch';
 import styles from './Header.module.css';
 
 export default function Header() {
@@ -12,6 +13,7 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [isCartClosing, setIsCartClosing] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const {
     cartItems,
@@ -50,9 +52,9 @@ export default function Header() {
     }, 400); // match animation duration
   };
 
-  // Prevent background scrolling when a drawer is open
+  // Prevent background scrolling when a drawer or search is open
   useEffect(() => {
-    if (isMobileMenuOpen || isCartDrawerOpen) {
+    if (isMobileMenuOpen || isCartDrawerOpen || isSearchOpen) {
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     } else {
@@ -63,7 +65,19 @@ export default function Header() {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     };
-  }, [isMobileMenuOpen, isCartDrawerOpen]);
+  }, [isMobileMenuOpen, isCartDrawerOpen, isSearchOpen]);
+
+  // Global shortcut (Cmd+K / Ctrl+K) to open search
+  useEffect(() => {
+    const handleGlobalKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsSearchOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, []);
 
   return (
     <header className={styles.header}>
@@ -129,12 +143,17 @@ export default function Header() {
 
         {/* Actions */}
         <div className={styles.actions}>
-          <Link href="/search" aria-label="Search" className={styles.iconBtn}>
+          <button
+            type="button"
+            aria-label="Search"
+            className={styles.iconBtn}
+            onClick={() => setIsSearchOpen(true)}
+          >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="11" cy="11" r="7"/>
               <path d="M20 20L16 16"/>
             </svg>
-          </Link>
+          </button>
           
           <Link href="/account" aria-label="Account" className={styles.iconBtn}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -198,9 +217,10 @@ export default function Header() {
           <span className={styles.bottomNavLabel}>Shop</span>
         </button>
 
-        <Link 
-          href="/search" 
-          className={`${styles.bottomNavItem} ${pathname === '/search' ? styles.bottomNavItemActive : ''}`}
+        <button 
+          type="button"
+          className={`${styles.bottomNavItem} ${isSearchOpen ? styles.bottomNavItemActive : ''}`}
+          onClick={() => setIsSearchOpen(true)}
           aria-label="Search"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -208,7 +228,7 @@ export default function Header() {
             <path d="M20 20L16 16"/>
           </svg>
           <span className={styles.bottomNavLabel}>Search</span>
-        </Link>
+        </button>
 
         <Link 
           href="/wishlist" 
@@ -385,6 +405,12 @@ export default function Header() {
           </div>
         </div>
       )}
+
+      {/* Floating Instant Search Modal */}
+      <FloatingSearch 
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+      />
     </header>
   );
 }
