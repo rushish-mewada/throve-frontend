@@ -35,23 +35,23 @@ export default function LoginPage() {
     <main className={styles.authLayout}>
       <div className={styles.imageCol}>
         <div className={styles.imageWrapper}>
-          <Image 
-            src="/products/asymmetric-mandarin-shirt/main.jpg" 
-            alt="Throve S/S 25 Editorial" 
-            fill 
+          <Image
+            src="/products/asymmetric-mandarin-shirt/main.jpg"
+            alt="Throve S/S 25 Editorial"
+            fill
             style={{ objectFit: 'cover' }}
             priority
           />
         </div>
       </div>
-      
+
       <div className={styles.formCol}>
         <div className={styles.formContainer}>
           <div className={styles.header}>
             <h1>{step === 1 ? 'Welcome to Throve.' : 'Verify Number'}</h1>
             <p>
-              {step === 1 
-                ? 'Enter your mobile number to securely log in or create an account.' 
+              {step === 1
+                ? 'Enter your mobile number to securely log in or create an account.'
                 : `We've sent a 6-digit code to your WhatsApp on +91 ${phone}`}
             </p>
           </div>
@@ -62,10 +62,10 @@ export default function LoginPage() {
                 <label>Mobile Number</label>
                 <div className={styles.phoneInputWrapper}>
                   <span className={styles.countryCode}>+91</span>
-                  <input 
-                    type="tel" 
-                    placeholder="98926 91094" 
-                    className={styles.phoneInput} 
+                  <input
+                    type="tel"
+                    placeholder="98926 91094"
+                    className={styles.phoneInput}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     maxLength={10}
@@ -85,10 +85,10 @@ export default function LoginPage() {
             <form className={styles.form} onSubmit={handleVerify}>
               <div className={styles.inputGroup}>
                 <label>Enter 6-digit OTP</label>
-                <input 
-                  type="text" 
-                  placeholder="• • • • • •" 
-                  className={styles.otpInput} 
+                <input
+                  type="text"
+                  placeholder="• • • • • •"
+                  className={styles.otpInput}
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
                   maxLength={6}
@@ -106,7 +106,7 @@ export default function LoginPage() {
             <div className={styles.toggleText}>
               Didn't receive the code?{' '}
               <button className={styles.toggleBtn}>Resend via WhatsApp</button>
-              <br/><br/>
+              <br /><br />
               <button className={styles.toggleBtn} onClick={() => setStep(1)}>Change Number</button>
             </div>
           )}

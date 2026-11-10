@@ -246,11 +246,13 @@
 }
 
 .cardLeft {
-  right: calc(100% - 20px);
+  right: calc(50% + 40px);
+  left: auto;
 }
 
 .cardRight {
-  left: calc(100% - 20px);
+  left: calc(50% + 40px);
+  right: auto;
 }
 
 @keyframes cardFade {
