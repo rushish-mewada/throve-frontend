@@ -64,7 +64,7 @@ export default function LoginPage() {
                   <span className={styles.countryCode}>+91</span>
                   <input 
                     type="tel" 
-                    placeholder="98765 43210" 
+                    placeholder="98926 91094" 
                     className={styles.phoneInput} 
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}

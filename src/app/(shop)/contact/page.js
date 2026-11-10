@@ -51,7 +51,11 @@ export default function ContactPage() {
                 </svg>
                 <div>
                   <h3>Email</h3>
-                  <p>support@throve.com</p>
+                  <p>
+                    <a href="mailto:throve.in@gmail.com" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      throve.in@gmail.com
+                    </a>
+                  </p>
                 </div>
               </div>
               
@@ -61,18 +65,11 @@ export default function ContactPage() {
                 </svg>
                 <div>
                   <h3>Phone</h3>
-                  <p>+91 98765 43210</p>
-                </div>
-              </div>
-              
-              <div className={styles.detailItem}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <div>
-                  <h3>Office Address</h3>
-                  <p>123 Fashion Street, Bandra West<br />Mumbai, Maharashtra 400050<br />India</p>
+                  <p>
+                    <a href="tel:+919892691094" style={{ color: 'inherit', textDecoration: 'none' }}>
+                      +91 98926 91094
+                    </a>
+                  </p>
                 </div>
               </div>
             </div>

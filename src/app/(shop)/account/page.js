@@ -6,7 +6,7 @@ import AccountDashboard from './_components/AccountDashboard/AccountDashboard';
 // Placeholder for DAL fetching
 const getAccountData = async () => {
   return {
-    user: { name: 'Aryan Sharma', phone: '+91 98765 43210', email: 'aryan@example.com', tier: 'Throve Black VIP' },
+    user: { name: 'Aryan Sharma', phone: '+91 98926 91094', email: 'throve.in@gmail.com', tier: 'Throve Black VIP' },
     orders: [
       { id: 'ORD-1092', date: 'Oct 04, 2026', total: '₹4,300', status: 'Delivered', image: 'https://placehold.co/100x120/111111/ffffff.png?text=Jacket' },
       { id: 'ORD-1045', date: 'Sep 12, 2026', total: '₹2,100', status: 'Processing', image: 'https://placehold.co/100x120/e0e0e0/666666.png?text=Shirt' },

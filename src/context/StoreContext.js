@@ -177,8 +177,8 @@ export function StoreProvider({ children }) {
   const loginUser = (userData) => {
     const customer = userData || {
       name: 'Aryan Sharma',
-      phone: '+91 98765 43210',
-      email: 'aryan@example.com',
+      phone: '+91 98926 91094',
+      email: 'throve.in@gmail.com',
       tier: 'Throve Black VIP'
     };
     setUser(customer);
