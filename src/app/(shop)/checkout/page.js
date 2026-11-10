@@ -42,10 +42,10 @@ export default function CheckoutPage() {
           email,
           firstName: firstName || 'Customer',
           lastName: lastName || 'User',
-          address1: address || 'Bandra West',
+          address1: address || '123 Fashion Street',
           city: city || 'Mumbai',
           state: state || 'Maharashtra',
-          pincode: pincode || '400050',
+          pincode: pincode || '400001',
           paymentMethod,
         });
 
@@ -56,12 +56,8 @@ export default function CheckoutPage() {
           alert(res.error || 'Failed to place order');
         }
       } catch (err) {
-        if (err?.message?.includes('Server Action') || String(err).includes('409')) {
-          // If a new build occurred while checkout tab was open, reload to fetch latest action ID
-          window.location.reload();
-        } else {
-          alert(err.message || 'Checkout failed, please try again.');
-        }
+        console.error("Checkout submission failed:", err);
+        alert(err.message || 'Checkout failed. Please check backend connection.');
       }
     });
   };
