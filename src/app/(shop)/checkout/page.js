@@ -1,5 +1,6 @@
 "use client";
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
@@ -7,6 +8,7 @@ import styles from './page.module.css';
 import { processCheckoutAction } from '@/actions/checkout';
 
 export default function CheckoutPage() {
+  const router = useRouter();
   const { cartItems, cartSubtotal, clearCart } = useStore();
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('user@example.com');
@@ -17,7 +19,6 @@ export default function CheckoutPage() {
   const [state, setState] = useState('Maharashtra');
   const [pincode, setPincode] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [orderConfirmed, setOrderConfirmed] = useState(null);
   const [isPending, startTransition] = useTransition();
 
   const handlePayNow = () => {
@@ -50,8 +51,50 @@ export default function CheckoutPage() {
         });
 
         if (res.success) {
+          const targetId = res.displayId || res.orderId || `THR-${Date.now().toString().slice(-4)}`;
+          const snapshot = {
+            id: targetId,
+            publicId: res.orderId,
+            date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
+            email: email || 'user@example.com',
+            total: res.totalFormatted,
+            subtotal: res.totalFormatted,
+            shipping: 'Free',
+            paymentMethod: 'Cash on Delivery (COD) · Zero Upfront Payment',
+            shippingAddress: {
+              name: `${firstName || 'Customer'} ${lastName || 'User'}`.trim(),
+              address: address || '123 Fashion Street',
+              city: city || 'Mumbai',
+              state: state || 'Maharashtra',
+              pin: pincode || '400001',
+            },
+            items: cartItems.length > 0 ? cartItems.map((item, idx) => ({
+              id: item.id || idx + 1,
+              image: item.image || '/images/hero/slide4.png',
+              title: item.title,
+              variant: [item.color, item.size].filter(Boolean).join(' / ') || 'Standard',
+              price: item.price || `₹${(item.priceNum || 0).toLocaleString('en-IN')}`,
+              qty: item.qty || 1,
+            })) : [
+              {
+                id: 1,
+                image: '/images/hero/slide4.png',
+                title: 'Overlapping Mandarin Collar Shirt',
+                variant: 'Standard',
+                price: res.totalFormatted,
+                qty: 1,
+              }
+            ],
+          };
+
+          try {
+            sessionStorage.setItem('throve_last_order', JSON.stringify(snapshot));
+          } catch {
+            // Ignore storage errors in restricted browsing contexts
+          }
+
           clearCart();
-          setOrderConfirmed(res);
+          router.push(`/order/${encodeURIComponent(targetId)}`);
         } else {
           alert(res.error || 'Failed to place order');
         }
@@ -129,9 +172,6 @@ export default function CheckoutPage() {
           {step === 2 ? (
             <div className={styles.sectionBody}>
               <div className={styles.formGrid}>
-                <select className={`${styles.input} ${styles.fullWidth}`}>
-                  <option>India</option>
-                </select>
                 <input 
                   type="text" 
                   placeholder="First name" 
@@ -198,91 +238,45 @@ export default function CheckoutPage() {
           
           {step === 3 && (
             <div className={styles.sectionBody}>
-              {orderConfirmed ? (
-                <div style={{ padding: "16px 0", color: "#10b981", fontWeight: 600 }}>
-                  <p style={{ fontSize: "1.1rem" }}>✓ Order Placed Successfully!</p>
-                  <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px", marginTop: "4px" }}>
-                    Order ID: <strong>{orderConfirmed.displayId}</strong> ({orderConfirmed.orderId})
-                  </p>
-                  <p style={{ color: "#52525b", fontWeight: 400, fontSize: "14px", marginTop: "2px" }}>
-                    Amount: <strong>{orderConfirmed.totalFormatted}</strong> · Payment: {orderConfirmed.paymentMethod?.toUpperCase()}
-                  </p>
-                  <div style={{ marginTop: "16px", display: "flex", gap: "12px" }}>
-                    <a
-                      href="/track"
-                      style={{
-                        padding: "10px 18px",
-                        backgroundColor: "#111111",
-                        color: "#ffffff",
-                        borderRadius: "4px",
-                        fontSize: "13px",
-                        fontWeight: 600,
-                        textDecoration: "none",
-                        display: "inline-block"
-                      }}
-                    >
-                      Track Shipment →
-                    </a>
-                    <a
-                      href="/"
-                      style={{
-                        padding: "10px 18px",
-                        backgroundColor: "#f4f4f5",
-                        color: "#111111",
-                        borderRadius: "4px",
-                        fontSize: "13px",
-                        fontWeight: 600,
-                        textDecoration: "none",
-                        display: "inline-block"
-                      }}
-                    >
-                      Back to Store
-                    </a>
+              <p className={styles.paymentSub}>
+                <strong>Pre-Order Edition:</strong> Pay zero rupees today. 100% Cash on Delivery (COD) upon doorstep arrival.
+              </p>
+              
+              <div className={styles.paymentMethods}>
+                <label className={styles.paymentMethod} style={{ borderColor: '#111111', backgroundColor: '#fcfcfc', cursor: 'default' }}>
+                  <div className={styles.radioGroup}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      checked={true}
+                      readOnly
+                    />
+                    <div>
+                      <span style={{ fontWeight: 600, display: 'block', color: '#111111' }}>
+                        Cash on Delivery (COD) · Zero Upfront Payment
+                      </span>
+                      <span style={{ fontSize: '12px', color: '#71717a', marginTop: '2px', display: 'block' }}>
+                        Your pre-order will be tailored and dispatched with priority. Pay via Cash or UPI QR only when your parcel arrives.
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <>
-                  <p className={styles.paymentSub}>
-                    <strong>Pre-Order Edition:</strong> Pay zero rupees today. 100% Cash on Delivery (COD) upon doorstep arrival.
-                  </p>
-                  
-                  <div className={styles.paymentMethods}>
-                    <label className={styles.paymentMethod} style={{ borderColor: '#111111', backgroundColor: '#fcfcfc', cursor: 'default' }}>
-                      <div className={styles.radioGroup}>
-                        <input 
-                          type="radio" 
-                          name="payment" 
-                          checked={true}
-                          readOnly
-                        />
-                        <div>
-                          <span style={{ fontWeight: 600, display: 'block', color: '#111111' }}>
-                            Cash on Delivery (COD) · Zero Upfront Payment
-                          </span>
-                          <span style={{ fontSize: '12px', color: '#71717a', marginTop: '2px', display: 'block' }}>
-                            Your pre-order will be tailored and dispatched with priority. Pay via Cash or UPI QR only when your parcel arrives.
-                          </span>
-                        </div>
-                      </div>
-                    </label>
-                  </div>
-                  <button 
-                    className={styles.payBtn} 
-                    onClick={handlePayNow} 
-                    disabled={isPending}
-                    style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-                  >
-                    {isPending ? (
-                      <>
-                        <span className={styles.spinner} />
-                        <span>Confirming Pre-Order...</span>
-                      </>
-                    ) : (
-                      "Confirm Pre-Order (Pay on Delivery)"
-                    )}
-                  </button>
-                </>
-              )}
+                </label>
+              </div>
+              <button 
+                className={styles.payBtn} 
+                onClick={handlePayNow} 
+                disabled={isPending}
+                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                {isPending ? (
+                  <>
+                    <span className={styles.spinner} />
+                    <span>Confirming Pre-Order...</span>
+                  </>
+                ) : (
+                  "Confirm Pre-Order (Pay on Delivery)"
+                )}
+              </button>
             </div>
           )}
         </div>
