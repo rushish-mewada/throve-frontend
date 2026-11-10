@@ -18,6 +18,13 @@ const abhaya = Abhaya_Libre({
 export const metadata = {
   title: "Throve | Premium Lifestyle Goods",
   description: "Curated exclusively for India. Zero-API Architecture natively powered by Medusa v2.",
+  icons: {
+    icon: [
+      { url: "/assets/images/logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/assets/images/logo.svg",
+    apple: "/assets/images/logo.svg",
+  },
 };
 
 export default function RootLayout({ children }) {
