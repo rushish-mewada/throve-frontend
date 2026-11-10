@@ -22,24 +22,46 @@ export default function CheckoutPage() {
 
   const handlePayNow = () => {
     startTransition(async () => {
-      // 2 seconds realistic payment gateway handshake & encryption
-      await new Promise((r) => setTimeout(r, 2000));
-      const res = await processCheckoutAction({
-        email,
-        firstName: firstName || 'Customer',
-        lastName: lastName || 'User',
-        address1: address || '123 Fashion Street',
-        city: city || 'Mumbai',
-        state: state || 'Maharashtra',
-        pincode: pincode || '400001',
-        paymentMethod,
-      });
+      try {
+        const orderItems = cartItems.length > 0 ? cartItems.map((item) => ({
+          variantId: item.productId || item.handle || "var_01",
+          title: item.title,
+          quantity: item.qty || 1,
+          pricePaise: (item.priceNum || 2900) * 100,
+        })) : [
+          {
+            variantId: "throve_lp_02",
+            title: "Overlapping Mandarin Collar Shirt",
+            quantity: 1,
+            pricePaise: 390000,
+          }
+        ];
 
-      if (res.success) {
-        clearCart();
-        setOrderConfirmed(res);
-      } else {
-        alert(res.error || 'Failed to place order');
+        const res = await processCheckoutAction({
+          items: orderItems,
+          email,
+          firstName: firstName || 'Customer',
+          lastName: lastName || 'User',
+          address1: address || 'Bandra West',
+          city: city || 'Mumbai',
+          state: state || 'Maharashtra',
+          pincode: pincode || '400050',
+          paymentMethod,
+        });
+
+        if (res.success) {
+          clearCart();
+          setOrderConfirmed(res);
+        } else {
+          alert(res.error || 'Failed to place order');
+        }
+      } catch (err) {
+        if (err?.message?.includes('Server Action') || String(err).includes('409')) {
+          // If a new build occurred while checkout tab was open, reload to fetch latest action ID
+          window.location.reload();
+        } else {
+          alert(err.message || 'Checkout failed, please try again.');
+        }
       }
     });
   };
