@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { LAUNCH_PRODUCTS } from '@/lib/catalog';
+import { searchProducts } from '@/lib/storefront/products';
 import styles from './page.module.css';
 
 export default async function SearchPage({ searchParams }) {
@@ -9,9 +10,18 @@ export default async function SearchPage({ searchParams }) {
   const queryLower = rawQuery.toLowerCase();
   const tokens = queryLower.split(/\s+/).filter(Boolean);
 
-  const matchedProducts = !rawQuery
-    ? []
-    : LAUNCH_PRODUCTS.filter((product) => {
+  let matchedProducts = [];
+  if (rawQuery) {
+    try {
+      const liveMatches = await searchProducts(rawQuery);
+      if (liveMatches.length > 0) {
+        matchedProducts = liveMatches;
+      }
+    } catch {
+      // Fallback below when storefront-api is unavailable
+    }
+    if (matchedProducts.length === 0) {
+      matchedProducts = LAUNCH_PRODUCTS.filter((product) => {
         const title = (product.title || '').toLowerCase();
         const category = (product.category || '').toLowerCase();
         const subcategory = (product.subcategory || '').toLowerCase();
@@ -20,9 +30,10 @@ export default async function SearchPage({ searchParams }) {
         const handle = (product.handle || '').toLowerCase();
         const fullCorpus = `${title} ${category} ${subcategory} ${collection} ${handle} ${desc}`;
 
-        // All tokens must match
         return tokens.every((token) => fullCorpus.includes(token));
       });
+    }
+  }
 
   const resultCount = matchedProducts.length;
 

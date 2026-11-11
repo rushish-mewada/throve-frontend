@@ -12,19 +12,30 @@ export function toProductProps(raw) {
 
   const pricePaise = Number(raw.pricePaise) || 0;
   const compareAtPaise = Number(raw.compareAtPricePaise) || 0;
+  const category = raw.metadata?.category || "Women";
+  const subcategory = raw.metadata?.subcategory || category;
 
   return {
     id: raw.id,
     handle: raw.handle,
     title: raw.title,
-    collection: raw.metadata?.subtitle || raw.metadata?.category || "Collection",
-    category: raw.metadata?.category || "Apparel",
+    collection: raw.metadata?.subtitle || category || "Collection",
+    category,
+    subcategory,
+    filterCategory: subcategory,
     description: raw.description || "",
     price: formatMoney(pricePaise, raw.currency || "INR"),
     oldPrice: compareAtPaise > pricePaise ? formatMoney(compareAtPaise, raw.currency || "INR") : null,
     priceNum: Math.round(pricePaise / 100),
+    rating: "4.9",
+    sold: "0",
+    comingSoon: false,
+    preOrder: false,
     inStock: Boolean(raw.inStock),
     images: (raw.images || []).map((img) => img.url).filter(Boolean),
+    colors: [],
+    colorHexes: ["#18181b"],
+    sizes: (raw.variants || []).map((v) => v.title).filter(Boolean),
     variants: (raw.variants || []).map((v) => ({
       id: v.id,
       name: v.title,

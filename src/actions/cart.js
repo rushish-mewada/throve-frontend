@@ -1,57 +1,69 @@
 "use server";
 
-import { sdk } from "@/lib/medusa/client";
+import crypto from "node:crypto";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 
-// Retrieves or creates a cart ID stored securely in a httpOnly cookie
+const CART_COOKIE = "_throve_cart";
+
+/**
+ * Retrieve or initialize a first-party HttpOnly cart stored on the storefront origin.
+ */
 export async function getOrInitCart() {
   const cookieStore = await cookies();
-  const cartId = cookieStore.get("_medusa_cart_id")?.value;
+  const raw = cookieStore.get(CART_COOKIE)?.value;
 
-  if (cartId) {
+  if (raw) {
     try {
-      const { cart } = await sdk.store.cart.retrieve(cartId, { fields: "*items, *region" });
-      return cart;
-    } catch (e) {
-      console.warn("Could not retrieve cart, creating a new one.");
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.items)) return parsed;
+    } catch {
+      // Create fresh cart if cookie is malformed
     }
   }
 
-  // Fetch the India region from the backend to ensure Indian Taxes & INR apply
-  const { regions } = await sdk.store.region.list({ country_code: "in" });
-  const indiaRegion = regions[0];
+  const freshCart = {
+    id: `cart_${crypto.randomBytes(8).toString("hex")}`,
+    currency: "INR",
+    items: [],
+  };
 
-  // Create a new cart explicitly bound to India
-  const { cart } = await sdk.store.cart.create({ 
-    region_id: indiaRegion?.id 
-  });
-  
-  cookieStore.set("_medusa_cart_id", cart.id, {
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+  cookieStore.set(CART_COOKIE, JSON.stringify(freshCart), {
+    maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
     sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
+    path: "/",
   });
 
-  return cart;
+  return freshCart;
 }
 
-// Zero-API Server Action: Adds an item to the cart strictly on the backend
-export async function addToCart(variantId) {
+/**
+ * Server Action: Add a variant line item to the first-party HttpOnly cart cookie.
+ */
+export async function addToCart(variantId, quantity = 1) {
   try {
+    const cookieStore = await cookies();
     const cart = await getOrInitCart();
-    
-    // Add the line item via the Medusa SDK (happens entirely on the Next.js Server)
-    await sdk.store.cart.createLineItem(cart.id, {
-      variant_id: variantId,
-      quantity: 1,
+    const existing = cart.items.find((it) => it.variantId === variantId);
+
+    if (existing) {
+      existing.quantity += Math.max(1, Number(quantity) || 1);
+    } else {
+      cart.items.push({ variantId, quantity: Math.max(1, Number(quantity) || 1) });
+    }
+
+    cookieStore.set(CART_COOKIE, JSON.stringify(cart), {
+      maxAge: 60 * 60 * 24 * 7,
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
     });
 
-    // Silently refresh the page data without full reload
     revalidatePath("/");
-    
-    return { success: true };
+    return { success: true, cart };
   } catch (error) {
     console.error("Failed to add to cart:", error);
     return { success: false, error: error.message };

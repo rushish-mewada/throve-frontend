@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { submitCheckout } from "@/lib/storefront/checkout";
 
 /**
@@ -11,6 +12,15 @@ import { submitCheckout } from "@/lib/storefront/checkout";
  */
 export async function processCheckoutAction(data) {
   try {
+    const cookieStore = await cookies();
+    let attribution;
+    try {
+      const attrCookie = cookieStore.get("throve_attr")?.value;
+      if (attrCookie) attribution = JSON.parse(attrCookie);
+    } catch {
+      attribution = undefined;
+    }
+
     const payload = {
       items: data.items && data.items.length > 0 ? data.items : [
         {
@@ -41,6 +51,7 @@ export async function processCheckoutAction(data) {
       },
       paymentMethod: "cod",
       couponCode: data.couponCode || "",
+      ...(attribution ? { attribution } : {}),
     };
 
     const result = await submitCheckout(payload);
