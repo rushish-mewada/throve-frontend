@@ -1,11 +1,20 @@
 "use client";
-import { useState, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
-import { processCheckoutAction } from '@/actions/checkout';
+import { getCheckoutPaymentOptionsAction, processCheckoutAction } from '@/actions/checkout';
+
+const FALLBACK_PAYMENT_OPTIONS = [
+  {
+    id: 'cod',
+    kind: 'offline',
+    label: 'Cash on Delivery (COD) · Zero Upfront Payment',
+    subtitle: 'Your pre-order will be tailored and dispatched with priority. Pay via Cash or UPI QR only when your parcel arrives.',
+  },
+];
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -18,8 +27,23 @@ export default function CheckoutPage() {
   const [city, setCity] = useState('');
   const [state, setState] = useState('Maharashtra');
   const [pincode, setPincode] = useState('');
+  const [paymentOptions, setPaymentOptions] = useState(FALLBACK_PAYMENT_OPTIONS);
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [isPending, startTransition] = useTransition();
+
+  useEffect(() => {
+    let active = true;
+    getCheckoutPaymentOptionsAction().then((res) => {
+      if (!active || !res?.methods?.length) return;
+      setPaymentOptions(res.methods);
+      setPaymentMethod(res.methods[0].id);
+    });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const selectedMethodMeta = paymentOptions.find((m) => m.id === paymentMethod) || paymentOptions[0];
 
   const handlePayNow = () => {
     startTransition(async () => {
@@ -60,7 +84,8 @@ export default function CheckoutPage() {
             total: res.totalFormatted,
             subtotal: res.totalFormatted,
             shipping: 'Free',
-            paymentMethod: 'Cash on Delivery (COD) · Zero Upfront Payment',
+            paymentMethod: res.paymentMethodLabel || selectedMethodMeta?.label || 'Cash on Delivery (COD)',
+            paymentSession: res.paymentSession || null,
             shippingAddress: {
               name: `${firstName || 'Customer'} ${lastName || 'User'}`.trim(),
               address: address || '123 Fashion Street',
@@ -94,6 +119,11 @@ export default function CheckoutPage() {
           }
 
           clearCart();
+          const externalCheckoutUrl = res.paymentSession?.checkoutUrl;
+          if (res.paymentMethod !== 'cod' && externalCheckoutUrl && /^https?:\/\//i.test(externalCheckoutUrl)) {
+            window.location.assign(externalCheckoutUrl);
+            return;
+          }
           router.push(`/order/${encodeURIComponent(targetId)}`);
         } else {
           alert(res.error || 'Failed to place order');
@@ -239,42 +269,61 @@ export default function CheckoutPage() {
           {step === 3 && (
             <div className={styles.sectionBody}>
               <p className={styles.paymentSub}>
-                <strong>Pre-Order Edition:</strong> Pay zero rupees today. 100% Cash on Delivery (COD) upon doorstep arrival.
+                {selectedMethodMeta?.id === 'cod' ? (
+                  <><strong>Pre-Order Edition:</strong> Pay zero rupees today. 100% Cash on Delivery (COD) upon doorstep arrival.</>
+                ) : (
+                  <><strong>Secure Online Checkout:</strong> Encrypted payment session via {selectedMethodMeta?.label}.</>
+                )}
               </p>
-              
+
               <div className={styles.paymentMethods}>
-                <label className={styles.paymentMethod} style={{ borderColor: '#111111', backgroundColor: '#fcfcfc', cursor: 'default' }}>
-                  <div className={styles.radioGroup}>
-                    <input 
-                      type="radio" 
-                      name="payment" 
-                      checked={true}
-                      readOnly
-                    />
-                    <div>
-                      <span style={{ fontWeight: 600, display: 'block', color: '#111111' }}>
-                        Cash on Delivery (COD) · Zero Upfront Payment
-                      </span>
-                      <span style={{ fontSize: '12px', color: '#71717a', marginTop: '2px', display: 'block' }}>
-                        Your pre-order will be tailored and dispatched with priority. Pay via Cash or UPI QR only when your parcel arrives.
-                      </span>
-                    </div>
-                  </div>
-                </label>
+                {paymentOptions.map((opt) => {
+                  const isSelected = paymentMethod === opt.id;
+                  return (
+                    <label
+                      key={opt.id}
+                      className={styles.paymentMethod}
+                      style={{
+                        borderColor: isSelected ? '#111111' : undefined,
+                        backgroundColor: isSelected ? '#fcfcfc' : undefined,
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <div className={styles.radioGroup}>
+                        <input
+                          type="radio"
+                          name="payment"
+                          checked={isSelected}
+                          onChange={() => setPaymentMethod(opt.id)}
+                        />
+                        <div>
+                          <span style={{ fontWeight: 600, display: 'block', color: '#111111' }}>
+                            {opt.label}
+                          </span>
+                          <span style={{ fontSize: '12px', color: '#71717a', marginTop: '2px', display: 'block' }}>
+                            {opt.subtitle}
+                          </span>
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
               </div>
-              <button 
-                className={styles.payBtn} 
-                onClick={handlePayNow} 
+              <button
+                className={styles.payBtn}
+                onClick={handlePayNow}
                 disabled={isPending}
                 style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
               >
                 {isPending ? (
                   <>
                     <span className={styles.spinner} />
-                    <span>Confirming Pre-Order...</span>
+                    <span>Processing Order...</span>
                   </>
-                ) : (
+                ) : selectedMethodMeta?.id === 'cod' ? (
                   "Confirm Pre-Order (Pay on Delivery)"
+                ) : (
+                  `Pay Now via ${selectedMethodMeta?.label || "Online Gateway"}`
                 )}
               </button>
             </div>

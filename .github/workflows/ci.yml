@@ -1,0 +1,60 @@
+name: Frontend Storefront CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: "1"
+      STOREFRONT_API_URL: http://127.0.0.1:3102
+      STOREFRONT_PUBLISHABLE_KEY: pk_ci_placeholder_key
+      STOREFRONT_SECRET_KEY: sk_ci_placeholder_key
+      REVALIDATE_SECRET: whsec_ci_placeholder_secret
+      NEXT_PUBLIC_SITE_URL: https://throve.in
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build storefront application
+        run: npm run build
+
+      - name: Scan client bundles for forbidden leaks
+        run: |
+          node -e '
+          const fs = require("node:fs");
+          const path = require("node:path");
+          function walk(dir) {
+            let out = [];
+            for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+              const p = path.join(dir, e.name);
+              if (e.isDirectory()) out = out.concat(walk(p));
+              else if (/\.(js|mjs|css)$/.test(e.name)) out.push(p);
+            }
+            return out;
+          }
+          const files = walk(".next/static");
+          const forbidden = [/NEXT_PUBLIC_STOREFRONT/, /sk_ci_placeholder_key/, /pk_ci_placeholder_key/, /STOREFRONT_SECRET_KEY/, /127\.0\.0\.1:3102/, /storefront-api/];
+          for (const f of files) {
+            const c = fs.readFileSync(f, "utf8");
+            for (const rx of forbidden) {
+              if (rx.test(c)) throw new Error("Privacy leak " + rx + " in " + f);
+            }
+          }
+          console.log("Client bundle privacy scan passed across " + files.length + " assets.");
+          '
+
+      - name: Security vulnerability audit
+        run: npm audit --audit-level=high
+
