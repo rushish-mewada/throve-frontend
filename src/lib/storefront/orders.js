@@ -12,7 +12,7 @@ export async function getOrderById(id) {
   if (!id) return null;
 
   try {
-    const res = await fetchStorefront(`/api/v1/orders/${encodeURIComponent(id)}`, {
+    const res = await fetchStorefront(`/v1/orders/${encodeURIComponent(id)}`, {
       cache: "no-store",
     });
 

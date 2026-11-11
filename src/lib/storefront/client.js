@@ -1,21 +1,21 @@
-const API_URL = process.env.STOREFRONT_API_URL || "http://127.0.0.1:3001";
-const SECRET_KEY = process.env.STOREFRONT_SECRET_KEY || "sk_throve_test_key";
-const PUBLISHABLE_KEY = process.env.STOREFRONT_PUBLISHABLE_KEY || "pk_throve_test_key";
+import "server-only";
+import { getStorefrontEnv } from "../../env.js";
 
 /**
- * Server-only fetcher for THROVE commerce API.
- * Never exposed to the browser.
+ * Server-only fetcher for standalone THROVE storefront-api (/v1).
+ * Never exposed to the browser and contains zero static URL or key fallbacks.
  *
  * @param {string} endpoint
  * @param {RequestInit & { secret?: boolean }} [options]
  * @returns {Promise<any>}
  */
 export async function fetchStorefront(endpoint, options = {}) {
-  const url = `${API_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+  const env = getStorefrontEnv();
+  const url = `${env.STOREFRONT_API_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
   const headers = {
     "Content-Type": "application/json",
-    "x-publishable-key": PUBLISHABLE_KEY,
-    ...(options.secret ? { Authorization: `Bearer ${SECRET_KEY}` } : {}),
+    "x-publishable-key": env.STOREFRONT_PUBLISHABLE_KEY,
+    ...(options.secret ? { Authorization: `Bearer ${env.STOREFRONT_SECRET_KEY}` } : {}),
     ...options.headers,
   };
 
