@@ -1,0 +1,59 @@
+name: Frontend CD Deploy
+
+on:
+  workflow_run:
+    workflows: ["Frontend Storefront CI"]
+    types: [completed]
+    branches: [dev, main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Check deployment secrets
+        id: check
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          if [ -n "$DEPLOY_HOST" ] && [ -n "$DEPLOY_USER" ] && [ -n "$DEPLOY_SSH_KEY" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "Skipping remote SSH deploy: configure DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY, and FRONTEND_ENV_PROD in GitHub Environment 'production' to activate automatic server rollout."
+          fi
+
+      - name: Deploy storefront to production host via SSH
+        if: steps.check.outputs.ready == 'true'
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_PATH: ${{ secrets.FRONTEND_DEPLOY_PATH || '/opt/throve/frontend' }}
+          FRONTEND_ENV_PROD: ${{ secrets.FRONTEND_ENV_PROD }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+          if [ -n "${FRONTEND_ENV_PROD:-}" ]; then
+            printf '%s\n' "$FRONTEND_ENV_PROD" | ssh -i ~/.ssh/id_deploy "${DEPLOY_USER}@${DEPLOY_HOST}" "umask 077 && mkdir -p '$DEPLOY_PATH' && tee '$DEPLOY_PATH/.env.prod' > '$DEPLOY_PATH/.env.production.local'"
+          fi
+
+          ssh -i ~/.ssh/id_deploy "${DEPLOY_USER}@${DEPLOY_HOST}" bash -s -- "$DEPLOY_PATH" <<'EOF'
+            set -euo pipefail
+            DEPLOY_DIR="$1"
+            cd "$DEPLOY_DIR"
+            git fetch origin dev
+            git reset --hard origin/dev
+            npm ci
+            npm run build
+            systemctl restart throve-frontend || pm2 restart throve-frontend || nohup npm run start > /var/log/throve-frontend.log 2>&1 &
+            sleep 3
+            curl -fsS -o /dev/null http://127.0.0.1:3000/
+          EOF
