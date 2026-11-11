@@ -51,15 +51,75 @@ export function toProductProps(raw) {
   };
 }
 
+export const PAYMENT_METHOD_LABELS = {
+  cod: { label: "Cash on Delivery (COD)", subtitle: "Pay at doorstep via cash or courier UPI" },
+  razorpay: { label: "Razorpay", subtitle: "UPI, Cards, NetBanking & Wallets" },
+  juspay: { label: "Juspay HyperCheckout", subtitle: "1-Click UPI & Orchestrated Cards" },
+  payu: { label: "PayU India", subtitle: "Cards, UPI AutoPay & NetBanking" },
+  cashfree: { label: "Cashfree Payments", subtitle: "Instant UPI, Cards & Wallets" },
+  phonepe: { label: "PhonePe PG", subtitle: "Direct PhonePe & UPI Switch" },
+  paytm: { label: "Paytm Gateway", subtitle: "Paytm Wallet, UPI & Postpaid" },
+  easebuzz: { label: "Easebuzz", subtitle: "UPI QR, Cards & NetBanking" },
+  stripe: { label: "Stripe", subtitle: "International Cards, Apple Pay & Google Pay" },
+  paypal: { label: "PayPal", subtitle: "PayPal Wallet & International Cards" },
+};
+
+/**
+ * Derive checkout payment method options from GET /v1/config (enforces single active online PG + optional COD).
+ *
+ * @param {Object} config
+ * @returns {{ activeOnlineGateway: string, codEnabled: boolean, codMaxOrderPaise: number, methods: Array<Object> }}
+ */
+export function toPaymentOptionsProps(config = {}) {
+  const commerce = config?.commerce || {};
+  const enabledList = Array.isArray(commerce.enabledPaymentGateways)
+    ? commerce.enabledPaymentGateways.map((id) => String(id || "").toLowerCase())
+    : ["cod", "razorpay"];
+
+  const activeOnlineGateway =
+    String(commerce.activePaymentGateway || "").toLowerCase() ||
+    enabledList.find((id) => id !== "cod") ||
+    "";
+
+  const codEnabled = commerce.codEnabled !== undefined ? Boolean(commerce.codEnabled) : enabledList.includes("cod");
+  const codMaxOrderPaise = Number(commerce.codMaxOrderPaise) || 1500000;
+
+  const methods = [];
+  if (activeOnlineGateway && PAYMENT_METHOD_LABELS[activeOnlineGateway]) {
+    methods.push({
+      id: activeOnlineGateway,
+      kind: "online",
+      ...PAYMENT_METHOD_LABELS[activeOnlineGateway],
+    });
+  }
+  if (codEnabled) {
+    methods.push({
+      id: "cod",
+      kind: "offline",
+      ...PAYMENT_METHOD_LABELS.cod,
+    });
+  }
+
+  return {
+    activeOnlineGateway,
+    codEnabled,
+    codMaxOrderPaise,
+    methods,
+  };
+}
+
 /**
  * Maps raw backend checkout result to props expected by the storefront.
  * Conforms to existing frontend components without modifying their markup.
  *
  * @param {Object} raw
- * @returns {Object}
+ * @returns {Object|null}
  */
 export function toCheckoutProps(raw) {
   if (!raw) return null;
+
+  const methodInfo = PAYMENT_METHOD_LABELS[raw.paymentMethod] || PAYMENT_METHOD_LABELS.cod;
+  const session = raw.paymentSession || null;
 
   return {
     orderId: raw.orderId,
@@ -68,7 +128,38 @@ export function toCheckoutProps(raw) {
     totalFormatted: formatMoney(raw.totalPaise, raw.currency),
     totalPaise: raw.totalPaise,
     paymentMethod: raw.paymentMethod,
-    paymentSession: raw.paymentSession || null,
+    paymentMethodLabel: methodInfo.label,
+    paymentSession: session
+      ? {
+          provider: session.provider,
+          environment: session.environment,
+          providerOrderId: session.providerOrderId,
+          publicKey: session.publicKey,
+          checkoutUrl: session.checkoutUrl,
+          clientSecret: session.clientSecret,
+          razorpayOrderId: session.razorpayOrderId,
+          razorpayKeyId: session.razorpayKeyId,
+          amountPaise: session.amountPaise,
+          currency: session.currency,
+        }
+      : null,
+  };
+}
+
+/**
+ * Normalize verification payload returned to client components after server-to-server verification.
+ *
+ * @param {Object} raw
+ * @returns {Object|null}
+ */
+export function toPaymentVerificationProps(raw) {
+  if (!raw) return null;
+  return {
+    verified: Boolean(raw.verified),
+    provider: raw.provider,
+    orderId: raw.orderId,
+    paymentStatus: raw.paymentStatus,
+    orderStatus: raw.orderStatus,
   };
 }
 
