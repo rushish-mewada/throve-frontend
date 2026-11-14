@@ -79,7 +79,12 @@
   height: 18px;
   border: 1px solid #cccccc;
   border-radius: 4px;
-  display: inline-block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .sizeGrid {
@@ -162,17 +167,4 @@
 .checkmarkChecked {
   background-color: #111111 !important;
   border-color: #111111 !important;
-  position: relative;
-}
-
-.checkmarkChecked::after {
-  content: "";
-  position: absolute;
-  left: 5px;
-  top: 2px;
-  width: 4px;
-  height: 8px;
-  border: solid white;
-  border-width: 0 2px 2px 0;
-  transform: rotate(45deg);
 }

@@ -78,7 +78,13 @@ export default function Filters({
                     }
                   }}
                 >
-                  <span className={`${styles.checkmark} ${isSelected ? styles.checkmarkChecked : ''}`} />
+                  <span className={`${styles.checkmark} ${isSelected ? styles.checkmarkChecked : ''}`}>
+                    {isSelected && (
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </span>
                   <span style={{ fontWeight: isSelected ? 600 : 400, color: isSelected ? '#111111' : '#555555' }}>
                     {item}
                   </span>
@@ -108,7 +114,13 @@ export default function Filters({
                     if (onTogglePriceRange) onTogglePriceRange(item);
                   }}
                 >
-                  <span className={`${styles.checkmark} ${isChecked ? styles.checkmarkChecked : ''}`} />
+                  <span className={`${styles.checkmark} ${isChecked ? styles.checkmarkChecked : ''}`}>
+                    {isChecked && (
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </span>
                   <span style={{ fontWeight: isChecked ? 600 : 400, color: isChecked ? '#111111' : '#555555' }}>
                     {item}
                   </span>

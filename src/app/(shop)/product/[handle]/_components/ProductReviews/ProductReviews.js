@@ -824,16 +824,36 @@ export default function ProductReviews({ productHandle = 'default', productTitle
               return (
                 <label
                   key={rating}
-                  className={styles.checkboxLabel}
-                  onClick={() => setSelectedRatingFilter(isChecked ? null : rating)}
-                  style={{ fontWeight: isChecked ? 600 : 400 }}
+                  className={`${styles.checkboxLabel} ${isChecked ? styles.checkboxLabelActive : ''}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setSelectedRatingFilter(isChecked ? null : rating);
+                  }}
                 >
-                  <input type="checkbox" checked={isChecked} readOnly />
-                  <span
-                    className={styles.checkmark}
-                    style={{ backgroundColor: isChecked ? '#1c1917' : 'transparent', borderColor: isChecked ? '#1c1917' : '#d6d3d1' }}
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => setSelectedRatingFilter(isChecked ? null : rating)}
                   />
-                  <span className={styles.starIcon}>★</span> {rating} Stars
+                  <span
+                    className={`${styles.checkmark} ${isChecked ? styles.checkmarkChecked : ''}`}
+                  >
+                    {isChecked && (
+                      <svg
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="#ffffff"
+                        strokeWidth="3.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
+                  </span>
+                  <span className={styles.starIcon}>★</span> {rating} {rating === 1 ? 'Star' : 'Stars'}
                   <span className={styles.filterBadge}>{ratingCounts[rating]}</span>
                 </label>
               );
