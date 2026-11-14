@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Image from 'next/image';
+import ProductCard from '@/components/ui/ProductCard/ProductCard';
 import { LAUNCH_PRODUCTS } from '@/lib/catalog';
 import { searchProducts } from '@/lib/storefront/products';
 import styles from './page.module.css';
@@ -119,33 +119,13 @@ export default async function SearchPage({ searchParams }) {
             </div>
             
             <div className={styles.productGrid}>
-              {matchedProducts.map((product) => {
-                const img = product.images?.[0] || product.image || '/products/asymmetric-mandarin-shirt/main.jpg';
-                const colors = product.colorHexes || ['#000000'];
-                return (
-                  <Link href={`/product/${product.handle}`} key={product.id} className={styles.productCard}>
-                    <div className={styles.imageWrapper}>
-                      <Image src={img} alt={product.title} fill style={{ objectFit: 'cover' }} sizes="(max-width: 768px) 50vw, 25vw" />
-                    </div>
-                    <div className={styles.productInfo}>
-                      <div className={styles.productTop}>
-                        <h3>{product.title}</h3>
-                        <div className={styles.rating}>
-                          <span>★</span> {Number(product.rating) > 0 ? product.rating : '0'}
-                        </div>
-                      </div>
-                      <div className={styles.productBottom}>
-                        <span className={styles.price}>{product.price}</span>
-                        <div className={styles.colorDots}>
-                          {colors.map((color, idx) => (
-                            <span key={idx} className={styles.dot} style={{ backgroundColor: color }} />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })}
+              {matchedProducts.map((product) => (
+                <ProductCard
+                  key={product.id || product.handle}
+                  product={product}
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+              ))}
             </div>
           </div>
         )}

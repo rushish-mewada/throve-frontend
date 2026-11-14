@@ -106,9 +106,14 @@ export default function CollectionClient({ initialCategory, initialProducts, fil
 
     // 4. Filter by color
     if (selectedColors.length > 0) {
-      result = result.filter((p) =>
-        p.colors ? p.colors.some((c) => selectedColors.includes(c)) : true
-      );
+      result = result.filter((p) => {
+        const hexes = Array.isArray(p.colorHexes) && p.colorHexes.length > 0
+          ? p.colorHexes
+          : (Array.isArray(p.colors)
+              ? p.colors.map((c) => (typeof c === 'string' ? c : c?.hex))
+              : []);
+        return hexes.some((h) => selectedColors.includes(h));
+      });
     }
 
     // 5. Sort

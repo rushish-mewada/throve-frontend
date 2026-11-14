@@ -10,17 +10,17 @@ function buildCollectionsConfig(sourceProducts) {
     const hasCutout = Boolean(vtonObj?.cutout_url && String(vtonObj.cutout_url).trim().length > 0);
     const isVtonActive = Boolean(vtonObj?.enabled && hasCutout);
 
+    const images = Array.isArray(p.images) && p.images.length > 0
+      ? p.images
+      : (p.image ? [p.image] : ['/products/asymmetric-mandarin-shirt/main.jpg']);
+
     return {
-      id: p.id,
-      title: p.title,
-      price: p.price,
-      priceNum: p.priceNum,
-      rating: p.rating,
-      category: p.filterCategory,
-      image: p.images[0] || '/products/asymmetric-mandarin-shirt/main.jpg',
-      colors: p.colorHexes,
+      ...p,
+      category: p.filterCategory || p.category,
+      images,
+      colors: p.colors || p.colorHexes,
+      colorHexes: p.colorHexes || (Array.isArray(p.colors) ? p.colors.map((c) => (typeof c === 'string' ? c : c?.hex)) : []),
       sizes: p.sizes,
-      handle: p.handle,
       vton: vtonObj,
       vtonActive: p.vtonActive !== undefined ? (p.vtonActive && hasCutout) : isVtonActive,
     };

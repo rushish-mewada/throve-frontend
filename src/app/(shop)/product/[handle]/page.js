@@ -36,16 +36,12 @@ export default async function ProductPage({ params }) {
 
   const relatedProducts = sourcePool
     .filter((p) => p.handle !== product.handle)
-    .slice(0, 4)
-    .map((p) => ({
-      id: p.id,
-      title: p.title,
-      price: p.price,
-      rating: p.rating,
-      image: p.images[0],
-      colors: p.colorHexes,
-      handle: p.handle,
-    }));
+    .slice(0, 4);
+
+  const popularProducts = [...sourcePool]
+    .reverse()
+    .filter((p) => p.handle !== product.handle)
+    .slice(0, 4);
 
   return (
     <main className={styles.pdpLayout}>
@@ -113,7 +109,7 @@ export default async function ProductPage({ params }) {
 
       <ProductGrid
         title="Popular This Week"
-        products={relatedProducts}
+        products={popularProducts}
         seeAllLink="/collections/new-arrivals"
       />
     </main>
