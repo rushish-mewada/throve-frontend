@@ -20,7 +20,8 @@ export default function AddToCartClient({ variants = [], colors = [], product })
     ? colors
     : [{ id: 'c_default', name: 'Classic', hex: '#18181b' }];
 
-  const [selectedSize, setSelectedSize] = useState(safeVariants[1] || safeVariants[0]);
+  const [selectedSize, setSelectedSize] = useState(null);
+  const [sizeError, setSizeError] = useState(false);
   const [selectedColor, setSelectedColor] = useState(safeColors[0]);
   const [isAdding, setIsAdding] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
@@ -29,6 +30,10 @@ export default function AddToCartClient({ variants = [], colors = [], product })
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
   const handleAddToCart = () => {
+    if (!selectedSize) {
+      setSizeError(true);
+      return;
+    }
     if (isAdding) return;
     setIsAdding(true);
     const sizeName = selectedSize?.name || selectedSize?.title || 'M';
@@ -41,6 +46,10 @@ export default function AddToCartClient({ variants = [], colors = [], product })
   };
 
   const handleCheckoutNow = () => {
+    if (!selectedSize) {
+      setSizeError(true);
+      return;
+    }
     setIsCheckingOut(true);
     const sizeName = selectedSize?.name || selectedSize?.title || 'M';
     const colorName = selectedColor?.name || 'Standard';
@@ -70,7 +79,9 @@ export default function AddToCartClient({ variants = [], colors = [], product })
       {/* Sizes */}
       <div className={styles.optionGroup}>
         <div className={styles.sizeHeader}>
-          <span className={styles.optionLabel}>Size: <span>{selectedSize?.name || selectedSize?.title || 'M'}</span></span>
+          <span className={styles.optionLabel}>
+            Size: {selectedSize ? <span>{selectedSize.name || selectedSize.title}</span> : <span className={styles.sizePrompt}>Select your size</span>}
+          </span>
           <button
             type="button"
             className={styles.sizeGuideBtn}
@@ -79,23 +90,31 @@ export default function AddToCartClient({ variants = [], colors = [], product })
             View Size Chart
           </button>
         </div>
-        <div className={styles.sizeList}>
+        <div className={`${styles.sizeList} ${sizeError ? styles.sizeListError : ''}`}>
           {safeVariants.map((v) => {
             const rawLabel = v.name || v.title || 'M';
             const shortLabel = rawLabel.includes(' / ') ? rawLabel.split(' / ')[0].trim() : rawLabel;
-            const isSelected = selectedSize?.id === v.id || selectedSize?.name === v.name || selectedSize?.name === shortLabel;
+            const isSelected = selectedSize && (selectedSize.id === v.id || selectedSize.name === v.name || selectedSize.name === shortLabel);
             return (
               <button
                 key={v.id}
                 type="button"
                 className={`${styles.sizeBtn} ${isSelected ? styles.sizeActive : ''}`}
-                onClick={() => setSelectedSize({ ...v, name: shortLabel })}
+                onClick={() => {
+                  setSelectedSize({ ...v, name: shortLabel });
+                  setSizeError(false);
+                }}
               >
                 {shortLabel}
               </button>
             );
           })}
         </div>
+        {sizeError && (
+          <div className={styles.sizeErrorMsg} role="alert">
+            Please choose a size to continue
+          </div>
+        )}
       </div>
 
       {/* Luxury Delivery & Service Guarantee */}

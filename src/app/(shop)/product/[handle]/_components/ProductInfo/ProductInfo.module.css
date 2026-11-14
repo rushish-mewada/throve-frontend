@@ -209,6 +209,33 @@
   font-weight: 700;
 }
 
+.sizePrompt {
+  color: #71717a;
+  font-weight: 400;
+}
+
+.sizeListError .sizeBtn {
+  border-color: #ef4444;
+}
+
+.sizeErrorMsg {
+  margin-top: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  animation: shakeSize 0.25s ease-in-out;
+}
+
+@keyframes shakeSize {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
 .vtonTriggerSection {
   margin: 1.25rem 0 0.25rem 0;
 }
