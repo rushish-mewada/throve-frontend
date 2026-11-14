@@ -5,19 +5,60 @@
 }
 
 .breadcrumbs {
+  margin-bottom: 20px;
+}
+
+.breadcrumbList {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.85rem;
-  color: #888888;
-  margin-bottom: 16px;
+  font-size: 0.82rem;
+  color: #71717a;
+  line-height: 1.4;
+  white-space: nowrap;
 }
 
-.breadcrumbs span {
-  cursor: pointer;
+.breadcrumbItem {
+  display: inline-flex;
+  align-items: center;
 }
 
-.breadcrumbs span:last-child {
+.breadcrumbLink {
+  color: #71717a;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.breadcrumbLink:hover {
+  color: #111111;
+  text-decoration: underline;
+}
+
+.breadcrumbSeparator {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 8px;
+  color: #a1a1aa;
+  font-size: 0.72rem;
+  user-select: none;
+}
+
+.breadcrumbText {
+  color: #71717a;
+}
+
+.breadcrumbCurrent {
   color: #111111;
   font-weight: 500;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .topSection {
@@ -43,8 +84,29 @@
     margin-bottom: 40px;
   }
   .breadcrumbs {
-    font-size: 0.8rem;
+    margin-bottom: 14px;
     overflow-x: auto;
-    white-space: nowrap;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    padding-bottom: 4px;
+  }
+
+  .breadcrumbs::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+  }
+
+  .breadcrumbList {
+    font-size: 0.78rem;
+  }
+
+  .breadcrumbSeparator {
+    margin: 0 6px;
+    font-size: 0.68rem;
+  }
+
+  .breadcrumbCurrent {
+    max-width: 180px;
   }
 }

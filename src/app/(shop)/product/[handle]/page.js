@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ProductGallery from './_components/ProductGallery/ProductGallery';
 import ProductInfo from './_components/ProductInfo/ProductInfo';
@@ -48,9 +49,50 @@ export default async function ProductPage({ params }) {
 
   return (
     <main className={styles.pdpLayout}>
-      <div className={styles.breadcrumbs}>
-        <span>Homepage</span> &gt; <span>{product.category}</span> &gt; <span>{product.subcategory}</span> &gt; <span>{product.title}</span>
-      </div>
+      {/* Semantic Breadcrumbs with Deduplication and Clean Mobile Touch Scroll */}
+      <nav aria-label="Breadcrumb" className={styles.breadcrumbs}>
+        <ol className={styles.breadcrumbList}>
+          <li className={styles.breadcrumbItem}>
+            <Link href="/" className={styles.breadcrumbLink}>
+              Home
+            </Link>
+          </li>
+          <li className={styles.breadcrumbSeparator} aria-hidden="true">
+            /
+          </li>
+          {product.category && (
+            <>
+              <li className={styles.breadcrumbItem}>
+                <Link
+                  href={`/collections/${product.category.toLowerCase() === 'men' ? 'men' : 'women'}`}
+                  className={styles.breadcrumbLink}
+                >
+                  {product.category}
+                </Link>
+              </li>
+              {product.subcategory &&
+                product.subcategory.trim().toLowerCase() !== product.category.trim().toLowerCase() && (
+                  <>
+                    <li className={styles.breadcrumbSeparator} aria-hidden="true">
+                      /
+                    </li>
+                    <li className={styles.breadcrumbItem}>
+                      <span className={styles.breadcrumbText}>{product.subcategory}</span>
+                    </li>
+                  </>
+                )}
+              <li className={styles.breadcrumbSeparator} aria-hidden="true">
+                /
+              </li>
+            </>
+          )}
+          <li className={`${styles.breadcrumbItem} ${styles.breadcrumbItemActive}`} aria-current="page">
+            <span className={styles.breadcrumbCurrent} title={product.title}>
+              {product.title}
+            </span>
+          </li>
+        </ol>
+      </nav>
       
       <div className={styles.topSection}>
         <div className={styles.galleryColumn}>
