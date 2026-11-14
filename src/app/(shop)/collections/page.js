@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { getCollections } from '@/lib/storefront/collections';
 import styles from './page.module.css';
 
 export const metadata = {
@@ -52,7 +53,23 @@ const COLLECTIONS = [
   },
 ];
 
-export default function CollectionsPage() {
+export default async function CollectionsPage() {
+  let displayCollections = COLLECTIONS;
+  try {
+    const liveList = await getCollections();
+    if (Array.isArray(liveList) && liveList.length > 0) {
+      displayCollections = liveList.map((col) => ({
+        handle: col.handle,
+        title: col.title,
+        subtitle: col.description || col.subtitle || 'Atelier Collection',
+        itemCount: col.productsCount ? `${col.productsCount} Styles` : (col.itemCount || 'Curated Styles'),
+        image: col.image || col.thumbnail || '/products/navy-tailored-mini-dress/main.jpg?v=3',
+      }));
+    }
+  } catch {
+    displayCollections = COLLECTIONS;
+  }
+
   return (
     <main className={styles.collectionsPage}>
       <div className={styles.container}>
@@ -65,7 +82,7 @@ export default function CollectionsPage() {
         </div>
 
         <div className={styles.grid}>
-          {COLLECTIONS.map((col) => (
+          {displayCollections.map((col) => (
             <Link
               key={col.handle}
               href={`/collections/${col.handle}`}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import { submitContactInquiryAction } from '@/actions/contact';
 import styles from './page.module.css';
 
 export default function ContactPage() {
@@ -12,6 +13,7 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,11 +25,21 @@ export default function ContactPage() {
     if (isSubmitting) return;
 
     setIsSubmitting(true);
-    // 2-second realistic submission simulation
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
-    setFormData({ name: '', email: '', orderNumber: '', message: '' });
+    setSubmitError('');
+
+    try {
+      const res = await submitContactInquiryAction(formData);
+      if (res?.ok) {
+        setIsSubmitted(true);
+        setFormData({ name: '', email: '', orderNumber: '', message: '' });
+      } else {
+        setSubmitError(res?.error || 'Failed to send inquiry. Please try again or reach out on WhatsApp.');
+      }
+    } catch {
+      setSubmitError('Unable to send inquiry. Please try again or chat with our WhatsApp concierge.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -88,6 +100,21 @@ export default function ContactPage() {
                 lineHeight: 1.5
               }}>
                 ✓ Thank you! Your message has been received. Our concierge team will reply within 24 hours.
+              </div>
+            )}
+
+            {submitError && (
+              <div style={{
+                background: '#fef2f2',
+                border: '1px solid #fecaca',
+                color: '#991b1b',
+                padding: '14px 18px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '0.92rem',
+                lineHeight: 1.5
+              }}>
+                {submitError}
               </div>
             )}
             

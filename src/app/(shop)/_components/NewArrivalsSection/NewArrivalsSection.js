@@ -66,16 +66,18 @@ const NEW_ARRIVALS = [
   },
 ];
 
-export default function NewArrivalsSection() {
+export default function NewArrivalsSection({ products }) {
+  const displayProducts = Array.isArray(products) && products.length > 0 ? products : NEW_ARRIVALS;
   const { isInWishlist, toggleWishlist, addToCart } = useStore();
   const [activeImageIndices, setActiveImageIndices] = useState({});
 
   const handlePrevImage = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
+    const count = Array.isArray(product.images) && product.images.length > 0 ? product.images.length : 1;
     setActiveImageIndices((prev) => {
       const current = prev[product.id] || 0;
-      const next = current === 0 ? product.images.length - 1 : current - 1;
+      const next = current === 0 ? count - 1 : current - 1;
       return { ...prev, [product.id]: next };
     });
   };
@@ -83,9 +85,10 @@ export default function NewArrivalsSection() {
   const handleNextImage = (product, e) => {
     e.preventDefault();
     e.stopPropagation();
+    const count = Array.isArray(product.images) && product.images.length > 0 ? product.images.length : 1;
     setActiveImageIndices((prev) => {
       const current = prev[product.id] || 0;
-      const next = (current + 1) % product.images.length;
+      const next = (current + 1) % count;
       return { ...prev, [product.id]: next };
     });
   };
@@ -101,9 +104,12 @@ export default function NewArrivalsSection() {
         </div>
 
         <div className={styles.grid}>
-          {NEW_ARRIVALS.map((product) => {
+          {displayProducts.map((product) => {
+            const imagesList = Array.isArray(product.images) && product.images.length > 0
+              ? product.images
+              : [product.image || '/products/navy-tailored-mini-dress/main.jpg?v=3'];
             const currentImgIndex = activeImageIndices[product.id] || 0;
-            const currentImage = product.images[currentImgIndex];
+            const currentImage = imagesList[currentImgIndex] || imagesList[0];
 
             return (
               <div key={product.id} className={styles.productCard}>
