@@ -26,7 +26,7 @@ const PAYMENT_OPTIONS = [
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, cartSubtotal, clearCart, user } = useStore();
+  const { cartItems, cartSubtotal, clearCart, user, isMounted } = useStore();
   const [step, setStep] = useState(1); // 1: Contact, 2: Delivery, 3: Payment
   
   // Contact & Delivery State
@@ -61,15 +61,15 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
-  // Redirect if cart is empty
+  // Redirect if cart is empty after hydration
   useEffect(() => {
-    if (!cartItems || cartItems.length === 0) {
+    if (isMounted && (!cartItems || cartItems.length === 0)) {
       const timer = setTimeout(() => {
         router.replace('/');
-      }, 1500);
+      }, 2500);
       return () => clearTimeout(timer);
     }
-  }, [cartItems, router]);
+  }, [isMounted, cartItems, router]);
 
   const selectedMethodMeta = PAYMENT_OPTIONS.find((m) => m.id === paymentMethod) || PAYMENT_OPTIONS[0];
 
@@ -161,9 +161,8 @@ export default function CheckoutPage() {
               sessionStorage.setItem('throve_last_order', JSON.stringify(snapshot));
             } catch {}
 
-            clearCart();
-
             // Launch Cashfree Checkout Modal with customer's real phone & details
+            // Note: Cart is preserved until payment is confirmed on /order/[id]
             await launchCashfreeCheckout({
               paymentSessionId: res.paymentSessionId,
               environment: res.environment || 'production',
@@ -231,6 +230,27 @@ export default function CheckoutPage() {
       }
     });
   };
+
+  if (!isMounted) {
+    return (
+      <main className={styles.checkoutLayout} style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ textAlign: 'center', maxWidth: '440px', padding: '32px' }}>
+          <div style={{
+            width: '36px',
+            height: '36px',
+            border: '2px solid #e5e5e5',
+            borderTopColor: '#111',
+            borderRadius: '50%',
+            animation: 'spin 0.8s linear infinite',
+            margin: '0 auto 16px',
+          }} />
+          <h2 style={{ fontSize: '15px', fontWeight: 500, color: '#111', margin: 0, letterSpacing: '0.04em' }}>
+            Loading your atelier bag...
+          </h2>
+        </div>
+      </main>
+    );
+  }
 
   if (!cartItems || cartItems.length === 0) {
     return (

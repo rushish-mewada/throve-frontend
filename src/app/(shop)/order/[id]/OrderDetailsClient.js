@@ -3,10 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useStore } from "@/context/StoreContext";
 import styles from "./page.module.css";
 
 export default function OrderDetailsClient({ serverOrder, orderId }) {
   const [order, setOrder] = useState(serverOrder);
+  const { clearCart } = useStore();
+
+  useEffect(() => {
+    // Clear the cart on successful order confirmation page arrival
+    clearCart();
+  }, [clearCart]);
 
   useEffect(() => {
     let active = true;

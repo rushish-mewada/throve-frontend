@@ -207,6 +207,7 @@ export function StoreProvider({ children }) {
         cartItems,
         cartCount,
         cartSubtotal,
+        isMounted,
         isCartDrawerOpen,
         setIsCartDrawerOpen,
         openCart: () => setIsCartDrawerOpen(true),

@@ -62,7 +62,7 @@ export default async function ProductPage({ params }) {
         seeAllLink={`/collections/${product.category.toLowerCase() === 'men' ? 'men' : 'women'}`}
       />
       
-      <ProductReviews />
+      <ProductReviews productHandle={product?.handle} productTitle={product?.title} />
 
       <ProductGrid
         title="Popular This Week"
