@@ -70,9 +70,13 @@ const FAQ_SECTIONS = [
   },
 ];
 
-export default function FaqAccordion() {
+export default function FaqAccordion({ sections }) {
+  const activeSections = (Array.isArray(sections) && sections.length > 0) ? sections : FAQ_SECTIONS;
   const [activeTab, setActiveTab] = useState(0);
   const [openItems, setOpenItems] = useState({});
+
+  const safeTab = Math.min(activeTab, Math.max(0, activeSections.length - 1));
+  const currentSection = activeSections[safeTab] || { items: [] };
 
   const toggleItem = (categoryIndex, itemIndex) => {
     const key = `${categoryIndex}-${itemIndex}`;
@@ -86,11 +90,11 @@ export default function FaqAccordion() {
     <div className={styles.container}>
       {/* Category Pills */}
       <div className={styles.categoryTabs}>
-        {FAQ_SECTIONS.map((section, idx) => (
+        {activeSections.map((section, idx) => (
           <button
-            key={section.category}
+            key={section.category || idx}
             type="button"
-            className={`${styles.tabBtn} ${activeTab === idx ? styles.activeTab : ''}`}
+            className={`${styles.tabBtn} ${safeTab === idx ? styles.activeTab : ''}`}
             onClick={() => setActiveTab(idx)}
           >
             {section.category}
@@ -100,8 +104,8 @@ export default function FaqAccordion() {
 
       {/* Accordion List for Active Category */}
       <div className={styles.accordionList}>
-        {FAQ_SECTIONS[activeTab].items.map((item, itemIdx) => {
-          const isOpen = !!openItems[`${activeTab}-${itemIdx}`];
+        {currentSection.items.map((item, itemIdx) => {
+          const isOpen = !!openItems[`${safeTab}-${itemIdx}`];
           return (
             <div
               key={item.q}
@@ -110,7 +114,7 @@ export default function FaqAccordion() {
               <button
                 type="button"
                 className={styles.questionBtn}
-                onClick={() => toggleItem(activeTab, itemIdx)}
+                onClick={() => toggleItem(safeTab, itemIdx)}
                 aria-expanded={isOpen}
               >
                 <span className={styles.questionText}>{item.q}</span>

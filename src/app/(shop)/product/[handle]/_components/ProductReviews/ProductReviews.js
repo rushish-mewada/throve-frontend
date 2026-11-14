@@ -184,7 +184,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                   }
                 }
               }
-            } catch {}
+            } catch { }
 
             setIsEligibleToReview(false);
             setEligibilityData(res);
@@ -341,7 +341,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
         const stored = localStorage.getItem(`throve_reviews_${productHandle}`);
         const parsed = stored ? JSON.parse(stored) : [];
         localStorage.setItem(`throve_reviews_${productHandle}`, JSON.stringify([newReview, ...parsed]));
-      } catch {}
+      } catch { }
 
       // Reset form
       setFormTitle('');
@@ -801,7 +801,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
             </span>
           </div>
         </div>
-        
+
         <div className={styles.ratingBars}>
           {ratingBars.map((bar, i) => (
             <div
@@ -838,7 +838,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
               </button>
             )}
           </div>
-          
+
           <div className={styles.filterList}>
             {[5, 4, 3, 2, 1].map((rating) => {
               const isChecked = selectedRatingFilter === rating;
@@ -882,7 +882,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
               </span>
             )}
           </div>
-          
+
           {/* Filter Tabs */}
           <div className={styles.tabs}>
             <button
@@ -990,7 +990,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                       ))}
                     </div>
                   )}
-                  
+
                   <div className={styles.reviewFooter}>
                     <div className={styles.reviewerInfo}>
                       <div className={styles.avatar}>
@@ -1003,7 +1003,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className={styles.reviewActions}>
                       <button
                         type="button"
@@ -1012,7 +1012,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                         title="Mark as helpful"
                       >
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+                          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
                         </svg>
                         <span>Helpful ({review.likes || 0})</span>
                       </button>

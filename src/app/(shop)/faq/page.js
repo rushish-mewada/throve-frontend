@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getStorefrontConfig } from '@/lib/storefront/config';
 import FaqAccordion from './_components/FaqAccordion/FaqAccordion';
 import styles from './page.module.css';
 
@@ -7,7 +8,22 @@ export const metadata = {
   description: 'Find answers regarding Throve shipping, COD policies, returns, sizing, and order tracking across India.',
 };
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const config = await getStorefrontConfig().catch(() => ({}));
+  let customSections = null;
+  if (Array.isArray(config?.faq?.items) && config.faq.items.length > 0) {
+    const grouped = {};
+    for (const item of config.faq.items) {
+      const cat = item.category || 'General';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push({ q: item.question, a: item.answer });
+    }
+    customSections = Object.entries(grouped).map(([category, items]) => ({
+      category,
+      items,
+    }));
+  }
+
   return (
     <main className={styles.faqPage}>
       <div className={styles.container}>
@@ -19,7 +35,7 @@ export default function FaqPage() {
           </p>
         </div>
 
-        <FaqAccordion />
+        <FaqAccordion sections={customSections} />
 
         <div className={styles.contactBanner}>
           <div className={styles.bannerContent}>

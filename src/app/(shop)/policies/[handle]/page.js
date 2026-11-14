@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getStorefrontConfig } from '@/lib/storefront/config';
 import styles from './page.module.css';
 
 const policies = {
@@ -168,7 +169,8 @@ const policies = {
 
 export default async function PolicyPage({ params }) {
   const resolvedParams = await params;
-  const policy = policies[resolvedParams?.handle];
+  const handle = resolvedParams?.handle;
+  const policy = policies[handle];
 
   if (!policy) {
     return (
@@ -181,6 +183,18 @@ export default async function PolicyPage({ params }) {
     );
   }
 
+  const config = await getStorefrontConfig().catch(() => ({}));
+  let customContent = null;
+  if (handle === 'terms' && config?.policies?.termsContent) {
+    customContent = config.policies.termsContent;
+  } else if (handle === 'privacy' && config?.policies?.privacyContent) {
+    customContent = config.policies.privacyContent;
+  } else if (handle === 'shipping' && config?.policies?.shippingContent) {
+    customContent = config.policies.shippingContent;
+  } else if ((handle === 'refunds' || handle === 'returns') && config?.policies?.refundContent) {
+    customContent = config.policies.refundContent;
+  }
+
   return (
     <main className={styles.policyLayout}>
       <div className={styles.container}>
@@ -189,7 +203,13 @@ export default async function PolicyPage({ params }) {
           <p>Last updated: {policy.updated}</p>
         </div>
         <div className={styles.content}>
-          {policy.content}
+          {customContent ? (
+            customContent.split('\n\n').map((block, idx) => (
+              <p key={idx}>{block}</p>
+            ))
+          ) : (
+            policy.content
+          )}
         </div>
       </div>
     </main>
