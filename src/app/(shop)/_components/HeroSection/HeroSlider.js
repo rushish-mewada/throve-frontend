@@ -19,7 +19,7 @@ const PRODUCTS = [
         title: "Overlapping Mandarin Collar Shirt",
         collection: "First Launch · S/S 25",
         price: "₹ 3,900",
-        rating: "4.9",
+        rating: "0",
         color: "Espresso Brown",
         colorDots: ["#4A2E18"],
         dotTop: "32%",
@@ -42,7 +42,7 @@ const PRODUCTS = [
         title: "High Waisted Circular Flare Pants",
         collection: "First Launch · S/S 25",
         price: "₹ 3,950",
-        rating: "4.9",
+        rating: "0",
         color: "Dusty Rose",
         colorDots: ["#C47E85"],
         dotTop: "54%",
@@ -65,7 +65,7 @@ const PRODUCTS = [
         title: "Sleeveless Tailored Mini Dress",
         collection: "First Launch · S/S 25",
         price: "₹ 4,800",
-        rating: "4.9",
+        rating: "0",
         color: "Deep Navy",
         colorDots: ["#1C2841"],
         dotTop: "32%",
@@ -88,7 +88,7 @@ const PRODUCTS = [
         title: "Sleeveless Princess Line Sheath Dress",
         collection: "First Launch · S/S 25",
         price: "₹ 4,900",
-        rating: "4.9",
+        rating: "0",
         color: "Soft Cream",
         colorDots: ["#FAF7F2"],
         dotTop: "34%",
@@ -111,7 +111,7 @@ const PRODUCTS = [
         title: "Pleated Straight Formal Pants with Turnup",
         collection: "First Launch · S/S 25",
         price: "₹ 4,200",
-        rating: "4.8",
+        rating: "0",
         color: "Ivory Cream",
         colorDots: ["#F5F2EB"],
         dotTop: "52%",
@@ -134,7 +134,7 @@ const PRODUCTS = [
         title: "Scalloped Sweetheart Top",
         collection: "First Launch · S/S 25",
         price: "₹ 2,900",
-        rating: "4.8",
+        rating: "0",
         color: "Blush Pink",
         colorDots: ["#E8B4B8"],
         dotTop: "30%",
@@ -183,12 +183,11 @@ export default function HeroSlider({ products = [] }) {
         return (pHandle && pHandle === hs.handle) || (pTitle && pTitle === hsTitle);
       });
 
-      if (!liveProd) return hs;
+      if (!liveProd) return { ...hs, rating: "0" };
 
-      const ratingNum = liveProd.rating !== null && liveProd.rating !== undefined ? Number(liveProd.rating) : null;
-      const ratingStr = ratingNum !== null && !isNaN(ratingNum)
-        ? (ratingNum > 0 ? ratingNum.toFixed(1) : "0")
-        : (hs.rating || "0");
+      const hasRating = liveProd.rating !== null && liveProd.rating !== undefined && !isNaN(Number(liveProd.rating));
+      const ratingNum = hasRating ? Number(liveProd.rating) : 0;
+      const ratingStr = ratingNum > 0 ? ratingNum.toFixed(1) : "0";
 
       const colorDots = Array.isArray(liveProd.colorHexes) && liveProd.colorHexes.length > 0
         ? liveProd.colorHexes

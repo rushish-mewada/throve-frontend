@@ -16,7 +16,7 @@ export default async function Home() {
       <HeroSection title={config?.home?.heroTitle} products={products} />
       <CategorySection />
       <NewArrivalsSection products={products} />
-      <ShopTheLookSection />
+      <ShopTheLookSection products={products} />
     </main>
   );
 }

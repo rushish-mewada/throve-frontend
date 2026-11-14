@@ -17,7 +17,7 @@ const LOOKS = [
         id: 'throve_lp_04',
         title: 'Scalloped Sweetheart Top',
         price: '₹ 2,900',
-        rating: '4.8',
+        rating: '0',
         images: [
           '/products/scalloped-sweetheart-top/front.jpg?v=3',
           '/products/scalloped-sweetheart-top/right tilted.jpg?v=3',
@@ -31,7 +31,7 @@ const LOOKS = [
         id: 'throve_lp_06',
         title: 'High Waisted Circular Flare Pants',
         price: '₹ 3,950',
-        rating: '4.9',
+        rating: '0',
         images: [
           '/products/high-waisted-flare-pants/front.jpg?v=3',
           '/products/high-waisted-flare-pants/right.jpg?v=3',
@@ -44,7 +44,7 @@ const LOOKS = [
   },
 ];
 
-export default function ShopTheLookSection() {
+export default function ShopTheLookSection({ products = [] }) {
   const [activeLook, setActiveLook] = useState(0);
 
   const handlePrev = () => {
@@ -56,6 +56,13 @@ export default function ShopTheLookSection() {
   };
 
   const currentLook = LOOKS[activeLook];
+
+  const lookProducts = (currentLook.products || []).map((p) => {
+    const live = (products || []).find(
+      (lp) => (lp.handle && lp.handle === p.handle) || (lp.title || "").toLowerCase() === (p.title || "").toLowerCase()
+    );
+    return live ? { ...p, ...live } : p;
+  });
 
   return (
     <section className={styles.shopTheLookSection}>
@@ -111,7 +118,7 @@ export default function ShopTheLookSection() {
             </div>
 
             <div className={styles.productsGrid}>
-              {currentLook.products.map((product) => (
+              {lookProducts.map((product) => (
                 <ProductCard
                   key={product.id || product.handle}
                   product={product}
