@@ -6,6 +6,8 @@ const StorefrontEnvSchema = z.object({
   STOREFRONT_PUBLISHABLE_KEY: z.string().min(1, "STOREFRONT_PUBLISHABLE_KEY is required"),
   STOREFRONT_SECRET_KEY: z.string().min(1, "STOREFRONT_SECRET_KEY is required"),
   REVALIDATE_SECRET: z.string().min(1).optional(),
+  CASHFREE_APP_ID: z.string().optional(),
+  CASHFREE_SECRET_KEY: z.string().optional(),
 });
 
 let cachedEnv = null;
@@ -18,14 +20,20 @@ let cachedEnv = null;
  *   STOREFRONT_API_URL: string,
  *   STOREFRONT_PUBLISHABLE_KEY: string,
  *   STOREFRONT_SECRET_KEY: string,
- *   REVALIDATE_SECRET?: string
+ *   REVALIDATE_SECRET?: string,
+ *   CASHFREE_APP_ID?: string,
+ *   CASHFREE_SECRET_KEY?: string
  * }}
  */
 export function getStorefrontEnv() {
   if (cachedEnv) return cachedEnv;
 
   const leakedPublicKeys = Object.keys(process.env).filter(
-    (k) => k.startsWith("NEXT_PUBLIC_STOREFRONT") || k.startsWith("NEXT_PUBLIC_REVALIDATE")
+    (k) =>
+      k.startsWith("NEXT_PUBLIC_STOREFRONT") ||
+      k.startsWith("NEXT_PUBLIC_REVALIDATE") ||
+      k.startsWith("NEXT_PUBLIC_CASHFREE") ||
+      k.startsWith("NEXT_PUBLIC_SECRET")
   );
   if (leakedPublicKeys.length > 0) {
     throw new Error(
@@ -38,6 +46,8 @@ export function getStorefrontEnv() {
     STOREFRONT_PUBLISHABLE_KEY: process.env.STOREFRONT_PUBLISHABLE_KEY,
     STOREFRONT_SECRET_KEY: process.env.STOREFRONT_SECRET_KEY,
     REVALIDATE_SECRET: process.env.REVALIDATE_SECRET || undefined,
+    CASHFREE_APP_ID: process.env.CASHFREE_APP_ID || process.env.APP_ID || undefined,
+    CASHFREE_SECRET_KEY: process.env.CASHFREE_SECRET_KEY || process.env.SECRET_KEY || undefined,
   });
 
   if (!parsed.success) {
