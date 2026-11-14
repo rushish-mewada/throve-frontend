@@ -47,7 +47,7 @@ export default function AboutPage() {
           <div className={styles.imageContent}>
             <Image
               src="/products/sleeveless-princess-sheath-dress/main.jpg?v=3"
-              alt="Throve Atelier Tailoring"
+              alt="Throve Tailoring"
               fill
               style={{ objectFit: 'cover' }}
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -69,7 +69,7 @@ export default function AboutPage() {
             </div>
             <div className={styles.valueCard}>
               <h3>03. Limited Edition Drops</h3>
-              <p>Our debut collection is produced in small, limited numbers with individual atelier quality control, ensuring exclusivity and mindful production.</p>
+              <p>Our debut collection is produced in small, limited numbers with individual workshop quality control, ensuring exclusivity and mindful production.</p>
             </div>
           </div>
         </div>

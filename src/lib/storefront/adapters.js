@@ -25,7 +25,7 @@ export function toProductProps(raw) {
     "off white": "#FAF7F2",
     "white": "#FFFFFF",
     "black": "#18181b",
-    "atelier classic": "#18181b",
+    "classic": "#18181b",
     "dusty pink": "#E8B4B8",
     "pink": "#E8B4B8",
     "beige": "#F5F2EB",
@@ -49,7 +49,7 @@ export function toProductProps(raw) {
     ? extractedColors
     : (Array.isArray(raw.metadata?.colors) && raw.metadata.colors.length > 0
         ? raw.metadata.colors
-        : [{ id: "c_default", name: raw.metadata?.colorName || "Atelier Classic", hex: raw.metadata?.colorHex || "#18181b" }]);
+        : [{ id: "c_default", name: raw.metadata?.colorName || "Classic", hex: raw.metadata?.colorHex || "#18181b" }]);
 
   const cleanVariants = (raw.variants || []).map((v) => {
     const rawTitle = String(v.title || "");

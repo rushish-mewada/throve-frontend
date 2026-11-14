@@ -71,7 +71,7 @@ export async function trackOrderAction({ orderId, contact } = {}) {
         completed: true,
       },
       {
-        status: "Atelier Quality Inspection & Bespoke Packaging",
+        status: "Quality Inspection & Premium Packaging",
         time: isPacked ? (order.date || "Day 1") : "In Progress",
         completed: isPacked,
         current: isPacked && !isInTransit,

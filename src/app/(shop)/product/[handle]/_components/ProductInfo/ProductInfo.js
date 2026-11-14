@@ -12,7 +12,7 @@ export default function ProductInfo({ product }) {
       
       {/* Title & Collection */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-        <p className={styles.collectionName} style={{ margin: 0 }}>{product.collection || 'Atelier Collection'}</p>
+        <p className={styles.collectionName} style={{ margin: 0 }}>{product.collection || 'Collection'}</p>
         <span
           style={{
             fontSize: '11px',
@@ -48,7 +48,7 @@ export default function ProductInfo({ product }) {
       
       {/* Description */}
       <div className={styles.descriptionBlock}>
-        <span className={styles.descriptionTitle}>Atelier Specification & Silhouette:</span>
+        <span className={styles.descriptionTitle}>Specification & Silhouette:</span>
         <p className={styles.descriptionText}>
           {product.description}
           {' '}

@@ -8,7 +8,7 @@ const policies = {
     updated: 'November 14, 2026',
     content: (
       <>
-        <p>Welcome to THROVE Atelier (<strong>https://throve.in</strong>). By accessing our website, browsing our catalog, or placing an order, you explicitly agree to be bound by these Terms and Conditions and all applicable statutory regulations in the Republic of India.</p>
+        <p>Welcome to THROVE (<strong>https://throve.in</strong>). By accessing our website, browsing our catalog, or placing an order, you explicitly agree to be bound by these Terms and Conditions and all applicable statutory regulations in the Republic of India.</p>
         
         <h3>1. Commercial Offerings & Product Pricing</h3>
         <p>THROVE curates, manufactures, and fulfills bespoke luxury apparel, fine tailoring, and designer garments. All product descriptions, specifications, and sizes are accurately represented. All prices are explicitly stated in <strong>Indian Rupees (INR / ₹)</strong> and are inclusive of Goods & Services Tax (GST) unless specified otherwise. We reserve the right to correct typographical pricing errors before order dispatch.</p>
@@ -41,7 +41,7 @@ const policies = {
     updated: 'November 14, 2026',
     content: (
       <>
-        <p>THROVE Atelier respects your digital privacy. This Privacy Policy details how we collect, process, safeguard, and retain your personal data in strict compliance with India&apos;s <strong>Digital Personal Data Protection (DPDP) Act, 2023</strong> and the Information Technology Act, 2000.</p>
+        <p>THROVE respects your digital privacy. This Privacy Policy details how we collect, process, safeguard, and retain your personal data in strict compliance with India&apos;s <strong>Digital Personal Data Protection (DPDP) Act, 2023</strong> and the Information Technology Act, 2000.</p>
         
         <h3>1. Personal Data We Collect</h3>
         <p>We collect only the minimal data strictly necessary for order fulfillment and doorstep delivery: full name, shipping and billing address, email address, phone number, and transaction identifiers. We do not store sensitive payment credentials such as card numbers or CVV.</p>
@@ -63,7 +63,7 @@ const policies = {
         <h3>5. Grievance Redressal Mechanism & Officer</h3>
         <p>In compliance with the Information Technology Act, 2000 and the Consumer Protection (E-Commerce) Rules, 2020, our designated Grievance Officer details are published below:</p>
         <div style={{ padding: '16px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '6px', marginTop: '12px' }}>
-          <p><strong>Designation:</strong> Grievance Redressal Officer, THROVE Atelier</p>
+          <p><strong>Designation:</strong> Grievance Redressal Officer, THROVE</p>
           <p><strong>Registered Office:</strong> Girgaon, Charni Road, Mumbai, Maharashtra — 400004, India</p>
           <p><strong>Email:</strong> <a href="mailto:throve.in@gmail.com">throve.in@gmail.com</a></p>
           <p><strong>Helpline:</strong> <a href="tel:+919892691094">+91 98926 91094</a> (Mon–Sat, 9:00 AM – 6:00 PM IST)</p>
@@ -91,7 +91,7 @@ const policies = {
         </ul>
         
         <h3>3. Refund Disbursement Timelines</h3>
-        <p>Upon return package receipt at our Mumbai atelier, quality inspection is concluded within <strong>24 to 48 business hours</strong>. Approved refunds are disbursed as follows:</p>
+        <p>Upon return package receipt at our Mumbai facility, quality inspection is concluded within <strong>24 to 48 business hours</strong>. Approved refunds are disbursed as follows:</p>
         <ul>
           <li><strong>Prepaid Transactions (UPI, Credit/Debit Cards, NetBanking):</strong> Funds are credited back to the source account via <strong>Cashfree Payments</strong> within <strong>5 to 7 business days</strong>.</li>
           <li><strong>Cash on Delivery (COD) Transactions:</strong> Our team will request your verified bank NEFT or UPI details. Funds are disbursed via automated bank payout within <strong>2 to 4 business days</strong>.</li>

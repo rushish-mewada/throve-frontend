@@ -18,7 +18,7 @@ export default function AddToCartClient({ variants = [], colors = [], product })
 
   const safeColors = Array.isArray(colors) && colors.length > 0
     ? colors
-    : [{ id: 'c_default', name: 'Atelier Classic', hex: '#18181b' }];
+    : [{ id: 'c_default', name: 'Classic', hex: '#18181b' }];
 
   const [selectedSize, setSelectedSize] = useState(safeVariants[1] || safeVariants[0]);
   const [selectedColor, setSelectedColor] = useState(safeColors[0]);
@@ -53,7 +53,7 @@ export default function AddToCartClient({ variants = [], colors = [], product })
 
       {/* Colors */}
       <div className={styles.optionGroup}>
-        <span className={styles.optionLabel}>Color: <span>{selectedColor?.name || 'Atelier'}</span></span>
+        <span className={styles.optionLabel}>Color: <span>{selectedColor?.name || 'Classic'}</span></span>
         <div className={styles.swatchList}>
           {safeColors.map(color => (
             <button

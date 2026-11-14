@@ -83,7 +83,7 @@ export default function Footer() {
 
       {/* Copyright */}
       <div className={styles.copyright}>
-        <p>&copy; {new Date().getFullYear()} THROVE Atelier. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} THROVE. All rights reserved.</p>
       </div>
     </footer>
   );

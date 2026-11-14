@@ -61,7 +61,7 @@ export default async function CollectionsPage() {
       displayCollections = liveList.map((col) => ({
         handle: col.handle,
         title: col.title,
-        subtitle: col.description || col.subtitle || 'Atelier Collection',
+        subtitle: col.description || col.subtitle || 'Collection',
         itemCount: col.productsCount ? `${col.productsCount} Styles` : (col.itemCount || 'Curated Styles'),
         image: col.image || col.thumbnail || '/products/navy-tailored-mini-dress/main.jpg?v=3',
       }));

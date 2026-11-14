@@ -534,7 +534,7 @@ export default function CheckoutPage() {
         <div style={{ textAlign: 'center', maxWidth: '440px', padding: '32px' }}>
           <div className={styles.spinner} style={{ margin: '0 auto 16px', borderColor: '#e5e5e5', borderTopColor: '#111', width: '32px', height: '32px' }} />
           <h2 style={{ fontSize: '15px', fontWeight: 500, color: '#111', margin: 0, letterSpacing: '0.04em' }}>
-            Preparing your atelier checkout...
+            Preparing your checkout...
           </h2>
         </div>
       </main>
@@ -609,7 +609,7 @@ export default function CheckoutPage() {
           <Link href="/" className={styles.logoLink}>
             <Image 
               src="/assets/images/inline-logo.svg" 
-              alt="Throve Atelier" 
+              alt="Throve" 
               width={140} 
               height={32} 
               priority
@@ -944,7 +944,7 @@ export default function CheckoutPage() {
                 </svg>
               </div>
               <div>
-                <div className={styles.trustTextTitle}>100% Genuine Atelier Craftsmanship</div>
+                <div className={styles.trustTextTitle}>100% Genuine Craftsmanship</div>
                 <div className={styles.trustTextDesc}>Handcrafted luxury tailored exclusively with sustainable organic fibers.</div>
               </div>
             </div>

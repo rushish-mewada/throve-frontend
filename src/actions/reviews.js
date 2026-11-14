@@ -36,7 +36,7 @@ export async function verifyReviewEligibilityAction({ productHandle, orderId, ph
             return {
               eligible: true,
               orderId: order.id || cleanOrderId,
-              customerName: order.shippingAddress?.name || "Verified Atelier Client",
+              customerName: order.shippingAddress?.name || "Verified Client",
               customerPhone: cleanPhone || buyerPhone,
             };
           }
@@ -49,7 +49,7 @@ export async function verifyReviewEligibilityAction({ productHandle, orderId, ph
       return {
         eligible: false,
         reason: "NOT_LOGGED_IN",
-        message: "Only verified clients who have purchased this piece can submit an atelier review. Please sign in to verify your purchase.",
+        message: "Only verified clients who have purchased this piece can submit a review. Please sign in to verify your purchase.",
       };
     }
 

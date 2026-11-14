@@ -28,7 +28,7 @@ export default async function AccountPage() {
     name: customer?.name || "Valued Client",
     phone: customer?.phone || (cleanPhone ? `+91 ${cleanPhone}` : "+91 98926 91094"),
     email: customer?.email || "throve.in@gmail.com",
-    tier: customer?.tier || "Throve Atelier Member",
+    tier: customer?.tier || "Throve Member",
   };
 
   const addresses = [
@@ -36,7 +36,7 @@ export default async function AccountPage() {
       id: 1,
       type: "Primary",
       name: user.name,
-      address: "Atelier Delivery Address",
+      address: "Primary Delivery Address",
       city: "Mumbai",
       state: "Maharashtra",
       pin: "400004",

@@ -157,7 +157,7 @@ export function StoreProvider({ children }) {
         {
           id: product.id || product.handle,
           title: product.title,
-          category: product.category || 'Atelier Collection',
+          category: product.category || 'Collection',
           price: product.price || `₹ ${priceNum.toLocaleString('en-IN')}`,
           priceNum,
           image: imageSrc,
@@ -179,7 +179,7 @@ export function StoreProvider({ children }) {
       name: 'Client',
       phone: '+91 98926 91094',
       email: '',
-      tier: 'Throve Atelier Member'
+      tier: 'Throve Member'
     };
     setUser(customer);
     try {

@@ -19,9 +19,9 @@ const VERIFIED_REVIEWS_BY_HANDLE = {
       stars: 5,
       date: '08 Nov 2026',
       title: 'Exceptional tailoring and contoured sheath fit',
-      comment: 'The princess seams and structured silhouette are flawless. Delivered to Charni Road, Mumbai in bespoke atelier packaging within 2 days.',
+      comment: 'The princess seams and structured silhouette are flawless. Delivered to Charni Road, Mumbai in bespoke packaging within 2 days.',
       fitFeedback: 'True to Size',
-      tags: ['Flattering Seams', 'Atelier Fit'],
+      tags: ['Flattering Seams', 'Tailored Fit'],
       media: [
         { type: 'image', url: '/products/sleeveless-princess-sheath-dress/front.jpg?v=3', alt: 'Kanta Jain fit' },
       ],
@@ -409,7 +409,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
             </svg>
           </div>
           <div className={styles.verifiedNoticeContent}>
-            <h4 className={styles.verifiedNoticeTitle}>Verified Atelier Purchases Only</h4>
+            <h4 className={styles.verifiedNoticeTitle}>Verified Purchases Only</h4>
             <p className={styles.verifiedNoticeText}>
               To guarantee total honesty and protect against artificial reviews, only clients who have purchased this garment may publish an impression.
             </p>
@@ -524,7 +524,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
           </svg>
           <div>
             <strong style={{ display: 'block', marginBottom: '2px', color: '#166534' }}>
-              Thank you for your atelier review!
+              Thank you for your review!
             </strong>
             <span>Your verified impression and media have been authenticated and published below.</span>
           </div>
@@ -835,7 +835,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
 
           <div style={{ fontSize: '12px', color: '#78716c', lineHeight: 1.5 }}>
             <strong style={{ display: 'block', color: '#1c1917', marginBottom: '4px' }}>
-              Atelier Verification Seal
+              Quality Verification Seal
             </strong>
             Every review is confirmed against verified order delivery records from Cashfree & Delhivery logistics.
           </div>
@@ -974,7 +974,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                       <div>
                         <span className={styles.reviewerName}>{review.name}</span>
                         <span style={{ display: 'block', fontSize: '11px', color: '#a8a29e' }}>
-                          Atelier Member
+                          Verified Member
                         </span>
                       </div>
                     </div>

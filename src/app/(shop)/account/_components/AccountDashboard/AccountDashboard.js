@@ -338,7 +338,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
 
                 <h3 className={styles.sectionSubTitle}>Recent Orders</h3>
                 {orders.length === 0 ? (
-                  <p style={{ color: "#78716c", fontSize: "14px", margin: "12px 0" }}>No recent orders. Your atelier purchases will appear here.</p>
+                  <p style={{ color: "#78716c", fontSize: "14px", margin: "12px 0" }}>No recent orders. Your purchases will appear here.</p>
                 ) : (
                   orders.slice(0,1).map(order => (
                     <div key={order.id} className={styles.orderCard}>
@@ -423,7 +423,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
                           <h4>{item.title}</h4>
                           <p>{item.price}</p>
                           <span className={styles.statusBadge} style={{ background: '#f5f5f5', color: '#111' }}>
-                            {item.category || 'Atelier Collection'}
+                            {item.category || 'Collection'}
                           </span>
                         </div>
                         <div className={styles.orderCardAction} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
@@ -458,7 +458,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
                   <div className={styles.couponCard}>
                     <div className={styles.couponLeft}>
                       <span className={styles.discountAmt}>FLAT 15% OFF</span>
-                      <p>Valid on all streetwear jackets & atelier tailoring. Min spend ₹2000.</p>
+                      <p>Valid on all streetwear jackets & tailoring. Min spend ₹2000.</p>
                     </div>
                     <div className={styles.couponRight}>
                       <button
@@ -524,7 +524,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
                       {editingAddressId ? 'Edit Delivery Address' : 'Add New Delivery Address'}
                     </h3>
                     <div className={styles.inputGroup}>
-                      <label>Address Label (e.g. Home, Office, Atelier)</label>
+                      <label>Address Label (e.g. Home, Office, Studio)</label>
                       <input
                         type="text"
                         className={styles.input}

@@ -26,7 +26,7 @@ export default function LoginPage() {
         name: 'Client',
         phone: `+91 ${cleanPhone}`,
         email: '',
-        tier: 'Throve Atelier Member'
+        tier: 'Throve Member'
       });
       document.cookie = `throve_customer_session=${cleanPhone}; path=/; max-age=604800; SameSite=Lax`;
       window.location.href = "/account";
