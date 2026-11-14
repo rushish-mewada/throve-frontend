@@ -833,7 +833,8 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                     className={styles.checkmark}
                     style={{ backgroundColor: isChecked ? '#1c1917' : 'transparent', borderColor: isChecked ? '#1c1917' : '#d6d3d1' }}
                   />
-                  <span className={styles.starIcon}>★</span> {rating} Stars ({ratingCounts[rating]})
+                  <span className={styles.starIcon}>★</span> {rating} Stars
+                  <span className={styles.filterBadge}>{ratingCounts[rating]}</span>
                 </label>
               );
             })}
@@ -853,7 +854,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
         <div className={styles.reviewsListContainer}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
             <h3 className={styles.listTitle} style={{ margin: 0 }}>
-              Reviews ({displayedReviews.length})
+              Reviews <span className={styles.titleBadge}>{displayedReviews.length}</span>
             </h3>
             {selectedRatingFilter && (
               <span style={{ fontSize: '13px', color: '#78716c' }}>
@@ -869,28 +870,28 @@ export default function ProductReviews({ productHandle = 'default', productTitle
               className={`${styles.tabBtn} ${activeTab === 'all' && !selectedRatingFilter ? styles.tabActive : ''}`}
               onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
             >
-              All Reviews ({reviewCount})
+              All Reviews <span className={styles.tabBadge}>{reviewCount}</span>
             </button>
             <button
               type="button"
               className={`${styles.tabBtn} ${activeTab === 'media' ? styles.tabActive : ''}`}
               onClick={() => { setActiveTab('media'); setSelectedRatingFilter(null); }}
             >
-              With Photos & Videos ({reviewsWithMedia.length})
+              With Photos & Videos <span className={styles.tabBadge}>{reviewsWithMedia.length}</span>
             </button>
             <button
               type="button"
               className={`${styles.tabBtn} ${activeTab === '5stars' || selectedRatingFilter === 5 ? styles.tabActive : ''}`}
               onClick={() => { setActiveTab('5stars'); setSelectedRatingFilter(5); }}
             >
-              5 Stars ({ratingCounts[5]})
+              5 Stars <span className={styles.tabBadge}>{ratingCounts[5]}</span>
             </button>
             <button
               type="button"
               className={`${styles.tabBtn} ${activeTab === '4stars' || selectedRatingFilter === 4 ? styles.tabActive : ''}`}
               onClick={() => { setActiveTab('4stars'); setSelectedRatingFilter(4); }}
             >
-              4 Stars ({ratingCounts[4]})
+              4 Stars <span className={styles.tabBadge}>{ratingCounts[4]}</span>
             </button>
           </div>
 
@@ -997,7 +998,8 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
                         </svg>
-                        <span>Helpful ({review.likes || 0})</span>
+                        <span>Helpful</span>
+                        <span className={styles.helpfulBadge}>{review.likes || 0}</span>
                       </button>
                     </div>
                   </div>

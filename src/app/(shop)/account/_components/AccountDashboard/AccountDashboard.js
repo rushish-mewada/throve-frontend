@@ -428,7 +428,9 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
             {/* WISHLIST TAB */}
             {displayTab === 'wishlist' && (
               <div className={styles.tabContent}>
-                <h2 className={styles.tabTitle}>My Wishlist ({wishlistItems.length})</h2>
+                <h2 className={styles.tabTitle}>
+                  My Wishlist <span className={styles.countBadge}>{wishlistItems.length}</span>
+                </h2>
                 {wishlistItems.length === 0 ? (
                   <div className={styles.emptyState}>
                     <div className={styles.emptyIcon}>

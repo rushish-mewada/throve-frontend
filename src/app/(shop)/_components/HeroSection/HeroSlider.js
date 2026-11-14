@@ -183,11 +183,11 @@ export default function HeroSlider({ products = [] }) {
         return (pHandle && pHandle === hs.handle) || (pTitle && pTitle === hsTitle);
       });
 
-      if (!liveProd) return { ...hs, rating: "0" };
+      if (!liveProd) return { ...hs, rating: null };
 
       const hasRating = liveProd.rating !== null && liveProd.rating !== undefined && !isNaN(Number(liveProd.rating));
       const ratingNum = hasRating ? Number(liveProd.rating) : 0;
-      const ratingStr = ratingNum > 0 ? ratingNum.toFixed(1) : "0";
+      const ratingStr = ratingNum > 0 ? ratingNum.toFixed(1) : null;
 
       const colorDots = Array.isArray(liveProd.colorHexes) && liveProd.colorHexes.length > 0
         ? liveProd.colorHexes
@@ -407,7 +407,9 @@ export default function HeroSlider({ products = [] }) {
 
                     <div className={styles.cardMeta}>
                       <span className={styles.cardColor}>Color: {hs.color}</span>
-                      <span className={styles.cardRating}>★ {hs.rating || "0"}</span>
+                      {hs.rating && hs.rating !== "0" && Number(hs.rating) > 0 && (
+                        <span className={styles.cardRating}>★ {hs.rating}</span>
+                      )}
                     </div>
 
                     <div className={styles.cardPriceRow}>

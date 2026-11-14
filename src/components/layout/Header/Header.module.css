@@ -506,6 +506,24 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: #111111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cartCountBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background-color: #f5f5f4;
+  color: #111111;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #e7e5e4;
 }
 
 .cartItems {

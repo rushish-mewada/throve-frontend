@@ -147,7 +147,8 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
   const isWishlisted = isInWishlist(product.id || product.handle);
   const isVtonActive = isProductVtonActive(product);
   const ratingNumber = Number(product.rating) || 0;
-  const ratingDisplay = ratingNumber > 0 ? ratingNumber.toFixed(1) : "0";
+  const hasRating = Boolean(product.rating !== null && product.rating !== undefined && ratingNumber > 0);
+  const ratingDisplay = hasRating ? ratingNumber.toFixed(1) : null;
   const productHandle = product.handle || "sleeveless-princess-sheath-dress";
 
   return (
@@ -312,9 +313,11 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
 
         {/* Rating row positioned below title text, spaced equally between title and price */}
         <div className={styles.ratingRow}>
-          <span className={styles.productRating}>
-            ★ {ratingDisplay}
-          </span>
+          {hasRating && (
+            <span className={styles.productRating}>
+              ★ {ratingDisplay}
+            </span>
+          )}
         </div>
 
         {/* Bottom Row: Price & Swatches (Pinned horizontally across all cards) */}

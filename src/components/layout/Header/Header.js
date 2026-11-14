@@ -340,7 +340,9 @@ export default function Header() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className={styles.cartHeader}>
-              <span className={styles.cartTitle}>Your Cart ({cartCount})</span>
+              <span className={styles.cartTitle}>
+                Your Cart <span className={styles.cartCountBadge}>{cartCount}</span>
+              </span>
               <button 
                 className={styles.closeBtn} 
                 onClick={closeCart}

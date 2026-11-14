@@ -612,6 +612,40 @@
   font-size: 1.1rem;
   font-weight: 600;
   color: #111111;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.titleBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background-color: #f5f5f4;
+  color: #1c1917;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid #e7e5e4;
+}
+
+.filterBadge {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background-color: #f5f5f4;
+  color: #78716c;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border: 1px solid #e7e5e4;
 }
 
 .tabs {
@@ -622,7 +656,10 @@
 }
 
 .tabBtn {
-  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
   background: #ffffff;
   border: 1px solid #e7e5e4;
   border-radius: 20px;
@@ -630,6 +667,22 @@
   font-size: 0.82rem;
   color: #57534e;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tabBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background-color: #f5f5f4;
+  color: #57534e;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid #e7e5e4;
   transition: all 0.2s ease;
 }
 
@@ -642,6 +695,27 @@
   border-color: #1c1917;
   color: #ffffff;
   font-weight: 500;
+}
+
+.tabActive .tabBadge {
+  background-color: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.helpfulBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background-color: #f5f5f4;
+  color: #78716c;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid #e7e5e4;
 }
 
 /* Individual Review Items */
