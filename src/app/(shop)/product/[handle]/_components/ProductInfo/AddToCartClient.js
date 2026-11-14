@@ -80,15 +80,21 @@ export default function AddToCartClient({ variants = [], colors = [], product })
           </button>
         </div>
         <div className={styles.sizeList}>
-          {safeVariants.map(v => (
-            <button
-              key={v.id}
-              className={`${styles.sizeBtn} ${(selectedSize?.id === v.id || selectedSize?.name === v.name) ? styles.sizeActive : ''}`}
-              onClick={() => setSelectedSize(v)}
-            >
-              {v.name || v.title}
-            </button>
-          ))}
+          {safeVariants.map((v) => {
+            const rawLabel = v.name || v.title || 'M';
+            const shortLabel = rawLabel.includes(' / ') ? rawLabel.split(' / ')[0].trim() : rawLabel;
+            const isSelected = selectedSize?.id === v.id || selectedSize?.name === v.name || selectedSize?.name === shortLabel;
+            return (
+              <button
+                key={v.id}
+                type="button"
+                className={`${styles.sizeBtn} ${isSelected ? styles.sizeActive : ''}`}
+                onClick={() => setSelectedSize({ ...v, name: shortLabel })}
+              >
+                {shortLabel}
+              </button>
+            );
+          })}
         </div>
       </div>
 

@@ -15,6 +15,63 @@ export function toProductProps(raw) {
   const category = raw.metadata?.category || "Women";
   const subcategory = raw.metadata?.subcategory || category;
 
+  // Extract distinct colors from variant titles if present (e.g. "S / Espresso Brown")
+  const extractedColors = [];
+  const colorHexMap = {
+    "espresso brown": "#4A2E18",
+    "brown": "#4A2E18",
+    "navy blue": "#1C2841",
+    "navy": "#1C2841",
+    "off white": "#FAF7F2",
+    "white": "#FFFFFF",
+    "black": "#18181b",
+    "atelier classic": "#18181b",
+    "dusty pink": "#E8B4B8",
+    "pink": "#E8B4B8",
+    "beige": "#F5F2EB",
+  };
+
+  for (const v of raw.variants || []) {
+    if (v.title && v.title.includes(" / ")) {
+      const colorName = v.title.split(" / ")[1]?.trim();
+      if (colorName && !extractedColors.some((c) => c.name.toLowerCase() === colorName.toLowerCase())) {
+        const hex = colorHexMap[colorName.toLowerCase()] || "#18181b";
+        extractedColors.push({
+          id: `color_${colorName.toLowerCase().replace(/\s+/g, '_')}`,
+          name: colorName,
+          hex,
+        });
+      }
+    }
+  }
+
+  const finalColors = extractedColors.length > 0
+    ? extractedColors
+    : (Array.isArray(raw.metadata?.colors) && raw.metadata.colors.length > 0
+        ? raw.metadata.colors
+        : [{ id: "c_default", name: raw.metadata?.colorName || "Atelier Classic", hex: raw.metadata?.colorHex || "#18181b" }]);
+
+  const cleanVariants = (raw.variants || []).map((v) => {
+    const rawTitle = String(v.title || "");
+    const sizeName = rawTitle.includes(" / ") ? rawTitle.split(" / ")[0].trim() : rawTitle;
+    const colorName = rawTitle.includes(" / ") ? rawTitle.split(" / ")[1].trim() : "";
+    return {
+      id: v.id,
+      name: sizeName,
+      title: sizeName,
+      fullName: rawTitle,
+      colorName,
+      sku: v.sku,
+      pricePaise: Number(v.pricePaise) || pricePaise,
+      priceFormatted: formatMoney(Number(v.pricePaise) || pricePaise, raw.currency || "INR"),
+      inStock: Boolean(v.inStock),
+      images: Array.isArray(v.images) ? v.images.map((img) => img.url).filter(Boolean) : undefined,
+      vton: v.vton || undefined,
+    };
+  });
+
+  const cleanSizes = Array.from(new Set(cleanVariants.map((v) => v.name).filter(Boolean)));
+
   return {
     id: raw.id,
     handle: raw.handle,
@@ -33,19 +90,10 @@ export function toProductProps(raw) {
     preOrder: false,
     inStock: Boolean(raw.inStock),
     images: (raw.images || []).map((img) => img.url).filter(Boolean),
-    colors: [],
-    colorHexes: ["#18181b"],
-    sizes: (raw.variants || []).map((v) => v.title).filter(Boolean),
-    variants: (raw.variants || []).map((v) => ({
-      id: v.id,
-      name: v.title,
-      sku: v.sku,
-      pricePaise: Number(v.pricePaise) || pricePaise,
-      priceFormatted: formatMoney(Number(v.pricePaise) || pricePaise, raw.currency || "INR"),
-      inStock: Boolean(v.inStock),
-      images: Array.isArray(v.images) ? v.images.map((img) => img.url).filter(Boolean) : undefined,
-      vton: v.vton || undefined,
-    })),
+    colors: finalColors,
+    colorHexes: finalColors.map((c) => c.hex || "#18181b"),
+    sizes: cleanSizes,
+    variants: cleanVariants,
     seo: raw.metadata?.seo || undefined,
     vton: raw.vton || raw.metadata?.vton || undefined,
     vtonActive: Boolean(raw.vton?.enabled || raw.metadata?.vton?.enabled || raw.vtonActive),
