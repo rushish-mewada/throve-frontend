@@ -21,17 +21,48 @@ export default async function SearchPage({ searchParams }) {
       // Fallback below when storefront-api is unavailable
     }
     if (matchedProducts.length === 0) {
-      matchedProducts = LAUNCH_PRODUCTS.filter((product) => {
+      const scored = LAUNCH_PRODUCTS.map((product) => {
         const title = (product.title || '').toLowerCase();
         const category = (product.category || '').toLowerCase();
         const subcategory = (product.subcategory || '').toLowerCase();
-        const desc = (product.description || '').toLowerCase();
-        const collection = (product.collection || '').toLowerCase();
         const handle = (product.handle || '').toLowerCase();
-        const fullCorpus = `${title} ${category} ${subcategory} ${collection} ${handle} ${desc}`;
+        const collection = (product.collection || '').toLowerCase();
+        const colors = (product.colors || []).map((c) => c.name || '').join(' ').toLowerCase();
+        const desc = (product.description || '').toLowerCase();
 
-        return tokens.every((token) => fullCorpus.includes(token));
+        const matchesWord = (text, token) => {
+          if (token === 'men') return category === 'men' || new RegExp('\\bmen\\b', 'i').test(text);
+          if (token === 'women') return category === 'women' || new RegExp('\\bwomen\\b', 'i').test(text);
+          return new RegExp(`\\b${token}`, 'i').test(text);
+        };
+
+        let score = 0;
+        if (title.includes(queryLower)) {
+          score = 100;
+        } else if (tokens.every((t) => matchesWord(title, t))) {
+          score = 90;
+        } else if (tokens.every((t) => matchesWord(`${category} ${subcategory} ${handle} ${collection}`, t))) {
+          score = 80;
+        } else if (tokens.every((t) => matchesWord(`${title} ${category} ${subcategory}`, t))) {
+          score = 75;
+        } else if (tokens.every((t) => matchesWord(colors, t))) {
+          score = 70;
+        } else {
+          const descMatch = tokens.every((t) => matchesWord(desc, t));
+          if (descMatch) score = 40;
+        }
+        return { product, score };
       });
+
+      const validMatches = scored.filter((item) => item.score > 0);
+      const hasHighConfidence = validMatches.some((item) => item.score >= 70);
+      const filtered = hasHighConfidence
+        ? validMatches.filter((item) => item.score >= 70)
+        : validMatches;
+
+      matchedProducts = filtered
+        .sort((a, b) => b.score - a.score)
+        .map((item) => item.product);
     }
   }
 

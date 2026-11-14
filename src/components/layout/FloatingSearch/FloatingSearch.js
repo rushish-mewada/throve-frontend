@@ -52,7 +52,7 @@ export default function FloatingSearch({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  // Filter products in real time with smart tokenized matching and relevance scoring
+  // Filter products in real time with precision relevance scoring
   const results = useMemo(() => {
     const raw = query.trim().toLowerCase();
     if (!raw) return [];
@@ -60,46 +60,64 @@ export default function FloatingSearch({ isOpen, onClose }) {
     // Split query into tokens (e.g. "mandarin shirt" -> ["mandarin", "shirt"])
     const tokens = raw.split(/\s+/).filter(Boolean);
 
-    // Score and filter each product
+    // Score each product hierarchically
     const scored = LAUNCH_PRODUCTS.map((product) => {
       const title = (product.title || "").toLowerCase();
       const category = (product.category || "").toLowerCase();
       const subcategory = (product.subcategory || "").toLowerCase();
-      const desc = (product.description || "").toLowerCase();
-      const collection = (product.collection || "").toLowerCase();
       const handle = (product.handle || "").toLowerCase();
+      const collection = (product.collection || "").toLowerCase();
       const colors = (product.colors || []).map((c) => c.name || "").join(" ").toLowerCase();
+      const desc = (product.description || "").toLowerCase();
 
-      // Combined corpus for multi-token check
-      const fullCorpus = `${title} ${category} ${subcategory} ${collection} ${colors} ${handle} ${desc}`;
+      // Word boundary helper to prevent substring collisions (e.g. "women" matching "men")
+      const matchesWord = (text, token) => {
+        if (token === "men") return category === "men" || new RegExp("\\bmen\\b", "i").test(text);
+        if (token === "women") return category === "women" || new RegExp("\\bwomen\\b", "i").test(text);
+        return new RegExp(`\\b${token}`, "i").test(text);
+      };
 
-      // 1. Exact phrase match in title (Highest score)
+      let score = 0;
+
+      // 1. Exact phrase match in Title (Highest relevance: 100)
       if (title.includes(raw)) {
-        return { product, score: 100 };
+        score = 100;
+      }
+      // 2. All tokens appear in Title (High relevance: 90)
+      else if (tokens.every((t) => matchesWord(title, t))) {
+        score = 90;
+      }
+      // 3. Category, Subcategory, or Handle match (e.g. "shirt", "dress", "trousers", "men", "women") (Relevance: 80)
+      else if (tokens.every((t) => matchesWord(`${category} ${subcategory} ${handle} ${collection}`, t))) {
+        score = 80;
+      }
+      // 4. Combined title & category / subcategory tokens (Relevance: 75)
+      else if (tokens.every((t) => matchesWord(`${title} ${category} ${subcategory}`, t))) {
+        score = 75;
+      }
+      // 5. Color match (e.g. "navy", "blush", "pink", "brown", "cream") (Relevance: 70)
+      else if (tokens.every((t) => matchesWord(colors, t))) {
+        score = 70;
+      }
+      // 6. Discrete whole word match in description (Fallback: 40)
+      else {
+        const descMatch = tokens.every((t) => matchesWord(desc, t));
+        if (descMatch) {
+          score = 40;
+        }
       }
 
-      // 2. Exact phrase match across core info (category, subcategory, collection, handle)
-      const coreInfo = `${title} ${category} ${subcategory} ${collection} ${handle}`;
-      if (coreInfo.includes(raw)) {
-        return { product, score: 90 };
-      }
-
-      // 3. All tokens MUST match across the product corpus (Strict AND matching)
-      // Every typed word must be found somewhere in the product info
-      const allTokensMatch = tokens.every((token) => fullCorpus.includes(token));
-      if (allTokensMatch) {
-        // Boost score based on how many tokens appear in title or category
-        const titleTokensMatch = tokens.filter((t) => title.includes(t)).length;
-        const categoryTokensMatch = tokens.filter((t) => category.includes(t) || subcategory.includes(t)).length;
-        return { product, score: 70 + (titleTokensMatch * 10) + (categoryTokensMatch * 5) };
-      }
-
-      // If not all tokens match, do not return false-positive partial matches
-      return { product, score: 0 };
+      return { product, score };
     });
 
-    return scored
-      .filter((item) => item.score > 0)
+    const validMatches = scored.filter((item) => item.score > 0);
+    // If high-confidence matches (score >= 70) exist, only return those to prevent false positives from generic description text
+    const hasHighConfidence = validMatches.some((item) => item.score >= 70);
+    const filtered = hasHighConfidence
+      ? validMatches.filter((item) => item.score >= 70)
+      : validMatches;
+
+    return filtered
       .sort((a, b) => b.score - a.score)
       .map((item) => item.product);
   }, [query]);
