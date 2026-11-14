@@ -870,19 +870,6 @@ export default function CheckoutPage() {
                 <span className={styles.stepPill}>1</span>
                 <span>Delivery Address</span>
               </div>
-              {savedAddresses.length > 0 && !isManagingAddresses && (
-                <button
-                  type="button"
-                  className={styles.changeAddressBtn}
-                  onClick={() => {
-                    setIsManagingAddresses(true);
-                    setIsAddingNew(false);
-                    setEditingAddressId(null);
-                  }}
-                >
-                  Change Address
-                </button>
-              )}
             </div>
 
             {/* A: Saved Address Card (Active Selection) */}
