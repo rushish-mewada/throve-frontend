@@ -76,6 +76,10 @@ export function toProductProps(raw) {
   const soldCount = isKantaProduct ? "1" : (raw.metadata?.sold ? String(raw.metadata.sold) : (raw.sold ? String(raw.sold) : "0"));
   const ratingValue = isKantaProduct ? "5.0" : (raw.metadata?.rating || raw.rating || null);
 
+  const vtonObj = raw.vton || raw.metadata?.vton;
+  const hasCutout = Boolean(vtonObj?.cutout_url && String(vtonObj.cutout_url).trim().length > 0);
+  const isVtonActive = Boolean(vtonObj?.enabled && hasCutout);
+
   return {
     id: raw.id,
     handle: raw.handle,
@@ -99,8 +103,8 @@ export function toProductProps(raw) {
     sizes: cleanSizes,
     variants: cleanVariants,
     seo: raw.metadata?.seo || undefined,
-    vton: raw.vton || raw.metadata?.vton || undefined,
-    vtonActive: Boolean(raw.vton?.enabled || raw.metadata?.vton?.enabled || raw.vtonActive),
+    vton: vtonObj || undefined,
+    vtonActive: isVtonActive,
   };
 }
 

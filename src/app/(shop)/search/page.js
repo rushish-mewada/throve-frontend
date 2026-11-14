@@ -99,7 +99,7 @@ export default async function SearchPage({ searchParams }) {
                     <div className={styles.productInfo}>
                       <div className={styles.productTop}>
                         <h3>{product.title}</h3>
-                        {product.rating && (
+                        {Number(product.rating) > 0 && (
                           <div className={styles.rating}>
                             <span>★</span> {product.rating}
                           </div>

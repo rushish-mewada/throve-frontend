@@ -5,20 +5,26 @@ import { getProducts } from '@/lib/storefront/products';
 import styles from './page.module.css';
 
 function buildCollectionsConfig(sourceProducts) {
-  const mapCard = (p) => ({
-    id: p.id,
-    title: p.title,
-    price: p.price,
-    priceNum: p.priceNum,
-    rating: p.rating,
-    category: p.filterCategory,
-    image: p.images[0] || '/products/asymmetric-mandarin-shirt/main.jpg',
-    colors: p.colorHexes,
-    sizes: p.sizes,
-    handle: p.handle,
-    vton: p.vton || p.metadata?.vton,
-    vtonActive: p.vtonActive !== undefined ? p.vtonActive : Boolean(p.vton?.enabled || p.metadata?.vton?.enabled),
-  });
+  const mapCard = (p) => {
+    const vtonObj = p.vton || p.metadata?.vton;
+    const hasCutout = Boolean(vtonObj?.cutout_url && String(vtonObj.cutout_url).trim().length > 0);
+    const isVtonActive = Boolean(vtonObj?.enabled && hasCutout);
+
+    return {
+      id: p.id,
+      title: p.title,
+      price: p.price,
+      priceNum: p.priceNum,
+      rating: p.rating,
+      category: p.filterCategory,
+      image: p.images[0] || '/products/asymmetric-mandarin-shirt/main.jpg',
+      colors: p.colorHexes,
+      sizes: p.sizes,
+      handle: p.handle,
+      vton: vtonObj,
+      vtonActive: p.vtonActive !== undefined ? (p.vtonActive && hasCutout) : isVtonActive,
+    };
+  };
 
   const men = sourceProducts.filter((p) => String(p.category).toLowerCase() === 'men').map(mapCard);
   const women = sourceProducts.filter((p) => String(p.category).toLowerCase() === 'women').map(mapCard);

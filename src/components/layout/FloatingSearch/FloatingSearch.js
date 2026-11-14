@@ -245,7 +245,7 @@ export default function FloatingSearch({ isOpen, onClose }) {
                       <div className={styles.itemMeta}>
                         <span className={styles.itemPrice}>{product.price}</span>
                         <span className={styles.itemPreOrder} style={{ background: '#f5f5f4', color: '#1c1917', border: '1px solid #e7e5e4' }}>In Stock</span>
-                        {product.rating && (
+                        {Number(product.rating) > 0 && (
                           <span className={styles.itemRating}>★ {product.rating}</span>
                         )}
                       </div>

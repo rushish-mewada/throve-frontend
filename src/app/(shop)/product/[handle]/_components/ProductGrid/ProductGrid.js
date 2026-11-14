@@ -117,7 +117,7 @@ export default function ProductGrid({ title, products, seeAllLink }) {
                 >
                   {product.title}
                 </Link>
-                {product.rating && (
+                {Number(product.rating) > 0 && (
                   <span className={styles.productRating}>★ {product.rating}</span>
                 )}
               </div>

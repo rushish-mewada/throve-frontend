@@ -236,7 +236,9 @@ export default function NewArrivalsSection({ products }) {
                     >
                       {product.title}
                     </Link>
-                    <span className={styles.productRating}>★ {product.rating}</span>
+                    {Number(product.rating) > 0 && (
+                      <span className={styles.productRating}>★ {product.rating}</span>
+                    )}
                   </div>
                   <div className={styles.infoBottom}>
                     <span className={styles.productPrice}>{product.price}</span>

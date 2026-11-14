@@ -324,7 +324,7 @@ export default function HeroSlider() {
 
                     <div className={styles.cardMeta}>
                       <span className={styles.cardColor}>Color: {hs.color}</span>
-                      <span className={styles.cardRating}>★ {hs.rating}</span>
+                      {Number(hs.rating) > 0 && <span className={styles.cardRating}>★ {hs.rating}</span>}
                     </div>
 
                     <div className={styles.cardPriceRow}>
