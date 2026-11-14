@@ -36,7 +36,11 @@ export default async function AccountPage() {
     name: customer.name,
     phone: customer?.phone || (cleanPhone ? `+91 ${cleanPhone}` : "+91 98926 91094"),
     email: customer.email,
-    tier: customer?.tier || "Throve Member",
+    tier: customer?.tier || "THROVE MEMBER",
+    points: customer?.points ?? 0,
+    pointsFormatted: customer?.pointsFormatted || "0 Pts",
+    progressPercent: customer?.progressPercent ?? 0,
+    tierHint: customer?.tierHint || "Spend ₹10,000 more to reach Platinum",
   };
 
   const lastOrder = liveOrders?.[0];

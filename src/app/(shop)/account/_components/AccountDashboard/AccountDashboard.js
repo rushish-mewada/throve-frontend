@@ -184,7 +184,12 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
             <div className={styles.throveAvatar}>{user.name.charAt(0)}</div>
             <div className={styles.throveUserInfo}>
               <h1>{user.name}</h1>
-              <span className={styles.throveTierBadge}>{user.tier}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
+                <span className={styles.throveTierBadge}>{user.tier}</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#eab308' }}>
+                  {user.pointsFormatted || `${(user.points || 0).toLocaleString('en-IN')} Pts`}
+                </span>
+              </div>
               <p>{user.email}</p>
               <p>{user.phone}</p>
             </div>
@@ -252,12 +257,17 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
             <div className={styles.userTier}>
               <div className={styles.tierHeader}>
                 <span className={styles.tierBadge}>{user.tier}</span>
-                <span className={styles.points}>1,240 Pts</span>
+                <span className={styles.points}>{user.pointsFormatted || `${(user.points || 0).toLocaleString('en-IN')} Pts`}</span>
               </div>
               <div className={styles.progressBar}>
-                <div className={styles.progressFill} style={{ width: '65%' }}></div>
+                <div
+                  className={styles.progressFill}
+                  style={{ width: `${Math.min(100, Math.max(0, user.progressPercent || 0))}%` }}
+                ></div>
               </div>
-              <p className={styles.tierHint}>Spend ₹1,600 more to reach Platinum</p>
+              <p className={styles.tierHint}>
+                {user.tierHint || "Spend more to reach the next privilege tier"}
+              </p>
             </div>
           </div>
 
