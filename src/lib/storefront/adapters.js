@@ -19,23 +19,54 @@ export function toProductProps(raw) {
   const extractedColors = [];
   const colorHexMap = {
     "espresso brown": "#4A2E18",
+    "espresso": "#4A2E18",
     "brown": "#4A2E18",
+    "chocolate": "#3D2314",
     "navy blue": "#1C2841",
     "navy": "#1C2841",
+    "deep navy": "#1C2841",
+    "blue": "#1C2841",
+    "dusty rose": "#C47E85",
+    "rose": "#C47E85",
+    "blush pink": "#E8B4B8",
+    "blush": "#E8B4B8",
+    "pink": "#E8B4B8",
+    "dusty pink": "#E8B4B8",
+    "soft cream": "#FAF7F2",
+    "cream": "#FAF7F2",
+    "ivory cream": "#F5F2EB",
+    "ivory": "#F5F2EB",
     "off white": "#FAF7F2",
     "white": "#FFFFFF",
-    "black": "#18181b",
-    "classic": "#18181b",
-    "dusty pink": "#E8B4B8",
-    "pink": "#E8B4B8",
     "beige": "#F5F2EB",
+    "tan": "#D2B48C",
+    "khaki": "#C3B091",
+    "olive": "#556B2F",
+    "sage": "#9CAF88",
+    "black": "#18181b",
+    "charcoal": "#27272a",
+    "grey": "#71717a",
+    "gray": "#71717a",
+    "classic": "#18181b",
+  };
+
+  const resolveColorHex = (name) => {
+    if (!name) return "#18181b";
+    const clean = String(name).trim().toLowerCase();
+    if (colorHexMap[clean]) return colorHexMap[clean];
+    for (const [key, hexVal] of Object.entries(colorHexMap)) {
+      if (clean.includes(key) || key.includes(clean)) {
+        return hexVal;
+      }
+    }
+    return "#18181b";
   };
 
   for (const v of raw.variants || []) {
     if (v.title && v.title.includes(" / ")) {
       const colorName = v.title.split(" / ")[1]?.trim();
       if (colorName && !extractedColors.some((c) => c.name.toLowerCase() === colorName.toLowerCase())) {
-        const hex = colorHexMap[colorName.toLowerCase()] || "#18181b";
+        const hex = resolveColorHex(colorName);
         extractedColors.push({
           id: `color_${colorName.toLowerCase().replace(/\s+/g, '_')}`,
           name: colorName,
@@ -48,8 +79,12 @@ export function toProductProps(raw) {
   const finalColors = extractedColors.length > 0
     ? extractedColors
     : (Array.isArray(raw.metadata?.colors) && raw.metadata.colors.length > 0
-        ? raw.metadata.colors
-        : [{ id: "c_default", name: raw.metadata?.colorName || "Classic", hex: raw.metadata?.colorHex || "#18181b" }]);
+        ? raw.metadata.colors.map((c) => ({
+            id: c.id || `color_${String(c.name || 'default').toLowerCase().replace(/\s+/g, '_')}`,
+            name: c.name || "Classic",
+            hex: c.hex || resolveColorHex(c.name),
+          }))
+        : [{ id: "c_default", name: raw.metadata?.colorName || "Classic", hex: raw.metadata?.colorHex || resolveColorHex(raw.metadata?.colorName) }]);
 
   const cleanVariants = (raw.variants || []).map((v) => {
     const rawTitle = String(v.title || "");
