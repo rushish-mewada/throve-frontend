@@ -2,14 +2,14 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   width: 100%;
   user-select: none;
 }
 
 .label {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   font-weight: 500;
   color: #44403c;
 }
@@ -34,7 +34,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 12px 14px;
+  padding: 11px 13px;
   background-color: #ffffff;
   border: 1px solid #d6d3d1;
   border-radius: 6px;
@@ -58,14 +58,14 @@
 
 .valueText {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #1c1917;
   font-weight: 500;
 }
 
 .placeholderText {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   color: #a8a29e;
 }
 
@@ -144,7 +144,7 @@
 }
 
 .optionsList {
-  max-height: 240px;
+  max-height: 220px;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
@@ -167,9 +167,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
+  padding: 9px 13px;
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   color: #44403c;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -192,10 +192,10 @@
 }
 
 .noResults {
-  padding: 14px;
+  padding: 12px;
   text-align: center;
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   color: #a8a29e;
 }
 
@@ -204,4 +204,24 @@
   font-size: 0.75rem;
   color: #dc2626;
   margin-top: 2px;
+}
+
+@media (max-width: 768px) {
+  .label {
+    font-size: 0.75rem;
+  }
+
+  .trigger {
+    padding: 9px 11px;
+  }
+
+  .valueText,
+  .placeholderText {
+    font-size: 0.84rem;
+  }
+
+  .option {
+    padding: 8px 12px;
+    font-size: 0.82rem;
+  }
 }

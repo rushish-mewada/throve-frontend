@@ -10,6 +10,7 @@ import { processCheckoutAction, initiateCashfreeCheckoutAction } from '@/actions
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 import CustomInput from '@/components/ui/CustomInput/CustomInput';
 import CustomSelect from '@/components/ui/CustomSelect/CustomSelect';
+import { UpiIcon, GPayIcon, PhonePeIcon, PaytmIcon, CardsIcon, CodIcon } from '@/components/ui/PaymentIcons';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
@@ -71,15 +72,13 @@ const PIN_PREFIX_STATE_MAP = {
 const PAYMENT_OPTIONS = [
   {
     id: 'cashfree',
-    label: 'UPI, Cards, NetBanking (Cashfree)',
-    subtitle: 'Instant secure checkout with PhonePe, Google Pay, Paytm, UPI, all Cards & NetBanking.',
-    badges: ['Google Pay', 'PhonePe', 'Paytm', 'UPI QR', 'Cards'],
+    title: 'UPI / Cards / NetBanking',
+    subtitle: 'Instant payment via Google Pay, PhonePe, Paytm, all Cards & UPI.',
   },
   {
     id: 'cod',
-    label: 'Cash on Delivery (COD)',
-    subtitle: 'Pay at your doorstep via cash or courier UPI QR when your parcel arrives.',
-    badges: ['Pay on Delivery', 'Doorstep Verification'],
+    title: 'Cash on Delivery (COD)',
+    subtitle: 'Pay at your doorstep via cash or courier UPI QR upon parcel arrival.',
   },
 ];
 
@@ -870,14 +869,22 @@ export default function CheckoutPage() {
 
                     <div className={styles.paymentMeta}>
                       <div className={styles.paymentHeader}>
-                        <span className={styles.paymentTitle}>{opt.label}</span>
+                        <span className={styles.paymentTitle}>{opt.title}</span>
+                        {opt.id === 'cashfree' ? (
+                          <div className={styles.paymentIconsRow}>
+                            <UpiIcon />
+                            <GPayIcon />
+                            <PhonePeIcon />
+                            <PaytmIcon />
+                            <CardsIcon />
+                          </div>
+                        ) : (
+                          <div className={styles.paymentIconsRow}>
+                            <CodIcon />
+                          </div>
+                        )}
                       </div>
                       <p className={styles.paymentSubtitle}>{opt.subtitle}</p>
-                      <div className={styles.paymentBadges}>
-                        {opt.badges.map((b) => (
-                          <span key={b} className={styles.badgePill}>{b}</span>
-                        ))}
-                      </div>
                     </div>
                   </div>
                 );
