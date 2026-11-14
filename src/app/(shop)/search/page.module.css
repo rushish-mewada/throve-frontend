@@ -119,7 +119,7 @@
 
 .productGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -203,7 +203,7 @@
 
 @media (max-width: 1024px) {
   .productGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -215,7 +215,7 @@
     font-size: 1.8rem;
   }
   .productGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 16px;
   }
   .searchForm {
