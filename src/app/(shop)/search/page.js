@@ -99,9 +99,11 @@ export default async function SearchPage({ searchParams }) {
                     <div className={styles.productInfo}>
                       <div className={styles.productTop}>
                         <h3>{product.title}</h3>
-                        <div className={styles.rating}>
-                          <span>★</span> {product.rating}
-                        </div>
+                        {product.rating && (
+                          <div className={styles.rating}>
+                            <span>★</span> {product.rating}
+                          </div>
+                        )}
                       </div>
                       <div className={styles.productBottom}>
                         <span className={styles.price}>{product.price}</span>

@@ -100,7 +100,9 @@ export default function CollectionGrid({ products }) {
                 >
                   {product.title}
                 </Link>
-                <span className={styles.productRating}>★ {product.rating}</span>
+                {product.rating && (
+                  <span className={styles.productRating}>★ {product.rating}</span>
+                )}
               </div>
               <div className={styles.infoBottom}>
                 <span className={styles.productPrice}>{product.price}</span>

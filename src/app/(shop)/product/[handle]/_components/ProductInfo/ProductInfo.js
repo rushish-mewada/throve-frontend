@@ -37,9 +37,11 @@ export default function ProductInfo({ product }) {
           {product.oldPrice && <span className={styles.oldPrice}>{product.oldPrice}</span>}
           <span className={styles.newPrice}>{product.price}</span>
         </div>
-        <div className={styles.salesInfo}>
-          {product.sold || '380+'} Sold &bull; ⭐️ {product.rating || '4.9'}
-        </div>
+        {Number(product.sold) > 0 && (
+          <div className={styles.salesInfo}>
+            {product.sold} Sold &bull; ⭐️ {product.rating || '5.0'}
+          </div>
+        )}
       </div>
       
       <hr className={styles.divider} />

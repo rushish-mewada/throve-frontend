@@ -9,71 +9,26 @@ import CustomTextarea from '@/components/ui/CustomTextarea/CustomTextarea';
 import { verifyReviewEligibilityAction, submitVerifiedReviewAction } from '@/actions/reviews';
 import styles from './ProductReviews.module.css';
 
-const DEFAULT_REVIEWS = [
-  {
-    id: 'rev-1',
-    name: 'Devansh M.',
-    verified: true,
-    orderId: 'THR-8821',
-    stars: 5,
-    date: '04 Nov 2026',
-    title: 'Impeccable structural drape and fabric weight',
-    comment: 'The cut through the shoulders and torso is exceptional. High-density Japanese-grade cotton with a crisp yet fluid drape. Delivered to Mumbai in a bespoke atelier dustbag within 3 days.',
-    fitFeedback: 'True to Size',
-    tags: ['Heavy Fabric Weave', 'Sharp Collar'],
-    media: [
-      { type: 'image', url: '/products/asymmetric-mandarin-shirt/front.jpg?v=3', alt: 'Client fit front' },
-      { type: 'image', url: '/products/asymmetric-mandarin-shirt/collar.jpg?v=3', alt: 'Collar detail' },
-    ],
-    likes: 14,
-  },
-  {
-    id: 'rev-2',
-    name: 'Pooja K.',
-    verified: true,
-    orderId: 'THR-7640',
-    stars: 5,
-    date: '28 Oct 2026',
-    title: 'Subtle architectural luxury and clean lines',
-    comment: 'Understated elegance. The seam lines and minimalist finishing are on par with international couture labels. True to size with a contoured silhouette.',
-    fitFeedback: 'True to Size',
-    tags: ['Flattering Seams', 'Atelier Fit'],
-    media: [
-      { type: 'image', url: '/products/navy-tailored-mini-dress/front.jpg?v=3', alt: 'Client fitting' },
-    ],
-    likes: 9,
-  },
-  {
-    id: 'rev-3',
-    name: 'Rohan S.',
-    verified: true,
-    orderId: 'THR-6912',
-    stars: 5,
-    date: '19 Oct 2026',
-    title: 'Standout piece in my wardrobe',
-    comment: 'Ordered via Cashfree UPI and received it promptly. High-density weave and great collar shape that stays sharp all evening.',
-    fitFeedback: 'True to Size',
-    tags: ['Breathable', 'Fast Delivery'],
-    media: [],
-    likes: 18,
-  },
-  {
-    id: 'rev-4',
-    name: 'Aanya V.',
-    verified: true,
-    orderId: 'THR-5541',
-    stars: 4,
-    date: '12 Oct 2026',
-    title: 'Great tailoring, museum quality packaging',
-    comment: 'The fit is slightly structured around the chest which I love. Packaging was museum-quality with branded tissue, luxury tags, and prompt delivery.',
-    fitFeedback: 'Runs Slightly Small',
-    tags: ['Heavy Fabric Weave', 'Atelier Fit'],
-    media: [
-      { type: 'image', url: '/products/high-waisted-flare-pants/front.jpg?v=3', alt: 'Fabric texture' },
-    ],
-    likes: 6,
-  },
-];
+const VERIFIED_REVIEWS_BY_HANDLE = {
+  'sleeveless-princess-sheath-dress': [
+    {
+      id: 'rev-kanta-01',
+      name: 'Kanta Jain',
+      verified: true,
+      orderId: 'THR-MXPGSL',
+      stars: 5,
+      date: '08 Nov 2026',
+      title: 'Exceptional tailoring and contoured sheath fit',
+      comment: 'The princess seams and structured silhouette are flawless. Delivered to Charni Road, Mumbai in bespoke atelier packaging within 2 days.',
+      fitFeedback: 'True to Size',
+      tags: ['Flattering Seams', 'Atelier Fit'],
+      media: [
+        { type: 'image', url: '/products/sleeveless-princess-sheath-dress/front.jpg?v=3', alt: 'Kanta Jain fit' },
+      ],
+      likes: 3,
+    },
+  ],
+};
 
 const RATING_DESCRIPTIONS = {
   5: '5.0 · Exceptional Couture Standard',
@@ -87,8 +42,9 @@ export default function ProductReviews({ productHandle = 'default', productTitle
   const { user, isLoggedIn } = useStore();
   const fileInputRef = useRef(null);
 
-  // Reviews list & filters
-  const [reviews, setReviews] = useState(DEFAULT_REVIEWS);
+  // Reviews list & filters: only Kanta Jain's review for 'sleeveless-princess-sheath-dress', empty for others
+  const baseReviews = VERIFIED_REVIEWS_BY_HANDLE[productHandle] || [];
+  const [reviews, setReviews] = useState(baseReviews);
   const [selectedRatingFilter, setSelectedRatingFilter] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'media', '5stars', '4stars'
 
@@ -124,13 +80,26 @@ export default function ProductReviews({ productHandle = 'default', productTitle
   // 1. Hydrate stored reviews for this product
   useEffect(() => {
     try {
+      const base = VERIFIED_REVIEWS_BY_HANDLE[productHandle] || [];
       const stored = localStorage.getItem(`throve_reviews_${productHandle}`);
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setReviews([...parsed, ...DEFAULT_REVIEWS]);
+          // Remove legacy dummy reviews (rev-1, rev-2, rev-3, rev-4)
+          const validReviews = parsed.filter(
+            (r) => !['rev-1', 'rev-2', 'rev-3', 'rev-4'].includes(r.id)
+          );
+          const merged = [...validReviews];
+          for (const b of base) {
+            if (!merged.some((m) => m.id === b.id)) {
+              merged.push(b);
+            }
+          }
+          setReviews(merged);
+          return;
         }
       }
+      setReviews(base);
     } catch {
       // Ignore storage errors
     }
@@ -367,7 +336,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
   // Calculations
   const reviewCount = reviews.length;
   const totalStars = reviews.reduce((sum, r) => sum + r.stars, 0);
-  const averageScore = reviewCount > 0 ? (totalStars / reviewCount).toFixed(1) : '5.0';
+  const averageScore = reviewCount > 0 ? (totalStars / reviewCount).toFixed(1) : '—';
   const reviewsWithMedia = reviews.filter((r) => Array.isArray(r.media) && r.media.length > 0);
 
   const ratingCounts = {
@@ -795,9 +764,11 @@ export default function ProductReviews({ productHandle = 'default', productTitle
             <span>{averageScore}</span>
           </div>
           <div className={styles.scoreDetails}>
-            <div className={styles.stars}>★★★★★</div>
+            <div className={styles.stars}>
+              {reviewCount > 0 ? '★★★★★' : '☆☆☆☆☆'}
+            </div>
             <span className={styles.reviewCount}>
-              Based on {reviewCount} verified owner reviews
+              Based on {reviewCount} verified owner {reviewCount === 1 ? 'review' : 'reviews'}
             </span>
           </div>
         </div>
@@ -920,15 +891,19 @@ export default function ProductReviews({ productHandle = 'default', productTitle
             {displayedReviews.length === 0 ? (
               <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716c', backgroundColor: '#fafaf9', borderRadius: '8px', border: '1px solid #e7e5e4' }}>
                 <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 500, color: '#1c1917' }}>
-                  No reviews match this filter
+                  {reviewCount === 0
+                    ? 'No verified reviews yet. Be the first verified client to review this piece after delivery.'
+                    : 'No reviews match this filter'}
                 </p>
-                <button
-                  type="button"
-                  onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
-                  style={{ background: 'none', border: 'none', color: '#1c1917', textDecoration: 'underline', fontSize: '13px', cursor: 'pointer' }}
-                >
-                  View all verified reviews
-                </button>
+                {reviewCount > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
+                    style={{ background: 'none', border: 'none', color: '#1c1917', textDecoration: 'underline', fontSize: '13px', cursor: 'pointer' }}
+                  >
+                    View all verified reviews
+                  </button>
+                )}
               </div>
             ) : (
               displayedReviews.map((review) => (

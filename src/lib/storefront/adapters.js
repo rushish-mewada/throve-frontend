@@ -72,6 +72,10 @@ export function toProductProps(raw) {
 
   const cleanSizes = Array.from(new Set(cleanVariants.map((v) => v.name).filter(Boolean)));
 
+  const isKantaProduct = raw.handle === "sleeveless-princess-sheath-dress";
+  const soldCount = isKantaProduct ? "1" : (raw.metadata?.sold ? String(raw.metadata.sold) : (raw.sold ? String(raw.sold) : "0"));
+  const ratingValue = isKantaProduct ? "5.0" : (raw.metadata?.rating || raw.rating || null);
+
   return {
     id: raw.id,
     handle: raw.handle,
@@ -84,8 +88,8 @@ export function toProductProps(raw) {
     price: formatMoney(pricePaise, raw.currency || "INR"),
     oldPrice: compareAtPaise > pricePaise ? formatMoney(compareAtPaise, raw.currency || "INR") : null,
     priceNum: Math.round(pricePaise / 100),
-    rating: raw.metadata?.rating || raw.rating || "4.9",
-    sold: raw.metadata?.sold || raw.sold || "380+",
+    rating: ratingValue,
+    sold: soldCount,
     comingSoon: false,
     preOrder: false,
     inStock: Boolean(raw.inStock),
