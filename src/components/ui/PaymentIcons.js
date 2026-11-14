@@ -44,8 +44,8 @@ export function MastercardIcon({ className }) {
 
 export function VisaIcon({ className }) {
   return (
-    <span className={className} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#ffffff', border: '1px solid #e7e5e4', borderRadius: '4px', padding: '2px 5px', height: '22px' }}>
-      <Image src="/assets/images/payments/visa.svg" alt="Visa" width={26} height={12} style={{ objectFit: 'contain', height: '12px', width: 'auto' }} />
+    <span className={className} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: '#ffffff', border: '1px solid #e7e5e4', borderRadius: '4px', padding: '2px 6px', height: '22px' }}>
+      <Image src="/assets/images/payments/visa.svg" alt="Visa" width={30} height={12} style={{ objectFit: 'contain', height: '12px', width: 'auto' }} />
     </span>
   );
 }
