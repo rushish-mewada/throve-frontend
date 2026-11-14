@@ -33,7 +33,6 @@ export default function AddToCartClient({ variants, colors, product }) {
   const handleCheckoutNow = async () => {
     if (isCheckingOut) return;
     setIsCheckingOut(true);
-    setIsCartDrawerOpen(false);
     try {
       const orderItems = [
         {
@@ -51,11 +50,12 @@ export default function AddToCartClient({ variants, colors, product }) {
           environment: res.environment || "production",
         });
       } else {
-        router.push('/cart');
+        console.error("Cashfree checkout error:", res.error);
+        setIsCartDrawerOpen(true);
       }
     } catch (err) {
       console.error("Cashfree checkout error:", err);
-      router.push('/cart');
+      setIsCartDrawerOpen(true);
     } finally {
       setIsCheckingOut(false);
     }
@@ -105,7 +105,7 @@ export default function AddToCartClient({ variants, colors, product }) {
         </div>
       </div>
 
-      {/* Pre-Order Exclusive Notice Banner */}
+      {/* Luxury Delivery & Service Guarantee */}
       <div
         style={{
           padding: '12px 14px',
@@ -121,15 +121,17 @@ export default function AddToCartClient({ variants, colors, product }) {
         }}
       >
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
+          <rect x="1" y="3" width="15" height="13" />
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
         </svg>
         <div>
           <strong style={{ color: '#1c1917', display: 'block', marginBottom: '2px' }}>
-            First Edition · Pre-Order Only
+            Complimentary Express Delivery & 7-Day Returns
           </strong>
           <span>
-            This bespoke style is in limited handcrafted production. Reserve your piece today with <strong>Zero Upfront Payment</strong> — 100% Cash on Delivery (COD) upon doorstep delivery.
+            Handcrafted luxury piece in ready stock. Secured instant order processing with Cashfree One-Click Checkout & COD available across India.
           </span>
         </div>
       </div>
@@ -181,7 +183,7 @@ export default function AddToCartClient({ variants, colors, product }) {
           {isCheckingOut ? (
             <>
               <span className={styles.spinnerDark} />
-              <span>Securing Pre-Order...</span>
+              <span>Launching Checkout...</span>
             </>
           ) : (
             <>
@@ -198,7 +200,7 @@ export default function AddToCartClient({ variants, colors, product }) {
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
                 <path d="M7 11V7a5 5 0 0 1 10 0v4" />
               </svg>
-              <span>Pre-Order Now (COD)</span>
+              <span>Buy Now</span>
             </>
           )}
         </button>

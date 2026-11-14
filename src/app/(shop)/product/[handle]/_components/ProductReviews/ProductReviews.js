@@ -133,7 +133,7 @@ export default function ProductReviews() {
                   No reviews yet
                 </h4>
                 <p style={{ fontFamily: 'var(--font-poppins), sans-serif', fontSize: '0.85rem', color: '#78716c', margin: 0, maxWidth: '420px', lineHeight: 1.5 }}>
-                  This style is part of our upcoming first drop. Verified customer reviews and ratings will be published here as pre-orders are fulfilled.
+                  This style is part of our latest collection. Verified customer reviews and ratings will be published here as verified orders are delivered.
                 </p>
               </div>
             </div>

@@ -19,7 +19,7 @@ export default function CheckoutPage() {
 
     async function launch() {
       if (!cartItems || cartItems.length === 0) {
-        router.replace('/cart');
+        router.replace('/');
         return;
       }
 
@@ -64,7 +64,7 @@ export default function CheckoutPage() {
             <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', color: '#111' }}>Checkout Notice</h2>
             <p style={{ fontSize: '14px', color: '#666', marginBottom: '24px' }}>{errorMsg}</p>
             <Link
-              href="/cart"
+              href="/"
               style={{
                 display: 'inline-block',
                 padding: '12px 24px',
@@ -76,7 +76,7 @@ export default function CheckoutPage() {
                 borderRadius: '2px',
               }}
             >
-              Return to Cart
+              Return to Bag
             </Link>
           </div>
         ) : (

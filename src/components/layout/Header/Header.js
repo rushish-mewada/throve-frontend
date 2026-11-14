@@ -88,7 +88,6 @@ export default function Header() {
   const handleDrawerCheckout = async () => {
     if (isDrawerCheckingOut || cartItems.length === 0) return;
     setIsDrawerCheckingOut(true);
-    closeCart();
     try {
       const orderItems = cartItems.map((item) => ({
         variantId: item.productId || item.handle || "var_01",
@@ -99,15 +98,16 @@ export default function Header() {
 
       const res = await initiateCashfreeCheckoutAction({ items: orderItems });
       if (res.success && res.paymentSessionId) {
+        closeCart();
         await launchCashfreeCheckout({
           paymentSessionId: res.paymentSessionId,
           environment: res.environment || "production",
         });
       } else {
-        router.push("/cart");
+        console.error("Cashfree checkout error:", res?.error);
       }
-    } catch {
-      router.push("/cart");
+    } catch (err) {
+      console.error("Cashfree checkout error:", err);
     } finally {
       setIsDrawerCheckingOut(false);
     }
@@ -430,20 +430,14 @@ export default function Header() {
               </div>
               <p className={styles.taxNote}>Shipping, taxes, and discount codes calculated at checkout.</p>
               <div className={styles.cartActions}>
-                <Link
-                  href="/cart"
-                  onClick={closeCart}
-                  className={styles.viewBagBtn}
-                >
-                  View Bag
-                </Link>
                 <button
                   type="button"
                   onClick={handleDrawerCheckout}
                   disabled={isDrawerCheckingOut}
                   className={styles.checkoutBtn}
+                  style={{ width: '100%', flex: '1 1 100%' }}
                 >
-                  {isDrawerCheckingOut ? "Connecting..." : "Checkout"}
+                  {isDrawerCheckingOut ? "Connecting Cashfree..." : "Checkout with Cashfree"}
                 </button>
               </div>
             </div>

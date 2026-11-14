@@ -17,12 +17,12 @@ export default function ProductInfo({ product }) {
             letterSpacing: '0.06em',
             padding: '2px 8px',
             borderRadius: '12px',
-            backgroundColor: '#fef3c7',
-            color: '#92400e',
-            border: '1px solid #fde68a',
+            backgroundColor: '#ecfdf5',
+            color: '#065f46',
+            border: '1px solid #a7f3d0',
           }}
         >
-          Coming Soon · Pre-Order Only
+          In Stock · Ready to Ship
         </span>
       </div>
       <h1 className={styles.title}>{product.title}</h1>
