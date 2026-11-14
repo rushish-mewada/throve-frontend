@@ -8,6 +8,8 @@ import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
 import { processCheckoutAction, initiateCashfreeCheckoutAction } from '@/actions/checkout';
 import { launchCashfreeCheckout } from '@/lib/cashfree';
+import CustomInput from '@/components/ui/CustomInput/CustomInput';
+import CustomSelect from '@/components/ui/CustomSelect/CustomSelect';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
@@ -630,7 +632,7 @@ export default function CheckoutPage() {
         )}
 
         <form className={styles.checkoutForm} onSubmit={(e) => { e.preventDefault(); handlePayNow(); }}>
-          {/* 1. CONTACT INFORMATION */}
+          {/* 1. CONTACT INFORMATION (CUSTOM COMPONENTS) */}
           <div className={styles.sectionBlock}>
             <div className={styles.sectionHeading}>
               <div className={styles.headingLeft}>
@@ -640,45 +642,35 @@ export default function CheckoutPage() {
             </div>
 
             <div className={styles.formGrid}>
-              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-                <label htmlFor="contact-phone" className={styles.fieldLabel}>
-                  Mobile Number (for WhatsApp delivery alerts) *
-                </label>
-                <div className={styles.phoneWrapper}>
-                  <span className={styles.countryCode}>+91</span>
-                  <input
-                    id="contact-phone"
-                    name="tel"
-                    type="tel"
-                    autoComplete="tel"
-                    placeholder="98926 91094"
-                    className={styles.phoneInput}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    required
-                  />
-                </div>
-              </div>
+              <CustomInput
+                label="Mobile Number (for WhatsApp delivery alerts) *"
+                id="contact-phone"
+                name="tel"
+                type="tel"
+                autoComplete="tel"
+                placeholder="98926 91094"
+                prefix="+91"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                required
+                fullWidth
+              />
 
-              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-                <label htmlFor="contact-email" className={styles.fieldLabel}>
-                  Email Address (for GST tax invoice)
-                </label>
-                <input
-                  id="contact-email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="client@throve.in"
-                  className={styles.input}
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+              <CustomInput
+                label="Email Address (for GST tax invoice)"
+                id="contact-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                placeholder="client@throve.in"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+              />
             </div>
           </div>
 
-          {/* 2. DELIVERY ADDRESS: SAVED CARD OR EDITABLE FORM */}
+          {/* 2. DELIVERY ADDRESS: SAVED CARD OR EDITABLE FORM (CUSTOM COMPONENTS) */}
           <div className={styles.sectionBlock}>
             <div className={styles.sectionHeading}>
               <div className={styles.headingLeft}>
@@ -732,113 +724,97 @@ export default function CheckoutPage() {
                 )}
               </div>
             ) : (
-              /* EDITABLE ADDRESS FORM WITH PRECISION AUTOFILL */
+              /* EDITABLE ADDRESS FORM WITH CUSTOM COMPONENTS & PRECISION AUTOFILL */
               <div className={styles.formGrid}>
-                <div className={styles.fieldGroup}>
-                  <label htmlFor="shipping-firstName" className={styles.fieldLabel}>First Name *</label>
-                  <input
-                    id="shipping-firstName"
-                    name="firstName"
-                    type="text"
-                    autoComplete="given-name"
-                    placeholder="First Name *"
-                    className={styles.input}
-                    value={firstName}
-                    onChange={(e) => setFirstName(e.target.value)}
-                    required
-                  />
-                </div>
+                <CustomInput
+                  label="First Name *"
+                  id="shipping-firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="First Name *"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  required
+                />
 
-                <div className={styles.fieldGroup}>
-                  <label htmlFor="shipping-lastName" className={styles.fieldLabel}>Last Name</label>
-                  <input
-                    id="shipping-lastName"
-                    name="lastName"
-                    type="text"
-                    autoComplete="family-name"
-                    placeholder="Last Name"
-                    className={styles.input}
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                  />
-                </div>
+                <CustomInput
+                  label="Last Name"
+                  id="shipping-lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
 
                 {/* Exact WHATWG address-line1 mapping prevents autofill from inverting lines */}
-                <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-                  <label htmlFor="shipping-address1" className={styles.fieldLabel}>Street Address *</label>
-                  <input
-                    id="shipping-address1"
-                    name="address1"
-                    type="text"
-                    autoComplete="address-line1"
-                    placeholder="House / Flat No., Building Name, Street *"
-                    className={styles.input}
-                    value={address1}
-                    onChange={(e) => setAddress1(e.target.value)}
-                    required
-                  />
-                </div>
+                <CustomInput
+                  label="Street Address *"
+                  id="shipping-address1"
+                  name="address1"
+                  type="text"
+                  autoComplete="address-line1"
+                  placeholder="House / Flat No., Building Name, Street *"
+                  value={address1}
+                  onChange={(e) => setAddress1(e.target.value)}
+                  required
+                  fullWidth
+                />
 
                 {/* Exact WHATWG address-line2 mapping */}
-                <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-                  <label htmlFor="shipping-address2" className={styles.fieldLabel}>Apartment, Suite, Landmark (optional)</label>
-                  <input
-                    id="shipping-address2"
-                    name="address2"
-                    type="text"
-                    autoComplete="address-line2"
-                    placeholder="Apartment, Suite, Unit, Landmark (optional)"
-                    className={styles.input}
-                    value={address2}
-                    onChange={(e) => setAddress2(e.target.value)}
-                  />
-                </div>
+                <CustomInput
+                  label="Apartment, Suite, Landmark (optional)"
+                  id="shipping-address2"
+                  name="address2"
+                  type="text"
+                  autoComplete="address-line2"
+                  placeholder="Apartment, Suite, Unit, Landmark (optional)"
+                  value={address2}
+                  onChange={(e) => setAddress2(e.target.value)}
+                  fullWidth
+                />
 
-                <div className={styles.fieldGroup}>
-                  <label htmlFor="shipping-pincode" className={styles.fieldLabel}>PIN Code *</label>
-                  <input
-                    id="shipping-pincode"
-                    name="postal-code"
-                    type="text"
-                    autoComplete="postal-code"
-                    placeholder="6-digit PIN code *"
-                    className={styles.input}
-                    value={pincode}
-                    onChange={(e) => handlePincodeChange(e.target.value)}
-                    maxLength={6}
-                    required
-                  />
-                </div>
+                <CustomInput
+                  label="PIN Code *"
+                  id="shipping-pincode"
+                  name="postal-code"
+                  type="text"
+                  autoComplete="postal-code"
+                  placeholder="6-digit PIN code *"
+                  value={pincode}
+                  onChange={(e) => handlePincodeChange(e.target.value)}
+                  maxLength={6}
+                  required
+                />
 
-                <div className={styles.fieldGroup}>
-                  <label htmlFor="shipping-city" className={styles.fieldLabel}>City *</label>
-                  <input
-                    id="shipping-city"
-                    name="address-level2"
-                    type="text"
-                    autoComplete="address-level2"
-                    placeholder="City *"
-                    className={styles.input}
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    required
-                  />
-                </div>
+                <CustomInput
+                  label="City *"
+                  id="shipping-city"
+                  name="address-level2"
+                  type="text"
+                  autoComplete="address-level2"
+                  placeholder="City *"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  required
+                />
 
-                <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
-                  <label htmlFor="shipping-state" className={styles.fieldLabel}>State *</label>
-                  <select
+                {/* BESPOKE CUSTOM DROPDOWN COMPONENT MATCHING BRAND THEME */}
+                <div className={styles.fullWidth}>
+                  <CustomSelect
+                    label="State *"
                     id="shipping-state"
                     name="address-level1"
                     autoComplete="address-level1"
-                    className={styles.select}
                     value={state}
-                    onChange={(e) => setState(e.target.value)}
-                  >
-                    {INDIAN_STATES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                    onChange={(val) => setState(val)}
+                    options={INDIAN_STATES}
+                    placeholder="Select State *"
+                    required
+                    searchable
+                  />
                 </div>
 
                 {hasSavedAddress && (
@@ -966,7 +942,7 @@ export default function CheckoutPage() {
               <div className={styles.trustIcon}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                   <rect x="1" y="3" width="15" height="13"/>
-                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 16 8"/>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
                   <circle cx="5.5" cy="18.5" r="2.5"/>
                   <circle cx="18.5" cy="18.5" r="2.5"/>
                 </svg>
