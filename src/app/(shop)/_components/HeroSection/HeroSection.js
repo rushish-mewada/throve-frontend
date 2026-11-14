@@ -1,7 +1,7 @@
 import styles from './HeroSection.module.css';
 import HeroSlider from './HeroSlider';
 
-export default function HeroSection({ title }) {
+export default function HeroSection({ title, products = [] }) {
   return (
     <section className={styles.hero}>
       {/* Background Grid Pattern */}
@@ -14,7 +14,7 @@ export default function HeroSection({ title }) {
       </div>
 
       {/* Hero Slider Container */}
-      <HeroSlider />
+      <HeroSlider products={products} />
     </section>
   );
 }

@@ -150,7 +150,7 @@ const PRODUCTS = [
 // Fixed 7 relative slots: 3 items left (-3,-2,-1), 1 center (0), 3 items right (1,2,3)
 const OFFSETS = [-3, -2, -1, 0, 1, 2, 3];
 
-export default function HeroSlider() {
+export default function HeroSlider({ products = [] }) {
   const { isInWishlist, toggleWishlist } = useStore();
   const NUM_DOM_ELEMENTS = 9;
   const [offsetBase, setOffsetBase] = useState(0);
@@ -163,10 +163,68 @@ export default function HeroSlider() {
 
   const prevOffsetBase = prevOffsetBaseRef.current;
 
-  let activeIdx = (-offsetBase) % PRODUCTS.length;
-  if (activeIdx < 0) activeIdx += PRODUCTS.length;
+  // Dynamically link live backend product data into hero slides & hotspots
+  const displayProducts = PRODUCTS.map((prod) => {
+    const matchedBackendProd = (products || []).find((p) => {
+      const pHandle = p.handle || "";
+      const pTitle = (p.title || "").toLowerCase();
+      const prodTitle = (prod.title || "").toLowerCase();
+      return (
+        (pHandle && (pHandle === prod.handle || prod.hotspots?.some((h) => h.handle === pHandle))) ||
+        (pTitle && pTitle === prodTitle)
+      );
+    });
 
-  const activeProduct = PRODUCTS[activeIdx];
+    const updatedHotspots = (prod.hotspots || []).map((hs) => {
+      const liveProd = (products || []).find((p) => {
+        const pHandle = p.handle || "";
+        const pTitle = (p.title || "").toLowerCase();
+        const hsTitle = (hs.title || "").toLowerCase();
+        return (pHandle && pHandle === hs.handle) || (pTitle && pTitle === hsTitle);
+      });
+
+      if (!liveProd) return hs;
+
+      const ratingNum = liveProd.rating !== null && liveProd.rating !== undefined ? Number(liveProd.rating) : null;
+      const ratingStr = ratingNum !== null && !isNaN(ratingNum)
+        ? (ratingNum > 0 ? ratingNum.toFixed(1) : "0")
+        : (hs.rating || "0");
+
+      const colorDots = Array.isArray(liveProd.colorHexes) && liveProd.colorHexes.length > 0
+        ? liveProd.colorHexes
+        : (Array.isArray(liveProd.colors) && liveProd.colors.length > 0
+            ? liveProd.colors.map((c) => (typeof c === "string" ? c : c?.hex || "#18181b"))
+            : hs.colorDots);
+
+      const colorName = liveProd.colors?.[0]?.name || hs.color;
+
+      return {
+        ...hs,
+        id: liveProd.id || hs.id,
+        title: liveProd.title || hs.title,
+        price: liveProd.price || hs.price,
+        rating: ratingStr,
+        handle: liveProd.handle || hs.handle,
+        collection: liveProd.collection && liveProd.collection !== "Collection" ? liveProd.collection : hs.collection,
+        color: colorName,
+        colorDots,
+        _liveProduct: liveProd,
+      };
+    });
+
+    return {
+      ...prod,
+      id: matchedBackendProd?.id || prod.id,
+      title: matchedBackendProd?.title || prod.title,
+      description: matchedBackendProd?.description || prod.description,
+      hotspots: updatedHotspots,
+    };
+  });
+
+  let activeIdx = (-offsetBase) % displayProducts.length;
+  if (activeIdx < 0) activeIdx += displayProducts.length;
+
+  const activeProduct = displayProducts[activeIdx];
 
   // Auto-play loop
   useEffect(() => {
@@ -250,9 +308,9 @@ export default function HeroSlider() {
 
           const isWrapping = Math.abs(offset - prevOffset) > 1;
 
-          let prodIdx = (activeIdx + offset) % PRODUCTS.length;
-          if (prodIdx < 0) prodIdx += PRODUCTS.length;
-          const prod = PRODUCTS[prodIdx];
+          let prodIdx = (activeIdx + offset) % displayProducts.length;
+          if (prodIdx < 0) prodIdx += displayProducts.length;
+          const prod = displayProducts[prodIdx];
 
           const isCenter = offset === 0;
           const slotClass = styles[`slot_${offset}`];
@@ -317,13 +375,15 @@ export default function HeroSlider() {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          toggleWishlist({
-                            id: hs.id,
-                            title: hs.title,
-                            price: hs.price,
-                            handle: hs.handle,
-                            image: prod.image,
-                          });
+                          toggleWishlist(
+                            hs._liveProduct || {
+                              id: hs.id,
+                              title: hs.title,
+                              price: hs.price,
+                              handle: hs.handle,
+                              image: prod.image,
+                            }
+                          );
                         }}
                       >
                         <svg
@@ -348,7 +408,7 @@ export default function HeroSlider() {
 
                     <div className={styles.cardMeta}>
                       <span className={styles.cardColor}>Color: {hs.color}</span>
-                      {Number(hs.rating) > 0 && <span className={styles.cardRating}>★ {hs.rating}</span>}
+                      <span className={styles.cardRating}>★ {hs.rating || "0"}</span>
                     </div>
 
                     <div className={styles.cardPriceRow}>

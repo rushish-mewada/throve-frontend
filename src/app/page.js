@@ -13,7 +13,7 @@ export default async function Home() {
 
   return (
     <main>
-      <HeroSection title={config?.home?.heroTitle} />
+      <HeroSection title={config?.home?.heroTitle} products={products} />
       <CategorySection />
       <NewArrivalsSection products={products} />
       <ShopTheLookSection />
