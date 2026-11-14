@@ -130,11 +130,9 @@ export default async function SearchPage({ searchParams }) {
                     <div className={styles.productInfo}>
                       <div className={styles.productTop}>
                         <h3>{product.title}</h3>
-                        {Number(product.rating) > 0 && (
-                          <div className={styles.rating}>
-                            <span>★</span> {product.rating}
-                          </div>
-                        )}
+                        <div className={styles.rating}>
+                          <span>★</span> {Number(product.rating) > 0 ? product.rating : '0'}
+                        </div>
                       </div>
                       <div className={styles.productBottom}>
                         <span className={styles.price}>{product.price}</span>
