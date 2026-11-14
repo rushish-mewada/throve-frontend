@@ -30,35 +30,9 @@ export default function AddToCartClient({ variants, colors, product }) {
     setTimeout(() => setAddedSuccess(false), 3000);
   };
 
-  const handleCheckoutNow = async () => {
-    if (isCheckingOut) return;
-    setIsCheckingOut(true);
-    try {
-      const orderItems = [
-        {
-          variantId: selectedSize?.id || product?.id || product?.handle,
-          title: `${product?.title || "THROVE Atelier"} - ${selectedSize?.name || "M"} / ${selectedColor?.name || "Standard"}`,
-          quantity: 1,
-          pricePaise: Math.round((product?.priceNum || 2900) * 100),
-        },
-      ];
-
-      const res = await initiateCashfreeCheckoutAction({ items: orderItems });
-      if (res.success && res.paymentSessionId) {
-        await launchCashfreeCheckout({
-          paymentSessionId: res.paymentSessionId,
-          environment: res.environment || "production",
-        });
-      } else {
-        console.error("Cashfree checkout error:", res.error);
-        setIsCartDrawerOpen(true);
-      }
-    } catch (err) {
-      console.error("Cashfree checkout error:", err);
-      setIsCartDrawerOpen(true);
-    } finally {
-      setIsCheckingOut(false);
-    }
+  const handleCheckoutNow = () => {
+    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1);
+    router.push('/checkout');
   };
 
   return (

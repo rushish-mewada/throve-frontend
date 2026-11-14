@@ -195,10 +195,18 @@ export async function initiateCashfreeCheckoutAction(data = {}) {
     // Cashfree Production requires https return_url
     const returnUrl = `https://throve.in/order/${orderId}?order_id={order_id}`;
 
-    const customerPhone = String(data.phone || data.shippingAddress?.phone || "9999999999")
+    const customerPhone = String(data.phone || data.shippingAddress?.phone || "")
       .replace(/[^0-9]/g, "")
-      .slice(-10) || "9999999999";
-    const customerEmail = data.email || data.shippingAddress?.email || "concierge@throve.in";
+      .slice(-10);
+
+    if (!customerPhone || customerPhone.length !== 10) {
+      return {
+        success: false,
+        error: "A valid 10-digit mobile number is required to initiate checkout.",
+      };
+    }
+
+    const customerEmail = data.email || data.shippingAddress?.email || `cust_${customerPhone}@customer.throve.in`;
     const customerName = [
       data.firstName || data.shippingAddress?.firstName,
       data.lastName || data.shippingAddress?.lastName,

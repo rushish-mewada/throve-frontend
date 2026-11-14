@@ -85,32 +85,9 @@ export default function Header() {
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
 
-  const handleDrawerCheckout = async () => {
-    if (isDrawerCheckingOut || cartItems.length === 0) return;
-    setIsDrawerCheckingOut(true);
-    try {
-      const orderItems = cartItems.map((item) => ({
-        variantId: item.productId || item.handle || "var_01",
-        title: item.title,
-        quantity: item.qty || 1,
-        pricePaise: Math.round((item.priceNum || 2900) * 100),
-      }));
-
-      const res = await initiateCashfreeCheckoutAction({ items: orderItems });
-      if (res.success && res.paymentSessionId) {
-        closeCart();
-        await launchCashfreeCheckout({
-          paymentSessionId: res.paymentSessionId,
-          environment: res.environment || "production",
-        });
-      } else {
-        console.error("Cashfree checkout error:", res?.error);
-      }
-    } catch (err) {
-      console.error("Cashfree checkout error:", err);
-    } finally {
-      setIsDrawerCheckingOut(false);
-    }
+  const handleDrawerCheckout = () => {
+    closeCart();
+    router.push('/checkout');
   };
 
   return (
@@ -433,11 +410,10 @@ export default function Header() {
                 <button
                   type="button"
                   onClick={handleDrawerCheckout}
-                  disabled={isDrawerCheckingOut}
                   className={styles.checkoutBtn}
                   style={{ width: '100%', flex: '1 1 100%' }}
                 >
-                  {isDrawerCheckingOut ? "Connecting Cashfree..." : "Checkout with Cashfree"}
+                  Proceed to Checkout • ₹{cartSubtotal.toLocaleString('en-IN')}
                 </button>
               </div>
             </div>
