@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,39 +9,98 @@ import styles from './page.module.css';
 import { processCheckoutAction, initiateCashfreeCheckoutAction } from '@/actions/checkout';
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 
+const INDIAN_STATES = [
+  "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
+  "Chandigarh", "Chhattisgarh", "Dadra and Nagar Haveli and Daman and Diu", "Delhi", "Goa",
+  "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka",
+  "Kerala", "Ladakh", "Lakshadweep", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya",
+  "Mizoram", "Nagaland", "Odisha", "Puducherry", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu",
+  "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
+];
+
+const PIN_PREFIX_STATE_MAP = {
+  '11': { state: 'Delhi', city: 'New Delhi' },
+  '12': { state: 'Haryana', city: 'Gurugram' },
+  '13': { state: 'Haryana', city: 'Faridabad' },
+  '14': { state: 'Punjab', city: 'Ludhiana' },
+  '15': { state: 'Punjab', city: 'Amritsar' },
+  '16': { state: 'Chandigarh', city: 'Chandigarh' },
+  '17': { state: 'Himachal Pradesh', city: 'Shimla' },
+  '18': { state: 'Jammu and Kashmir', city: 'Srinagar' },
+  '19': { state: 'Jammu and Kashmir', city: 'Jammu' },
+  '20': { state: 'Uttar Pradesh', city: 'Noida' },
+  '21': { state: 'Uttar Pradesh', city: 'Prayagraj' },
+  '22': { state: 'Uttar Pradesh', city: 'Lucknow' },
+  '24': { state: 'Uttarakhand', city: 'Dehradun' },
+  '25': { state: 'Uttar Pradesh', city: 'Meerut' },
+  '28': { state: 'Uttar Pradesh', city: 'Agra' },
+  '30': { state: 'Rajasthan', city: 'Jaipur' },
+  '31': { state: 'Rajasthan', city: 'Udaipur' },
+  '34': { state: 'Rajasthan', city: 'Jodhpur' },
+  '36': { state: 'Gujarat', city: 'Rajkot' },
+  '38': { state: 'Gujarat', city: 'Ahmedabad' },
+  '39': { state: 'Gujarat', city: 'Surat' },
+  '40': { state: 'Maharashtra', city: 'Mumbai' },
+  '41': { state: 'Maharashtra', city: 'Pune' },
+  '42': { state: 'Maharashtra', city: 'Nashik' },
+  '44': { state: 'Maharashtra', city: 'Nagpur' },
+  '45': { state: 'Madhya Pradesh', city: 'Indore' },
+  '46': { state: 'Madhya Pradesh', city: 'Bhopal' },
+  '49': { state: 'Chhattisgarh', city: 'Raipur' },
+  '50': { state: 'Telangana', city: 'Hyderabad' },
+  '51': { state: 'Andhra Pradesh', city: 'Tirupati' },
+  '52': { state: 'Andhra Pradesh', city: 'Vijayawada' },
+  '53': { state: 'Andhra Pradesh', city: 'Visakhapatnam' },
+  '56': { state: 'Karnataka', city: 'Bengaluru' },
+  '57': { state: 'Karnataka', city: 'Mangaluru' },
+  '58': { state: 'Karnataka', city: 'Hubli' },
+  '60': { state: 'Tamil Nadu', city: 'Chennai' },
+  '64': { state: 'Tamil Nadu', city: 'Coimbatore' },
+  '67': { state: 'Kerala', city: 'Kozhikode' },
+  '68': { state: 'Kerala', city: 'Kochi' },
+  '69': { state: 'Kerala', city: 'Thiruvananthapuram' },
+  '70': { state: 'West Bengal', city: 'Kolkata' },
+  '75': { state: 'Odisha', city: 'Bhubaneswar' },
+  '78': { state: 'Assam', city: 'Guwahati' },
+  '80': { state: 'Bihar', city: 'Patna' },
+  '83': { state: 'Jharkhand', city: 'Ranchi' },
+};
+
 const PAYMENT_OPTIONS = [
   {
     id: 'cashfree',
-    kind: 'online',
     label: 'Online Payment (UPI, Cards, NetBanking)',
-    subtitle: 'Instant secure checkout via Cashfree Payments. Supports Google Pay, PhonePe, Paytm, all Cards & UPI.',
+    subtitle: 'Instant & secure checkout powered by Cashfree. Zero convenience fee.',
+    badges: ['Google Pay', 'PhonePe', 'Paytm', 'UPI QR', 'Visa', 'Mastercard'],
   },
   {
     id: 'cod',
-    kind: 'offline',
     label: 'Cash on Delivery (COD)',
-    subtitle: 'Pay at your doorstep via cash or courier UPI QR code when your parcel is delivered.',
+    subtitle: 'Pay at your doorstep via cash or courier UPI QR when parcel arrives.',
+    badges: ['Pay on Delivery', 'Doorstep Verification'],
   },
 ];
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { cartItems, cartSubtotal, clearCart, user, isMounted } = useStore();
-  const [step, setStep] = useState(1); // 1: Contact, 2: Delivery, 3: Payment
   
   // Contact & Delivery State
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState('');
-  const [apartment, setApartment] = useState('');
+  const [address1, setAddress1] = useState('');
+  const [address2, setAddress2] = useState('');
   const [city, setCity] = useState('');
   const [state, setState] = useState('Maharashtra');
   const [pincode, setPincode] = useState('');
   
-  // Payment State
+  // Payment & Coupon State
   const [paymentMethod, setPaymentMethod] = useState('cashfree');
+  const [couponInput, setCouponInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponError, setCouponError] = useState('');
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -61,6 +120,64 @@ export default function CheckoutPage() {
     }
   }, [user]);
 
+  // Smart Indian PIN code auto-population
+  const handlePincodeChange = useCallback(async (rawPin) => {
+    const cleanPin = rawPin.replace(/\D/g, '').slice(0, 6);
+    setPincode(cleanPin);
+
+    if (cleanPin.length === 6) {
+      // 1. Instant heuristic fallback by prefix
+      const prefix2 = cleanPin.substring(0, 2);
+      if (PIN_PREFIX_STATE_MAP[prefix2]) {
+        const mapped = PIN_PREFIX_STATE_MAP[prefix2];
+        if (!city) setCity(mapped.city);
+        if (mapped.state) setState(mapped.state);
+      }
+
+      // 2. Exact PIN postal verification
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${cleanPin}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data[0]?.Status === 'Success' && data[0]?.PostOffice?.length > 0) {
+            const po = data[0].PostOffice[0];
+            if (po.District) setCity(po.District);
+            if (po.State && INDIAN_STATES.includes(po.State)) {
+              setState(po.State);
+            }
+          }
+        }
+      } catch {
+        // Fallback already assigned
+      }
+    }
+  }, [city]);
+
+  // Handle Coupon Application
+  const handleApplyCoupon = (e) => {
+    e?.preventDefault?.();
+    setCouponError('');
+    const code = couponInput.trim().toUpperCase();
+    if (!code) return;
+
+    if (code === 'THROVE10') {
+      const discount = Math.round(cartSubtotal * 0.1);
+      setAppliedCoupon({ code, discount, label: '10% Atelier Privilège Discount' });
+      setCouponInput('');
+    } else if (code === 'WELCOME500' || code === 'FIRST500') {
+      const discount = Math.min(500, cartSubtotal);
+      setAppliedCoupon({ code, discount, label: '₹500 Welcome Courtesy' });
+      setCouponInput('');
+    } else {
+      setCouponError('Invalid coupon code. Try THROVE10 for 10% off.');
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponError('');
+  };
+
   // Redirect if cart is empty after hydration
   useEffect(() => {
     if (isMounted && (!cartItems || cartItems.length === 0)) {
@@ -71,30 +188,38 @@ export default function CheckoutPage() {
     }
   }, [isMounted, cartItems, router]);
 
-  const selectedMethodMeta = PAYMENT_OPTIONS.find((m) => m.id === paymentMethod) || PAYMENT_OPTIONS[0];
+  // Calculate pricing breakdown
+  const discountAmount = appliedCoupon?.discount || 0;
+  const finalTotal = Math.max(0, cartSubtotal - discountAmount);
+  const itemCount = cartItems?.reduce((acc, item) => acc + (item.qty || 1), 0) || 0;
 
-  const handleContinueToDelivery = (e) => {
-    e?.preventDefault?.();
+  // Checkout submission handler
+  const handlePayNow = () => {
     setErrorMessage('');
-    if (!phone || phone.replace(/[^0-9]/g, '').length < 10) {
+
+    // Comprehensive client validation
+    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    if (!cleanPhone || cleanPhone.length < 10) {
       setErrorMessage('Please enter a valid 10-digit mobile number for order delivery updates.');
       return;
     }
-    setStep(2);
-  };
-
-  const handleContinueToPayment = (e) => {
-    e?.preventDefault?.();
-    setErrorMessage('');
-    if (!firstName.trim() || !address.trim() || !city.trim() || !pincode.trim()) {
-      setErrorMessage('Please complete all required delivery address fields.');
+    if (!firstName.trim()) {
+      setErrorMessage('Please enter your first name for shipping.');
       return;
     }
-    setStep(3);
-  };
+    if (!address1.trim()) {
+      setErrorMessage('Please enter your street address (Flat / House No., Building, Street).');
+      return;
+    }
+    if (!city.trim()) {
+      setErrorMessage('Please enter your delivery city.');
+      return;
+    }
+    if (!pincode.trim() || pincode.trim().length !== 6) {
+      setErrorMessage('Please enter a valid 6-digit Indian PIN code.');
+      return;
+    }
 
-  const handlePayNow = () => {
-    setErrorMessage('');
     startTransition(async () => {
       try {
         const orderItems = cartItems.map((item) => ({
@@ -104,9 +229,8 @@ export default function CheckoutPage() {
           pricePaise: Math.round((item.priceNum || 2900) * 100),
         }));
 
-        const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
         const customerName = `${firstName.trim()} ${lastName.trim()}`.trim() || 'Valued Customer';
-        const fullAddress = [address.trim(), apartment.trim()].filter(Boolean).join(', ');
+        const fullAddress = [address1.trim(), address2.trim()].filter(Boolean).join(', ');
 
         // 1. ONLINE PAYMENT: Cashfree One Click / Dropin Checkout
         if (paymentMethod === 'cashfree') {
@@ -116,12 +240,14 @@ export default function CheckoutPage() {
             email: email.trim() || `${cleanPhone}@customer.throve.in`,
             firstName: firstName.trim(),
             lastName: lastName.trim(),
+            couponCode: appliedCoupon?.code || '',
             shippingAddress: {
               firstName: firstName.trim(),
               lastName: lastName.trim(),
               email: email.trim(),
               phone: cleanPhone,
-              address1: fullAddress,
+              address1: address1.trim(),
+              address2: address2.trim(),
               city: city.trim(),
               state,
               pincode: pincode.trim(),
@@ -136,9 +262,10 @@ export default function CheckoutPage() {
               publicId: res.orderId,
               date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
               email: email || `${cleanPhone}@customer.throve.in`,
-              total: `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
+              total: `₹${finalTotal.toLocaleString('en-IN')}.00`,
               subtotal: `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
-              shipping: 'Free',
+              discount: discountAmount ? `₹${discountAmount.toLocaleString('en-IN')}.00` : null,
+              shipping: 'Complimentary Express',
               paymentMethod: 'Online Payment (Cashfree)',
               shippingAddress: {
                 name: customerName,
@@ -162,7 +289,6 @@ export default function CheckoutPage() {
             } catch {}
 
             // Launch Cashfree Checkout Modal with customer's real phone & details
-            // Note: Cart is preserved until payment is confirmed on /order/[id]
             await launchCashfreeCheckout({
               paymentSessionId: res.paymentSessionId,
               environment: res.environment || 'production',
@@ -180,11 +306,13 @@ export default function CheckoutPage() {
           phone: cleanPhone,
           firstName: firstName.trim(),
           lastName: lastName.trim(),
-          address1: fullAddress,
+          address1: address1.trim(),
+          address2: address2.trim(),
           city: city.trim(),
           state,
           pincode: pincode.trim(),
           paymentMethod: 'cod',
+          couponCode: appliedCoupon?.code || '',
         });
 
         if (codRes.success) {
@@ -194,9 +322,10 @@ export default function CheckoutPage() {
             publicId: codRes.orderId,
             date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
             email: email || `${cleanPhone}@customer.throve.in`,
-            total: codRes.totalFormatted || `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
-            subtotal: codRes.totalFormatted || `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
-            shipping: 'Free',
+            total: `₹${finalTotal.toLocaleString('en-IN')}.00`,
+            subtotal: `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
+            discount: discountAmount ? `₹${discountAmount.toLocaleString('en-IN')}.00` : null,
+            shipping: 'Complimentary Express',
             paymentMethod: 'Cash on Delivery (COD)',
             shippingAddress: {
               name: customerName,
@@ -235,17 +364,9 @@ export default function CheckoutPage() {
     return (
       <main className={styles.checkoutLayout} style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ textAlign: 'center', maxWidth: '440px', padding: '32px' }}>
-          <div style={{
-            width: '36px',
-            height: '36px',
-            border: '2px solid #e5e5e5',
-            borderTopColor: '#111',
-            borderRadius: '50%',
-            animation: 'spin 0.8s linear infinite',
-            margin: '0 auto 16px',
-          }} />
+          <div className={styles.spinner} style={{ margin: '0 auto 16px', borderColor: '#e5e5e5', borderTopColor: '#111', width: '32px', height: '32px' }} />
           <h2 style={{ fontSize: '15px', fontWeight: 500, color: '#111', margin: 0, letterSpacing: '0.04em' }}>
-            Loading your atelier bag...
+            Preparing your atelier checkout...
           </h2>
         </div>
       </main>
@@ -269,6 +390,7 @@ export default function CheckoutPage() {
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               textDecoration: 'none',
+              borderRadius: '4px',
             }}
           >
             Explore Collection
@@ -280,308 +402,435 @@ export default function CheckoutPage() {
 
   return (
     <main className={styles.checkoutLayout}>
+      {/* LEFT COLUMN: SHOPFLO UNIFIED CHECKOUT FORM */}
       <div className={styles.leftCol}>
         <div className={styles.header}>
           <Link href="/" className={styles.logoLink}>
             <Image 
               src="/assets/images/inline-logo.svg" 
-              alt="Throve" 
+              alt="Throve Atelier" 
               width={140} 
               height={32} 
               priority
             />
           </Link>
-          <div className={styles.breadcrumbs}>
-            <Link href="/" className={styles.breadcrumbLink}>Bag</Link> &gt; <span>Contact</span> &gt; <span>Delivery</span> &gt; <span>Payment</span>
+          <div className={styles.securityBadge}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <span>256-Bit SSL Encrypted</span>
           </div>
         </div>
 
         {errorMessage && (
-          <div style={{ padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: '13px', borderRadius: '4px', marginBottom: '20px' }}>
+          <div className={styles.alertBox}>
             {errorMessage}
           </div>
         )}
 
-        {/* STEP 1: CONTACT */}
-        <div className={`${styles.section} ${step === 1 ? styles.sectionActive : styles.sectionCompleted}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.stepTitle}>
-              <span className={styles.stepNum}>1</span>
-              <h3>Contact Details</h3>
+        <form className={styles.checkoutForm} onSubmit={(e) => { e.preventDefault(); handlePayNow(); }}>
+          {/* 1. CONTACT INFORMATION */}
+          <div className={styles.sectionBlock}>
+            <div className={styles.sectionHeading}>
+              <span className={styles.stepPill}>1</span>
+              <span>Contact Information</span>
             </div>
-            {step > 1 && (
-              <button className={styles.editBtn} onClick={() => setStep(1)}>Edit</button>
-            )}
-          </div>
-          
-          {step === 1 ? (
-            <div className={styles.sectionBody}>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#444', marginBottom: '6px' }}>
+
+            <div className={styles.formGrid}>
+              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+                <label htmlFor="contact-phone" className={styles.fieldLabel}>
                   Mobile Number (for WhatsApp delivery alerts) *
                 </label>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <span style={{ padding: '12px 14px', background: '#f5f5f5', border: '1px solid #e0e0e0', borderRight: 'none', fontSize: '14px', color: '#555', fontWeight: 500 }}>
-                    +91
-                  </span>
-                  <input 
-                    type="tel" 
-                    placeholder="98926 91094" 
-                    className={styles.input} 
+                <div className={styles.phoneWrapper}>
+                  <span className={styles.countryCode}>+91</span>
+                  <input
+                    id="contact-phone"
+                    name="tel"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="98926 91094"
+                    className={styles.phoneInput}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    style={{ flex: 1 }}
                     required
                   />
                 </div>
               </div>
 
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#444', marginBottom: '6px' }}>
+              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+                <label htmlFor="contact-email" className={styles.fieldLabel}>
                   Email Address (for GST tax invoice)
                 </label>
-                <input 
-                  type="email" 
-                  placeholder="client@throve.in" 
-                  className={styles.input} 
+                <input
+                  id="contact-email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="client@throve.in"
+                  className={styles.input}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
-
-              <button type="button" className={styles.continueBtn} onClick={handleContinueToDelivery}>
-                Continue to Delivery Address
-              </button>
             </div>
-          ) : (
-            <div className={styles.summaryText}>
-              <strong>+91 {phone}</strong> {email ? `• ${email}` : ''}
-            </div>
-          )}
-        </div>
-
-        {/* STEP 2: DELIVERY ADDRESS */}
-        <div className={`${styles.section} ${step === 2 ? styles.sectionActive : (step > 2 ? styles.sectionCompleted : styles.sectionPending)}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.stepTitle}>
-              <span className={styles.stepNum}>2</span>
-              <h3>Delivery Address</h3>
-            </div>
-            {step > 2 && (
-              <button className={styles.editBtn} onClick={() => setStep(2)}>Edit</button>
-            )}
           </div>
-          
-          {step === 2 ? (
-            <div className={styles.sectionBody}>
-              <div className={styles.formGrid}>
-                <input 
-                  type="text" 
-                  placeholder="First name *" 
-                  className={styles.input} 
+
+          {/* 2. DELIVERY ADDRESS (PRECISION AUTOFILL RESOLVED) */}
+          <div className={styles.sectionBlock}>
+            <div className={styles.sectionHeading}>
+              <span className={styles.stepPill}>2</span>
+              <span>Delivery Address</span>
+            </div>
+
+            <div className={styles.formGrid}>
+              <div className={styles.fieldGroup}>
+                <label htmlFor="shipping-firstName" className={styles.fieldLabel}>First Name *</label>
+                <input
+                  id="shipping-firstName"
+                  name="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  placeholder="First Name *"
+                  className={styles.input}
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   required
                 />
-                <input 
-                  type="text" 
-                  placeholder="Last name" 
-                  className={styles.input} 
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label htmlFor="shipping-lastName" className={styles.fieldLabel}>Last Name</label>
+                <input
+                  id="shipping-lastName"
+                  name="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  placeholder="Last Name"
+                  className={styles.input}
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
-                <input 
-                  type="text" 
-                  placeholder="Flat, House no., Building, Apartment *" 
-                  className={`${styles.input} ${styles.fullWidth}`} 
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+              </div>
+
+              {/* Exact WHATWG address-line1 mapping prevents autofill from inverting lines */}
+              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+                <label htmlFor="shipping-address1" className={styles.fieldLabel}>Street Address *</label>
+                <input
+                  id="shipping-address1"
+                  name="address1"
+                  type="text"
+                  autoComplete="address-line1"
+                  placeholder="House / Flat No., Building Name, Street *"
+                  className={styles.input}
+                  value={address1}
+                  onChange={(e) => setAddress1(e.target.value)}
                   required
                 />
-                <input 
-                  type="text" 
-                  placeholder="Area, Street, Sector, Village, Landmark (optional)" 
-                  className={`${styles.input} ${styles.fullWidth}`}
-                  value={apartment}
-                  onChange={(e) => setApartment(e.target.value)}
+              </div>
+
+              {/* Exact WHATWG address-line2 mapping */}
+              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+                <label htmlFor="shipping-address2" className={styles.fieldLabel}>Apartment, Suite, Landmark (optional)</label>
+                <input
+                  id="shipping-address2"
+                  name="address2"
+                  type="text"
+                  autoComplete="address-line2"
+                  placeholder="Apartment, Suite, Unit, Landmark (optional)"
+                  className={styles.input}
+                  value={address2}
+                  onChange={(e) => setAddress2(e.target.value)}
                 />
-                <input 
-                  type="text" 
-                  placeholder="City *" 
-                  className={styles.input} 
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label htmlFor="shipping-pincode" className={styles.fieldLabel}>PIN Code *</label>
+                <input
+                  id="shipping-pincode"
+                  name="postal-code"
+                  type="text"
+                  autoComplete="postal-code"
+                  placeholder="6-digit PIN code *"
+                  className={styles.input}
+                  value={pincode}
+                  onChange={(e) => handlePincodeChange(e.target.value)}
+                  maxLength={6}
+                  required
+                />
+              </div>
+
+              <div className={styles.fieldGroup}>
+                <label htmlFor="shipping-city" className={styles.fieldLabel}>City *</label>
+                <input
+                  id="shipping-city"
+                  name="address-level2"
+                  type="text"
+                  autoComplete="address-level2"
+                  placeholder="City *"
+                  className={styles.input}
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   required
                 />
-                <select 
-                  className={styles.input}
+              </div>
+
+              <div className={`${styles.fieldGroup} ${styles.fullWidth}`}>
+                <label htmlFor="shipping-state" className={styles.fieldLabel}>State *</label>
+                <select
+                  id="shipping-state"
+                  name="address-level1"
+                  autoComplete="address-level1"
+                  className={styles.select}
                   value={state}
                   onChange={(e) => setState(e.target.value)}
                 >
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Delhi">Delhi</option>
-                  <option value="Karnataka">Karnataka</option>
-                  <option value="Gujarat">Gujarat</option>
-                  <option value="Tamil Nadu">Tamil Nadu</option>
-                  <option value="Telangana">Telangana</option>
-                  <option value="Haryana">Haryana</option>
-                  <option value="West Bengal">West Bengal</option>
-                  <option value="Uttar Pradesh">Uttar Pradesh</option>
-                  <option value="Rajasthan">Rajasthan</option>
-                  <option value="Kerala">Kerala</option>
-                  <option value="Goa">Goa</option>
-                  <option value="Punjab">Punjab</option>
+                  {INDIAN_STATES.map((s) => (
+                    <option key={s} value={s}>{s}</option>
+                  ))}
                 </select>
-                <input 
-                  type="text" 
-                  placeholder="6-digit PIN code *" 
-                  className={styles.input} 
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  required
-                />
               </div>
-              <button type="button" className={styles.continueBtn} onClick={handleContinueToPayment} style={{ marginTop: '16px' }}>
-                Continue to Payment
-              </button>
-            </div>
-          ) : (
-            step > 2 && (
-              <div className={styles.summaryText}>
-                <div><strong>{firstName} {lastName}</strong></div>
-                <div>{[address, apartment].filter(Boolean).join(', ')}</div>
-                <div>{city}, {state} — {pincode}</div>
-              </div>
-            )
-          )}
-        </div>
-
-        {/* STEP 3: PAYMENT */}
-        <div className={`${styles.section} ${step === 3 ? styles.sectionActive : styles.sectionPending}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.stepTitle}>
-              <span className={styles.stepNum}>3</span>
-              <h3>Payment Method</h3>
             </div>
           </div>
-          
-          {step === 3 && (
-            <div className={styles.sectionBody}>
-              <p className={styles.paymentSub}>
-                {selectedMethodMeta?.id === 'cod' ? (
-                  <><strong>Cash on Delivery:</strong> Pay at doorstep via Cash or UPI QR when your courier arrives.</>
-                ) : (
-                  <><strong>Online Instant Checkout:</strong> 256-bit encrypted session powered by Cashfree Payments.</>
-                )}
-              </p>
 
-              <div className={styles.paymentMethods}>
-                {PAYMENT_OPTIONS.map((opt) => {
-                  const isSelected = paymentMethod === opt.id;
-                  return (
-                    <label
-                      key={opt.id}
-                      className={styles.paymentMethod}
-                      style={{
-                        borderColor: isSelected ? '#111111' : '#e0e0e0',
-                        backgroundColor: isSelected ? '#fafafa' : '#ffffff',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        padding: '16px',
-                        border: '1px solid',
-                        borderRadius: '6px',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      <div className={styles.radioGroup} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={isSelected}
-                          onChange={() => setPaymentMethod(opt.id)}
-                          style={{ marginTop: '3px' }}
-                        />
-                        <div>
-                          <span style={{ fontWeight: 600, display: 'block', color: '#111111', fontSize: '14px' }}>
-                            {opt.label}
-                          </span>
-                          <span style={{ fontSize: '12px', color: '#71717a', marginTop: '4px', display: 'block', lineHeight: 1.5 }}>
-                            {opt.subtitle}
-                          </span>
-                        </div>
-                      </div>
-                    </label>
-                  );
-                })}
+          {/* 3. SHIPPING METHOD BANNER */}
+          <div className={styles.shippingBanner}>
+            <div className={styles.shippingInfo}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="1" y="3" width="15" height="13"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+              <div>
+                <strong>Complimentary Express Delivery</strong>
+                <span style={{ display: 'block', fontSize: '0.78rem', color: '#15803d', marginTop: '1px' }}>
+                  2–4 Business Days via Blue Dart / Delhivery Air
+                </span>
               </div>
-
-              <button
-                type="button"
-                className={styles.payBtn}
-                onClick={handlePayNow}
-                disabled={isPending}
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', marginTop: '16px' }}
-              >
-                {isPending ? (
-                  <>
-                    <span className={styles.spinner} />
-                    <span>Connecting Cashfree...</span>
-                  </>
-                ) : paymentMethod === 'cod' ? (
-                  `Confirm Order (Pay ₹${cartSubtotal.toLocaleString('en-IN')}.00 on Delivery)`
-                ) : (
-                  `Pay ₹${cartSubtotal.toLocaleString('en-IN')}.00 via Cashfree`
-                )}
-              </button>
             </div>
-          )}
-        </div>
+            <span className={styles.shippingPrice}>Free</span>
+          </div>
+
+          {/* 4. PAYMENT METHOD SELECTOR */}
+          <div className={styles.sectionBlock}>
+            <div className={styles.sectionHeading}>
+              <span className={styles.stepPill}>3</span>
+              <span>Payment Method</span>
+            </div>
+
+            <div className={styles.paymentList}>
+              {PAYMENT_OPTIONS.map((opt) => {
+                const isSelected = paymentMethod === opt.id;
+                return (
+                  <div
+                    key={opt.id}
+                    className={`${styles.paymentCard} ${isSelected ? styles.paymentCardSelected : ''}`}
+                    onClick={() => setPaymentMethod(opt.id)}
+                  >
+                    <div className={`${styles.radioCircle} ${isSelected ? styles.radioCircleSelected : ''}`}>
+                      {isSelected && <div className={styles.radioDot} />}
+                    </div>
+
+                    <div className={styles.paymentMeta}>
+                      <div className={styles.paymentHeader}>
+                        <span className={styles.paymentTitle}>{opt.label}</span>
+                      </div>
+                      <p className={styles.paymentSubtitle}>{opt.subtitle}</p>
+                      <div className={styles.paymentBadges}>
+                        {opt.badges.map((b) => (
+                          <span key={b} className={styles.badgePill}>{b}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* PRIMARY SUBMIT BUTTON */}
+          <div>
+            <button
+              type="submit"
+              className={styles.payButton}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <span className={styles.spinner} />
+                  <span>Securing Order Session...</span>
+                </>
+              ) : paymentMethod === 'cod' ? (
+                `Confirm Order • Pay ₹${finalTotal.toLocaleString('en-IN')}.00 on Delivery`
+              ) : (
+                `Pay ₹${finalTotal.toLocaleString('en-IN')}.00 via Cashfree`
+              )}
+            </button>
+
+            <div className={styles.microTrust}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              <span>Guaranteed Safe & Secure Checkout • RBI Authorized Cashfree Gateway</span>
+            </div>
+          </div>
+        </form>
       </div>
 
-      {/* RIGHT COLUMN: ORDER SUMMARY */}
+      {/* RIGHT COLUMN: SHOPFLO STICKY ORDER SUMMARY */}
       <div className={styles.rightCol}>
-        <div className={styles.summaryItems}>
-          {cartItems.map((item) => (
-            <div key={item.id} className={styles.summaryItem}>
-              <div className={styles.itemImageWrapper}>
-                <div className={styles.itemImage} style={{ position: 'relative', overflow: 'hidden' }}>
+        <div className={styles.sidebarSummary}>
+          <h2 className={styles.summaryTitle}>
+            Order Summary ({itemCount} {itemCount === 1 ? 'item' : 'items'})
+          </h2>
+
+          <div className={styles.itemsList}>
+            {cartItems.map((item) => (
+              <div key={item.id} className={styles.itemRow}>
+                <div className={styles.itemImageThumb}>
                   {item.image && (
                     <Image
                       src={item.image}
                       alt={item.title || item.name}
                       fill
-                      sizes="64px"
+                      sizes="60px"
                       style={{ objectFit: 'cover' }}
                     />
                   )}
+                  <span className={styles.itemQuantityBadge}>{item.qty || 1}</span>
                 </div>
-                <span className={styles.itemBadge}>{item.qty}</span>
+
+                <div className={styles.itemDetails}>
+                  <h4 className={styles.itemTitle}>{item.title || item.name}</h4>
+                  <p className={styles.itemVariant}>
+                    {[item.color, item.size].filter(Boolean).join(' / ') || 'Standard'}
+                  </p>
+                </div>
+
+                <span className={styles.itemPrice}>
+                  ₹{(((item.priceNum || item.price || 0) * (item.qty || 1))).toLocaleString('en-IN')}.00
+                </span>
               </div>
-              <div className={styles.itemInfo}>
-                <h4>{item.title || item.name}</h4>
-                <p>{[item.color, item.size].filter(Boolean).join(' / ') || 'Standard'}</p>
+            ))}
+          </div>
+
+          {/* COUPON CARD */}
+          {appliedCoupon ? (
+            <div className={styles.couponAppliedTag}>
+              <div>
+                <strong>{appliedCoupon.code}</strong> applied ({appliedCoupon.label})
               </div>
-              <span className={styles.itemPrice}>
-                ₹{(((item.priceNum || item.price || 0) * item.qty)).toLocaleString('en-IN')}.00
+              <button type="button" className={styles.removeCouponBtn} onClick={handleRemoveCoupon}>
+                Remove
+              </button>
+            </div>
+          ) : (
+            <div>
+              <div className={styles.couponCard}>
+                <input
+                  type="text"
+                  placeholder="Discount code or gift card"
+                  className={styles.couponInput}
+                  value={couponInput}
+                  onChange={(e) => setCouponInput(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className={styles.couponButton}
+                  onClick={handleApplyCoupon}
+                >
+                  Apply
+                </button>
+              </div>
+              {couponError && (
+                <p style={{ color: '#dc2626', fontSize: '0.78rem', marginTop: '-16px', marginBottom: '16px' }}>
+                  {couponError}
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* COST BREAKDOWN */}
+          <div className={styles.costBreakdown}>
+            <div className={styles.costRow}>
+              <span>Subtotal</span>
+              <span className={styles.costValue}>₹{cartSubtotal.toLocaleString('en-IN')}.00</span>
+            </div>
+
+            {appliedCoupon && (
+              <div className={styles.costRow}>
+                <span style={{ color: '#166534' }}>Discount ({appliedCoupon.code})</span>
+                <span className={styles.costValue} style={{ color: '#166534' }}>
+                  - ₹{discountAmount.toLocaleString('en-IN')}.00
+                </span>
+              </div>
+            )}
+
+            <div className={styles.costRow}>
+              <span>Shipping</span>
+              <span className={styles.costValueFree}>Complimentary (Free)</span>
+            </div>
+
+            <div className={styles.costRow}>
+              <span>Estimated Taxes</span>
+              <span className={styles.costValue} style={{ color: '#78716c', fontSize: '0.82rem' }}>
+                Included in Price (GST)
               </span>
             </div>
-          ))}
-        </div>
+          </div>
 
-        <div className={styles.totals} style={{ marginTop: '24px' }}>
+          {/* FINAL TOTAL */}
           <div className={styles.totalRow}>
-            <span>Subtotal</span>
-            <span>₹{cartSubtotal.toLocaleString('en-IN')}.00</span>
-          </div>
-          <div className={styles.totalRow}>
-            <span>Shipping</span>
-            <span style={{ color: '#16a34a', fontWeight: 600 }}>Complimentary (Free)</span>
-          </div>
-          <div className={`${styles.totalRow} ${styles.finalTotal}`}>
-            <span>Total</span>
-            <span className={styles.priceLarge}>
-              <span className={styles.currency}>INR</span> ₹{cartSubtotal.toLocaleString('en-IN')}.00
+            <span className={styles.totalLabel}>Total</span>
+            <span className={styles.totalAmount}>
+              <span style={{ fontSize: '0.95rem', fontWeight: 500, color: '#78716c', marginRight: '6px' }}>INR</span>
+              ₹{finalTotal.toLocaleString('en-IN')}.00
             </span>
+          </div>
+
+          {/* TRUST ASSURANCE CARDS */}
+          <div className={styles.trustContainer}>
+            <div className={styles.trustItem}>
+              <div className={styles.trustIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+              <div>
+                <div className={styles.trustTextTitle}>100% Genuine Atelier Craftsmanship</div>
+                <div className={styles.trustTextDesc}>Handcrafted luxury tailored exclusively with sustainable organic fibers.</div>
+              </div>
+            </div>
+
+            <div className={styles.trustItem}>
+              <div className={styles.trustIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <rect x="1" y="3" width="15" height="13"/>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              </div>
+              <div>
+                <div className={styles.trustTextTitle}>Complimentary Express Air Shipping</div>
+                <div className={styles.trustTextDesc}>Insured priority transit via Blue Dart and Delhivery Air across 26,000+ PIN codes.</div>
+              </div>
+            </div>
+
+            <div className={styles.trustItem}>
+              <div className={styles.trustIcon}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+              </div>
+              <div>
+                <div className={styles.trustTextTitle}>7-Day Doorstep Returns & Exchanges</div>
+                <div className={styles.trustTextDesc}>Instant doorstep pickups with zero-hassle inspection.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
