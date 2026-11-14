@@ -11,37 +11,29 @@ export default function ProductInfo({ product }) {
     <div className={styles.infoContainer}>
       
       {/* Title & Collection */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-        <p className={styles.collectionName} style={{ margin: 0 }}>{product.collection || 'Collection'}</p>
-        <span
-          style={{
-            fontSize: '11px',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '0.06em',
-            padding: '2px 8px',
-            borderRadius: '12px',
-            backgroundColor: '#ecfdf5',
-            color: '#065f46',
-            border: '1px solid #a7f3d0',
-          }}
-        >
-          In Stock · Ready to Ship
-        </span>
-      </div>
+      <p className={styles.collectionName}>{product.collection || 'Collection'}</p>
       <h1 className={styles.title}>{product.title}</h1>
       
-      {/* Price & Sales */}
+      {/* Price & Stock Indicator */}
       <div className={styles.priceRow}>
         <div className={styles.priceGroup}>
           {product.oldPrice && <span className={styles.oldPrice}>{product.oldPrice}</span>}
           <span className={styles.newPrice}>{product.price}</span>
         </div>
-        {Number(product.sold) > 0 && (
-          <div className={styles.salesInfo}>
-            {product.sold} Sold &bull; ⭐️ {product.rating || '5.0'}
-          </div>
-        )}
+
+        <div className={styles.metaGroup}>
+          {product.inStock !== false && (
+            <div className={styles.stockIndicator} aria-label="Status: In Stock">
+              <span className={styles.stockDot} aria-hidden="true" />
+              <span>In Stock</span>
+            </div>
+          )}
+          {Number(product.sold) > 0 && (
+            <div className={styles.salesInfo}>
+              {product.sold} Sold &bull; ⭐️ {product.rating || '5.0'}
+            </div>
+          )}
+        </div>
       </div>
       
       <hr className={styles.divider} />

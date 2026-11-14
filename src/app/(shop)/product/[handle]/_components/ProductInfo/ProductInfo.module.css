@@ -54,6 +54,45 @@
   gap: 8px;
 }
 
+.metaGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.stockIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #15803d;
+  letter-spacing: 0.01em;
+}
+
+.stockDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #16a34a;
+  box-shadow: 0 0 0 2.5px rgba(22, 163, 74, 0.2);
+  display: inline-block;
+  flex-shrink: 0;
+  animation: pulseDot 2.4s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.85;
+  }
+}
+
 .divider {
   border: none;
   border-top: 1px solid #e0e0e0;
@@ -603,6 +642,14 @@
   }
   .newPrice {
     font-size: 1.3rem;
+  }
+  .priceRow {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .stockIndicator {
+    font-size: 0.75rem;
   }
   .sizeBtn {
     width: 40px;
