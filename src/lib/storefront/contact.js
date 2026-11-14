@@ -15,7 +15,7 @@ export async function submitContactInquiry({ name, email, orderNumber, message }
   try {
     const res = await fetchStorefront("/v1/contact", {
       method: "POST",
-      body: { name, email, orderNumber, message },
+      body: JSON.stringify({ name, email, orderNumber, message }),
       cache: "no-store",
     });
 

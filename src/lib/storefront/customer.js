@@ -38,7 +38,7 @@ export async function updateCustomerProfile({ phone, name, email }) {
   try {
     const res = await fetchStorefront("/v1/customers/profile", {
       method: "POST",
-      body: { phone, name, email },
+      body: JSON.stringify({ phone, name, email }),
       cache: "no-store",
     });
 

@@ -53,7 +53,11 @@ function LoginFormContent() {
     }
 
     setIsLoading(true);
-    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    let cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    if (!cleanPhone && typeof document !== 'undefined') {
+      const match = document.cookie.match(/throve_customer_session=([0-9]+)/);
+      if (match) cleanPhone = match[1];
+    }
 
     try {
       const statusRes = await checkCustomerStatusAction(cleanPhone);
@@ -100,7 +104,11 @@ function LoginFormContent() {
     }
 
     setIsLoading(true);
-    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    let cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    if (!cleanPhone && typeof document !== 'undefined') {
+      const match = document.cookie.match(/throve_customer_session=([0-9]+)/);
+      if (match) cleanPhone = match[1];
+    }
 
     try {
       const result = await completeFirstLoginAction({

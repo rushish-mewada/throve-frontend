@@ -19,6 +19,11 @@ export async function fetchStorefront(endpoint, options = {}) {
     ...options.headers,
   };
 
+  let body = options.body;
+  if (body && typeof body === "object" && !(body instanceof FormData) && !(body instanceof URLSearchParams)) {
+    body = JSON.stringify(body);
+  }
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 10000);
 
@@ -26,6 +31,7 @@ export async function fetchStorefront(endpoint, options = {}) {
     const response = await fetch(url, {
       ...options,
       headers,
+      body,
       signal: options.signal || controller.signal,
     });
 
