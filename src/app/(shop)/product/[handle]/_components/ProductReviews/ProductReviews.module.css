@@ -940,10 +940,30 @@
   transition: all 0.2s ease;
 }
 
-.actionBtn:hover {
+.actionBtn:hover:not(:disabled) {
   background-color: #fafaf9;
   border-color: #1c1917;
   color: #1c1917;
+}
+
+.actionBtnVoted {
+  background-color: #f5f5f4 !important;
+  border-color: #111111 !important;
+  color: #111111 !important;
+  font-weight: 500 !important;
+  cursor: default !important;
+}
+
+.actionBtnVoted:hover {
+  background-color: #f5f5f4 !important;
+  border-color: #111111 !important;
+  color: #111111 !important;
+}
+
+.helpfulBadgeVoted {
+  background-color: #111111 !important;
+  color: #ffffff !important;
+  border-color: #111111 !important;
 }
 
 /* Lightbox Modal */

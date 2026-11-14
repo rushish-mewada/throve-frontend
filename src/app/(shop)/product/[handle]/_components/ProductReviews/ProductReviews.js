@@ -25,7 +25,7 @@ const VERIFIED_REVIEWS_BY_HANDLE = {
       media: [
         { type: 'image', url: '/products/sleeveless-princess-sheath-dress/front.jpg?v=3', alt: 'Kanta Jain fit' },
       ],
-      likes: 3,
+      likes: 1,
     },
   ],
 };
@@ -327,7 +327,40 @@ export default function ProductReviews({ productHandle = 'default', productTitle
     }
   };
 
+  // State to track reviews voted as helpful by the current user or guest
+  const [votedReviewIds, setVotedReviewIds] = useState([]);
+
+  // Hydrate user/guest helpful votes from localStorage
+  useEffect(() => {
+    try {
+      const guestVotes = JSON.parse(localStorage.getItem('throve_helpful_voted_guest') || '[]');
+      const userVotes = user?.id
+        ? JSON.parse(localStorage.getItem(`throve_helpful_voted_${user.id}`) || '[]')
+        : [];
+      const legacyVotes = JSON.parse(localStorage.getItem('throve_helpful_voted_reviews') || '[]');
+      const combined = Array.from(new Set([...guestVotes, ...userVotes, ...legacyVotes]));
+      setVotedReviewIds(combined);
+    } catch {
+      // Ignore storage errors
+    }
+  }, [user?.id]);
+
   const handleLike = (id) => {
+    if (votedReviewIds.includes(id)) {
+      return; // Allowed only once per user / guest user
+    }
+
+    const nextVoted = [...votedReviewIds, id];
+    setVotedReviewIds(nextVoted);
+
+    try {
+      const key = user?.id ? `throve_helpful_voted_${user.id}` : 'throve_helpful_voted_guest';
+      localStorage.setItem(key, JSON.stringify(nextVoted));
+      localStorage.setItem('throve_helpful_voted_reviews', JSON.stringify(nextVoted));
+    } catch {
+      // Ignore storage errors
+    }
+
     setReviews((prev) =>
       prev.map((r) => (r.id === id ? { ...r, likes: (r.likes || 0) + 1 } : r))
     );
@@ -803,232 +836,248 @@ export default function ProductReviews({ productHandle = 'default', productTitle
 
           {/* Reviews Main Grid with Filters */}
           <div className={styles.reviewsLayout}>
-        {/* Left Sidebar: Filters */}
-        <aside className={styles.filtersSidebar}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-            <h3 className={styles.filterTitle} style={{ margin: 0, padding: 0, border: 'none' }}>Filter by Rating</h3>
-            {selectedRatingFilter && (
-              <button
-                type="button"
-                onClick={() => setSelectedRatingFilter(null)}
-                style={{ background: 'none', border: 'none', color: '#78716c', fontSize: '12px', textDecoration: 'underline', cursor: 'pointer' }}
-              >
-                Clear
-              </button>
-            )}
-          </div>
-
-          <div className={styles.filterList}>
-            {[5, 4, 3, 2, 1].map((rating) => {
-              const isChecked = selectedRatingFilter === rating;
-              return (
-                <label
-                  key={rating}
-                  className={`${styles.checkboxLabel} ${isChecked ? styles.checkboxLabelActive : ''}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setSelectedRatingFilter(isChecked ? null : rating);
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isChecked}
-                    onChange={() => setSelectedRatingFilter(isChecked ? null : rating)}
-                  />
-                  <span
-                    className={`${styles.checkmark} ${isChecked ? styles.checkmarkChecked : ''}`}
-                  >
-                    {isChecked && (
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="#ffffff"
-                        strokeWidth="3.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    )}
-                  </span>
-                  <span className={styles.starIcon}>★</span> {rating} {rating === 1 ? 'Star' : 'Stars'}
-                  <span className={styles.filterBadge}>{ratingCounts[rating]}</span>
-                </label>
-              );
-            })}
-          </div>
-
-          <hr style={{ border: 'none', borderTop: '1px solid #e7e5e4', margin: '20px 0' }} />
-
-          <div style={{ fontSize: '12px', color: '#78716c', lineHeight: 1.5 }}>
-            <strong style={{ display: 'block', color: '#1c1917', marginBottom: '4px' }}>
-              Quality Verification Seal
-            </strong>
-            Every review is confirmed against verified order delivery records from Cashfree & Delhivery logistics.
-          </div>
-        </aside>
-
-        {/* Right Main Content: Reviews List */}
-        <div className={styles.reviewsListContainer}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-            <h3 className={styles.listTitle} style={{ margin: 0 }}>
-              Reviews <span className={styles.titleBadge}>{displayedReviews.length}</span>
-            </h3>
-            {selectedRatingFilter && (
-              <span style={{ fontSize: '13px', color: '#78716c' }}>
-                Filtering by {selectedRatingFilter} Star reviews
-              </span>
-            )}
-          </div>
-
-          {/* Filter Tabs */}
-          <div className={styles.tabs}>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === 'all' && !selectedRatingFilter ? styles.tabActive : ''}`}
-              onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
-            >
-              All Reviews <span className={styles.tabBadge}>{reviewCount}</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === 'media' ? styles.tabActive : ''}`}
-              onClick={() => { setActiveTab('media'); setSelectedRatingFilter(null); }}
-            >
-              With Photos & Videos <span className={styles.tabBadge}>{reviewsWithMedia.length}</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === '5stars' || selectedRatingFilter === 5 ? styles.tabActive : ''}`}
-              onClick={() => { setActiveTab('5stars'); setSelectedRatingFilter(5); }}
-            >
-              5 Stars <span className={styles.tabBadge}>{ratingCounts[5]}</span>
-            </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${activeTab === '4stars' || selectedRatingFilter === 4 ? styles.tabActive : ''}`}
-              onClick={() => { setActiveTab('4stars'); setSelectedRatingFilter(4); }}
-            >
-              4 Stars <span className={styles.tabBadge}>{ratingCounts[4]}</span>
-            </button>
-          </div>
-
-          {/* Reviews List */}
-          <div className={styles.reviewItems}>
-            {displayedReviews.length === 0 ? (
-              <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716c', backgroundColor: '#fafaf9', borderRadius: '8px', border: '1px solid #e7e5e4' }}>
-                <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 500, color: '#1c1917' }}>
-                  {reviewCount === 0
-                    ? 'No verified reviews yet. Be the first verified client to review this piece after delivery.'
-                    : 'No reviews match this filter'}
-                </p>
-                {reviewCount > 0 && (
+            {/* Left Sidebar: Filters */}
+            <aside className={styles.filtersSidebar}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <h3 className={styles.filterTitle} style={{ margin: 0, padding: 0, border: 'none' }}>Filter by Rating</h3>
+                {selectedRatingFilter && (
                   <button
                     type="button"
-                    onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
-                    style={{ background: 'none', border: 'none', color: '#1c1917', textDecoration: 'underline', fontSize: '13px', cursor: 'pointer' }}
+                    onClick={() => setSelectedRatingFilter(null)}
+                    style={{ background: 'none', border: 'none', color: '#78716c', fontSize: '12px', textDecoration: 'underline', cursor: 'pointer' }}
                   >
-                    View all verified reviews
+                    Clear
                   </button>
                 )}
               </div>
-            ) : (
-              displayedReviews.map((review) => (
-                <div key={review.id} className={styles.reviewItem}>
-                  <div className={styles.reviewHeader}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                      <div className={styles.reviewStars} style={{ margin: 0 }}>
-                        {'★'.repeat(review.stars)}
-                      </div>
-                      {review.verified && (
-                        <span className={styles.verifiedBuyerTag}>
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+
+              <div className={styles.filterList}>
+                {[5, 4, 3, 2, 1].map((rating) => {
+                  const isChecked = selectedRatingFilter === rating;
+                  return (
+                    <label
+                      key={rating}
+                      className={`${styles.checkboxLabel} ${isChecked ? styles.checkboxLabelActive : ''}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setSelectedRatingFilter(isChecked ? null : rating);
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => setSelectedRatingFilter(isChecked ? null : rating)}
+                      />
+                      <span
+                        className={`${styles.checkmark} ${isChecked ? styles.checkmarkChecked : ''}`}
+                      >
+                        {isChecked && (
+                          <svg
+                            width="10"
+                            height="10"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="#ffffff"
+                            strokeWidth="3.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
                             <polyline points="20 6 9 17 4 12" />
                           </svg>
-                          Verified Buyer {review.orderId ? `· #${review.orderId}` : ''}
-                        </span>
-                      )}
-                      {review.fitFeedback && (
-                        <span className={styles.fitTag}>
-                          Fit: {review.fitFeedback}
-                        </span>
-                      )}
-                    </div>
-                    <span className={styles.reviewDate}>{review.date}</span>
-                  </div>
+                        )}
+                      </span>
+                      <span className={styles.starIcon}>★</span> {rating} {rating === 1 ? 'Star' : 'Stars'}
+                      <span className={styles.filterBadge}>{ratingCounts[rating]}</span>
+                    </label>
+                  );
+                })}
+              </div>
 
-                  <h4 className={styles.reviewTitle}>{review.title}</h4>
-                  <p className={styles.reviewComment}>{review.comment}</p>
+              <hr style={{ border: 'none', borderTop: '1px solid #e7e5e4', margin: '20px 0' }} />
 
-                  {/* Highlights / Tags */}
-                  {Array.isArray(review.tags) && review.tags.length > 0 && (
-                    <div className={styles.reviewTagsRow}>
-                      {review.tags.map((t, idx) => (
-                        <span key={idx} className={styles.reviewHighlightChip}>
-                          #{t}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+              <div style={{ fontSize: '12px', color: '#78716c', lineHeight: 1.5 }}>
+                <strong style={{ display: 'block', color: '#1c1917', marginBottom: '4px' }}>
+                  Quality Verification Seal
+                </strong>
+                Every review is confirmed against verified order delivery records from Cashfree & Delhivery logistics.
+              </div>
+            </aside>
 
-                  {/* Photos & Videos attached to review */}
-                  {Array.isArray(review.media) && review.media.length > 0 && (
-                    <div className={styles.reviewMediaGallery}>
-                      {review.media.map((m, idx) => (
-                        <div
-                          key={idx}
-                          className={styles.reviewMediaThumb}
-                          onClick={() => setLightboxItem(m)}
-                        >
-                          {m.type === 'video' ? (
-                            <div className={styles.videoThumbWrapper}>
-                              <video src={m.url} className={styles.thumbMedia} muted playsInline />
-                              <div className={styles.videoPlayOverlay}>▶</div>
-                            </div>
-                          ) : (
-                            <img src={m.url} alt={m.alt || 'Customer photo'} className={styles.thumbMedia} />
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+            {/* Right Main Content: Reviews List */}
+            <div className={styles.reviewsListContainer}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+                <h3 className={styles.listTitle} style={{ margin: 0 }}>
+                  Reviews <span className={styles.titleBadge}>{displayedReviews.length}</span>
+                </h3>
+                {selectedRatingFilter && (
+                  <span style={{ fontSize: '13px', color: '#78716c' }}>
+                    Filtering by {selectedRatingFilter} Star reviews
+                  </span>
+                )}
+              </div>
 
-                  <div className={styles.reviewFooter}>
-                    <div className={styles.reviewerInfo}>
-                      <div className={styles.avatar}>
-                        {review.name.charAt(0)}
-                      </div>
-                      <div>
-                        <span className={styles.reviewerName}>{review.name}</span>
-                        <span style={{ display: 'block', fontSize: '11px', color: '#a8a29e' }}>
-                          Verified Member
-                        </span>
-                      </div>
-                    </div>
+              {/* Filter Tabs */}
+              <div className={styles.tabs}>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === 'all' && !selectedRatingFilter ? styles.tabActive : ''}`}
+                  onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
+                >
+                  All Reviews <span className={styles.tabBadge}>{reviewCount}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === 'media' ? styles.tabActive : ''}`}
+                  onClick={() => { setActiveTab('media'); setSelectedRatingFilter(null); }}
+                >
+                  With Photos & Videos <span className={styles.tabBadge}>{reviewsWithMedia.length}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === '5stars' || selectedRatingFilter === 5 ? styles.tabActive : ''}`}
+                  onClick={() => { setActiveTab('5stars'); setSelectedRatingFilter(5); }}
+                >
+                  5 Stars <span className={styles.tabBadge}>{ratingCounts[5]}</span>
+                </button>
+                <button
+                  type="button"
+                  className={`${styles.tabBtn} ${activeTab === '4stars' || selectedRatingFilter === 4 ? styles.tabActive : ''}`}
+                  onClick={() => { setActiveTab('4stars'); setSelectedRatingFilter(4); }}
+                >
+                  4 Stars <span className={styles.tabBadge}>{ratingCounts[4]}</span>
+                </button>
+              </div>
 
-                    <div className={styles.reviewActions}>
+              {/* Reviews List */}
+              <div className={styles.reviewItems}>
+                {displayedReviews.length === 0 ? (
+                  <div style={{ padding: '40px 20px', textAlign: 'center', color: '#78716c', backgroundColor: '#fafaf9', borderRadius: '8px', border: '1px solid #e7e5e4' }}>
+                    <p style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 500, color: '#1c1917' }}>
+                      {reviewCount === 0
+                        ? 'No verified reviews yet. Be the first verified client to review this piece after delivery.'
+                        : 'No reviews match this filter'}
+                    </p>
+                    {reviewCount > 0 && (
                       <button
                         type="button"
-                        className={styles.actionBtn}
-                        onClick={() => handleLike(review.id)}
-                        title="Mark as helpful"
+                        onClick={() => { setActiveTab('all'); setSelectedRatingFilter(null); }}
+                        style={{ background: 'none', border: 'none', color: '#1c1917', textDecoration: 'underline', fontSize: '13px', cursor: 'pointer' }}
                       >
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
-                        </svg>
-                        <span>Helpful</span>
-                        <span className={styles.helpfulBadge}>{review.likes || 0}</span>
+                        View all verified reviews
                       </button>
-                    </div>
+                    )}
                   </div>
-                </div>
-              ))
-            )}
+                ) : (
+                  displayedReviews.map((review) => (
+                    <div key={review.id} className={styles.reviewItem}>
+                      <div className={styles.reviewHeader}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                          <div className={styles.reviewStars} style={{ margin: 0 }}>
+                            {'★'.repeat(review.stars)}
+                          </div>
+                          {review.verified && (
+                            <span className={styles.verifiedBuyerTag}>
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '4px' }}>
+                                <polyline points="20 6 9 17 4 12" />
+                              </svg>
+                              Verified Buyer {review.orderId ? `· #${review.orderId}` : ''}
+                            </span>
+                          )}
+                          {review.fitFeedback && (
+                            <span className={styles.fitTag}>
+                              Fit: {review.fitFeedback}
+                            </span>
+                          )}
+                        </div>
+                        <span className={styles.reviewDate}>{review.date}</span>
+                      </div>
+
+                      <h4 className={styles.reviewTitle}>{review.title}</h4>
+                      <p className={styles.reviewComment}>{review.comment}</p>
+
+                      {/* Highlights / Tags */}
+                      {Array.isArray(review.tags) && review.tags.length > 0 && (
+                        <div className={styles.reviewTagsRow}>
+                          {review.tags.map((t, idx) => (
+                            <span key={idx} className={styles.reviewHighlightChip}>
+                              #{t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Photos & Videos attached to review */}
+                      {Array.isArray(review.media) && review.media.length > 0 && (
+                        <div className={styles.reviewMediaGallery}>
+                          {review.media.map((m, idx) => (
+                            <div
+                              key={idx}
+                              className={styles.reviewMediaThumb}
+                              onClick={() => setLightboxItem(m)}
+                            >
+                              {m.type === 'video' ? (
+                                <div className={styles.videoThumbWrapper}>
+                                  <video src={m.url} className={styles.thumbMedia} muted playsInline />
+                                  <div className={styles.videoPlayOverlay}>▶</div>
+                                </div>
+                              ) : (
+                                <img src={m.url} alt={m.alt || 'Customer photo'} className={styles.thumbMedia} />
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className={styles.reviewFooter}>
+                        <div className={styles.reviewerInfo}>
+                          <div className={styles.avatar}>
+                            {review.name.charAt(0)}
+                          </div>
+                          <div>
+                            <span className={styles.reviewerName}>{review.name}</span>
+                            <span style={{ display: 'block', fontSize: '11px', color: '#a8a29e' }}>
+                              Verified Member
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className={styles.reviewActions}>
+                          {(() => {
+                            const isVoted = votedReviewIds.includes(review.id);
+                            return (
+                              <button
+                                type="button"
+                                className={`${styles.actionBtn} ${isVoted ? styles.actionBtnVoted : ''}`}
+                                onClick={() => handleLike(review.id)}
+                                disabled={isVoted}
+                                title={isVoted ? 'You marked this review as helpful' : 'Mark as helpful'}
+                                aria-label={isVoted ? 'Review marked as helpful' : 'Mark review as helpful'}
+                              >
+                                <svg
+                                  width="14"
+                                  height="14"
+                                  viewBox="0 0 24 24"
+                                  fill={isVoted ? 'currentColor' : 'none'}
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                >
+                                  <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
+                                </svg>
+                                <span>Helpful</span>
+                                <span className={`${styles.helpfulBadge} ${isVoted ? styles.helpfulBadgeVoted : ''}`}>
+                                  {review.likes || 0}
+                                </span>
+                              </button>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
         </>
       )}
 
