@@ -921,3 +921,54 @@
     width: 100%;
   }
 }
+
+/* Clean Empty State Card when reviewCount === 0 */
+.emptyReviewsCard {
+  background-color: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.emptyReviewsIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: #f5f5f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: #78716c;
+}
+
+.emptyReviewsTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1c1917;
+  margin: 0 0 6px 0;
+}
+
+.emptyReviewsText {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.88rem;
+  color: #78716c;
+  margin: 0 0 24px 0;
+  max-width: 440px;
+  line-height: 1.5;
+}
+
+.emptyReviewsAction {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}

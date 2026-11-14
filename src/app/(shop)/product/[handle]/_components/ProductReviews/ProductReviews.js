@@ -372,81 +372,83 @@ export default function ProductReviews({ productHandle = 'default', productTitle
           <p className={styles.subtitle}>Verified owner critiques, fabric drapes, and fit reviews</p>
         </div>
 
-        <div className={styles.headerActionsCol}>
-          {/* Verification Notice Banner placed ABOVE the button */}
-          {eligibilityChecked && !isEligibleToReview && !showManualVerify && (
-            <div className={styles.verifiedNoticeBox}>
-              <div className={styles.verifiedNoticeIcon}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                  <path d="M9 12l2 2 4-4" />
-                </svg>
-              </div>
-              <div className={styles.verifiedNoticeContent}>
-                <div className={styles.verifiedNoticeHeaderRow}>
-                  <span className={styles.verifiedNoticeTitle}>Verified Purchases Only</span>
+        {reviewCount > 0 && (
+          <div className={styles.headerActionsCol}>
+            {/* Verification Notice Banner placed ABOVE the button */}
+            {eligibilityChecked && !isEligibleToReview && !showManualVerify && (
+              <div className={styles.verifiedNoticeBox}>
+                <div className={styles.verifiedNoticeIcon}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    <path d="M9 12l2 2 4-4" />
+                  </svg>
                 </div>
-                <p className={styles.verifiedNoticeText}>
-                  Only clients who have purchased this garment may publish a review.
-                  {!isLoggedIn ? (
-                    <>
-                      {' '}
-                      <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeLinkBtn}>
-                        Log in
-                      </Link>
-                      {' or '}
-                      <button
-                        type="button"
-                        className={styles.verifiedNoticeLinkBtn}
-                        onClick={() => setShowManualVerify(true)}
-                      >
-                        verify with Order ID →
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {' '}
-                      <span className={styles.verifiedNoticeSub}>
-                        (No order found under your number).
-                      </span>{' '}
-                      <button
-                        type="button"
-                        className={styles.verifiedNoticeLinkBtn}
-                        onClick={() => setShowManualVerify(true)}
-                      >
-                        Guest or other number? Verify here →
-                      </button>
-                    </>
-                  )}
-                </p>
+                <div className={styles.verifiedNoticeContent}>
+                  <div className={styles.verifiedNoticeHeaderRow}>
+                    <span className={styles.verifiedNoticeTitle}>Verified Purchases Only</span>
+                  </div>
+                  <p className={styles.verifiedNoticeText}>
+                    Only clients who have purchased this garment may publish a review.
+                    {!isLoggedIn ? (
+                      <>
+                        {' '}
+                        <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeLinkBtn}>
+                          Log in
+                        </Link>
+                        {' or '}
+                        <button
+                          type="button"
+                          className={styles.verifiedNoticeLinkBtn}
+                          onClick={() => setShowManualVerify(true)}
+                        >
+                          verify with Order ID →
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {' '}
+                        <span className={styles.verifiedNoticeSub}>
+                          (No order found under your number).
+                        </span>{' '}
+                        <button
+                          type="button"
+                          className={styles.verifiedNoticeLinkBtn}
+                          onClick={() => setShowManualVerify(true)}
+                        >
+                          Guest or other number? Verify here →
+                        </button>
+                      </>
+                    )}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {isEligibleToReview ? (
-            <button
-              type="button"
-              className={styles.writeReviewBtn}
-              onClick={() => setShowReviewForm(!showReviewForm)}
-            >
-              {showReviewForm ? 'Close Form' : 'Write a Verified Review'}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className={styles.writeReviewBtn}
-              onClick={() => {
-                if (!isLoggedIn) {
-                  setShowManualVerify(true);
-                } else {
-                  setShowManualVerify(!showManualVerify);
-                }
-              }}
-            >
-              {showManualVerify ? 'Close Verification' : 'Verify Purchase to Review'}
-            </button>
-          )}
-        </div>
+            {isEligibleToReview ? (
+              <button
+                type="button"
+                className={styles.writeReviewBtn}
+                onClick={() => setShowReviewForm(!showReviewForm)}
+              >
+                {showReviewForm ? 'Close Form' : 'Write a Verified Review'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                className={styles.writeReviewBtn}
+                onClick={() => {
+                  if (!isLoggedIn) {
+                    setShowManualVerify(true);
+                  } else {
+                    setShowManualVerify(!showManualVerify);
+                  }
+                }}
+              >
+                {showManualVerify ? 'Close Verification' : 'Verify Purchase to Review'}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Manual Guest Order Verification Box */}
@@ -760,44 +762,130 @@ export default function ProductReviews({ productHandle = 'default', productTitle
         </form>
       )}
 
-      {/* Top Stats Box */}
-      <div className={styles.statsBox}>
-        <div className={styles.averageScore}>
-          <div className={styles.scoreCircle}>
-            <span>{averageScore}</span>
-          </div>
-          <div className={styles.scoreDetails}>
-            <div className={styles.stars}>
-              {reviewCount > 0 ? '★★★★★' : '☆☆☆☆☆'}
+      {/* Zero Reviews Clean Empty State OR Populated Stats & Reviews Layout */}
+      {reviewCount === 0 ? (
+        !showReviewForm && !showManualVerify && (
+          <div className={styles.emptyReviewsCard}>
+            <div className={styles.emptyReviewsIcon}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
             </div>
-            <span className={styles.reviewCount}>
-              Based on {reviewCount} verified owner {reviewCount === 1 ? 'review' : 'reviews'}
-            </span>
-          </div>
-        </div>
+            <h3 className={styles.emptyReviewsTitle}>No Reviews Yet</h3>
+            <p className={styles.emptyReviewsText}>
+              Be the first verified client to share your impression of this piece.
+            </p>
 
-        <div className={styles.ratingBars}>
-          {ratingBars.map((bar, i) => (
-            <div
-              key={i}
-              className={styles.barRow}
-              onClick={() => setSelectedRatingFilter(selectedRatingFilter === bar.starNum ? null : bar.starNum)}
-              style={{ cursor: 'pointer' }}
-            >
-              <span className={styles.barLabel}>
-                {bar.stars} <span className={styles.starIcon}>★</span>
-              </span>
-              <div className={styles.barTrack}>
-                <div className={styles.barFill} style={{ width: `${bar.percent}%` }}></div>
+            <div className={styles.emptyReviewsAction}>
+              {eligibilityChecked && !isEligibleToReview && (
+                <div className={styles.verifiedNoticeBox} style={{ maxWidth: '440px', margin: '0 auto 12px auto', textAlign: 'left' }}>
+                  <div className={styles.verifiedNoticeIcon}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      <path d="M9 12l2 2 4-4" />
+                    </svg>
+                  </div>
+                  <div className={styles.verifiedNoticeContent}>
+                    <div className={styles.verifiedNoticeHeaderRow}>
+                      <span className={styles.verifiedNoticeTitle}>Verified Purchases Only</span>
+                    </div>
+                    <p className={styles.verifiedNoticeText}>
+                      Only clients who have purchased this garment may publish a review.
+                      {!isLoggedIn ? (
+                        <>
+                          {' '}
+                          <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeLinkBtn}>
+                            Log in
+                          </Link>
+                          {' or '}
+                          <button
+                            type="button"
+                            className={styles.verifiedNoticeLinkBtn}
+                            onClick={() => setShowManualVerify(true)}
+                          >
+                            verify with Order ID →
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          {' '}
+                          <span className={styles.verifiedNoticeSub}>
+                            (No order found under your number).
+                          </span>{' '}
+                          <button
+                            type="button"
+                            className={styles.verifiedNoticeLinkBtn}
+                            onClick={() => setShowManualVerify(true)}
+                          >
+                            Guest or other number? Verify here →
+                          </button>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {isEligibleToReview ? (
+                <button
+                  type="button"
+                  className={styles.writeReviewBtn}
+                  onClick={() => setShowReviewForm(true)}
+                >
+                  Write a Verified Review
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className={styles.writeReviewBtn}
+                  onClick={() => setShowManualVerify(true)}
+                >
+                  Verify Purchase to Review
+                </button>
+              )}
+            </div>
+          </div>
+        )
+      ) : (
+        <>
+          {/* Top Stats Box */}
+          <div className={styles.statsBox}>
+            <div className={styles.averageScore}>
+              <div className={styles.scoreCircle}>
+                <span>{averageScore}</span>
               </div>
-              <span className={styles.barCount}>{bar.count}</span>
+              <div className={styles.scoreDetails}>
+                <div className={styles.stars}>
+                  {reviewCount > 0 ? '★★★★★' : '☆☆☆☆☆'}
+                </div>
+                <span className={styles.reviewCount}>
+                  Based on {reviewCount} verified owner {reviewCount === 1 ? 'review' : 'reviews'}
+                </span>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      {/* Reviews Main Grid with Filters */}
-      <div className={styles.reviewsLayout}>
+            <div className={styles.ratingBars}>
+              {ratingBars.map((bar, i) => (
+                <div
+                  key={i}
+                  className={styles.barRow}
+                  onClick={() => setSelectedRatingFilter(selectedRatingFilter === bar.starNum ? null : bar.starNum)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className={styles.barLabel}>
+                    {bar.stars} <span className={styles.starIcon}>★</span>
+                  </span>
+                  <div className={styles.barTrack}>
+                    <div className={styles.barFill} style={{ width: `${bar.percent}%` }}></div>
+                  </div>
+                  <span className={styles.barCount}>{bar.count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Reviews Main Grid with Filters */}
+          <div className={styles.reviewsLayout}>
         {/* Left Sidebar: Filters */}
         <aside className={styles.filtersSidebar}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -1002,6 +1090,8 @@ export default function ProductReviews({ productHandle = 'default', productTitle
           </div>
         </div>
       </div>
+        </>
+      )}
 
       {/* Lightbox Modal for customer photos and videos */}
       {lightboxItem && (
