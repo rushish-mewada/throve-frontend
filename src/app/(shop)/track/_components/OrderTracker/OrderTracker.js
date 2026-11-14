@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { trackOrderAction } from '@/actions/tracking';
 import styles from './OrderTracker.module.css';
 
 export default function OrderTracker() {
@@ -11,45 +13,34 @@ export default function OrderTracker() {
   const [trackingResult, setTrackingResult] = useState(null);
   const [error, setError] = useState('');
 
-  const handleTrack = (e) => {
+  const handleTrack = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!orderId.trim() || !contact.trim()) {
-      setError('Please provide both Order ID and Phone / Email.');
+    const cleanOrderId = orderId.trim();
+    const cleanContact = contact.trim();
+
+    if (!cleanOrderId || !cleanContact) {
+      setError('Please provide both Order Number and Phone / Email.');
       return;
     }
 
     setIsLoading(true);
 
-    // Simulated lookup with 2 secs processing
-    setTimeout(() => {
+    try {
+      const result = await trackOrderAction({ orderId: cleanOrderId, contact: cleanContact });
+      if (result.ok && result.data) {
+        setTrackingResult(result.data);
+      } else {
+        setTrackingResult(null);
+        setError(result.error || 'Unable to locate order. Please check the details entered.');
+      }
+    } catch {
+      setTrackingResult(null);
+      setError('An error occurred while tracking your shipment. Please try again.');
+    } finally {
       setIsLoading(false);
-      setTrackingResult({
-        orderId: orderId.toUpperCase(),
-        placedDate: '10 Oct 2026',
-        estimatedDelivery: '14 Oct 2026',
-        status: 'in_transit', // placed, processing, in_transit, out_for_delivery, delivered
-        courier: 'Blue Dart Express',
-        awb: 'BLUEDART-8291839210',
-        destination: 'Mumbai, Maharashtra - 400050',
-        timeline: [
-          { status: 'Order Confirmed', time: '10 Oct, 02:30 PM', completed: true },
-          { status: 'Quality Inspected & Packed', time: '11 Oct, 10:15 AM', completed: true },
-          { status: 'Handed to Blue Dart (In Transit)', time: '11 Oct, 04:45 PM', completed: true, current: true },
-          { status: 'Out for Delivery', time: 'Pending', completed: false },
-          { status: 'Delivered', time: 'Pending', completed: false },
-        ],
-        items: [
-          {
-            name: 'Boxy Heavyweight Acid Wash Hoodie',
-            size: 'L',
-            qty: 1,
-            price: 4999,
-          },
-        ],
-      });
-    }, 2000);
+    }
   };
 
   return (
@@ -61,7 +52,7 @@ export default function OrderTracker() {
           <input
             id="orderId"
             type="text"
-            placeholder="e.g. THR-82914"
+            placeholder="e.g. THR-1001 or 1"
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
             className={styles.input}
@@ -74,7 +65,7 @@ export default function OrderTracker() {
           <input
             id="contact"
             type="text"
-            placeholder="+91 98765 43210 or user@example.com"
+            placeholder="+91 98926 91094 or client@throve.in"
             value={contact}
             onChange={(e) => setContact(e.target.value)}
             className={styles.input}
@@ -82,7 +73,7 @@ export default function OrderTracker() {
           />
         </div>
 
-        {error && <p className={styles.errorMessage}>{error}</p>}
+        {error && <p className={styles.errorMessage}>⚠ {error}</p>}
 
         <button
           type="submit"
@@ -96,7 +87,7 @@ export default function OrderTracker() {
               <span>Scanning Logistics Network...</span>
             </>
           ) : (
-            'Track Shipment'
+            'Track Live Shipment'
           )}
         </button>
       </form>
@@ -106,14 +97,14 @@ export default function OrderTracker() {
         <div className={styles.resultCard}>
           <div className={styles.resultHeader}>
             <div>
-              <span className={styles.badge}>Live Tracking</span>
+              <span className={styles.badge}>Live Shipment Verified</span>
               <h2 className={styles.orderTitle}>Order #{trackingResult.orderId}</h2>
               <p className={styles.metaText}>
-                Courier: <strong>{trackingResult.courier}</strong> (AWB: {trackingResult.awb})
+                Logistics Partner: <strong>{trackingResult.courier}</strong> (AWB: <code style={{ backgroundColor: '#f5f5f4', padding: '2px 6px', borderRadius: '4px' }}>{trackingResult.awb}</code>)
               </p>
             </div>
             <div className={styles.etaBox}>
-              <span className={styles.etaLabel}>Est. Delivery</span>
+              <span className={styles.etaLabel}>Status / Est. Delivery</span>
               <span className={styles.etaDate}>{trackingResult.estimatedDelivery}</span>
             </div>
           </div>
@@ -137,15 +128,51 @@ export default function OrderTracker() {
             ))}
           </div>
 
+          {/* Items In Shipment */}
+          {Array.isArray(trackingResult.items) && trackingResult.items.length > 0 && (
+            <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid #f0f0f0' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', color: '#111', display: 'block', marginBottom: '12px' }}>
+                Items in This Shipment ({trackingResult.items.length})
+              </span>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {trackingResult.items.map((item, idx) => (
+                  <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <div style={{ width: '48px', height: '58px', position: 'relative', borderRadius: '4px', overflow: 'hidden', backgroundColor: '#fafaf9', border: '1px solid #e7e5e4', flexShrink: 0 }}>
+                      <Image src={item.image || '/products/asymmetric-mandarin-shirt/main.jpg'} alt={item.name} fill style={{ objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '13px', fontWeight: 600, color: '#1c1917', display: 'block' }}>{item.name}</span>
+                      <span style={{ fontSize: '12px', color: '#78716c' }}>Size: {item.size} · Qty: {item.qty}</span>
+                    </div>
+                    <span style={{ fontSize: '13px', fontWeight: 600, color: '#1c1917' }}>{item.price}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Destination & Action */}
           <div className={styles.resultFooter}>
             <div className={styles.destination}>
-              <span className={styles.destLabel}>Delivery Address</span>
+              <span className={styles.destLabel}>Delivery Destination</span>
               <p className={styles.destValue}>{trackingResult.destination}</p>
             </div>
-            <Link href="/contact" className={styles.helpLink}>
-              Need Help with this Order?
-            </Link>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+              {trackingResult.trackingUrl && (
+                <a
+                  href={trackingResult.trackingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.helpLink}
+                  style={{ fontWeight: 600, color: '#111' }}
+                >
+                  Direct Carrier Portal Tracking ↗
+                </a>
+              )}
+              <Link href="/contact" className={styles.helpLink}>
+                Need Help with this Order?
+              </Link>
+            </div>
           </div>
         </div>
       )}
