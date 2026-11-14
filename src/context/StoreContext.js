@@ -176,15 +176,16 @@ export function StoreProvider({ children }) {
 
   const loginUser = (userData) => {
     const customer = userData || {
-      name: 'Aryan Sharma',
+      name: 'Client',
       phone: '+91 98926 91094',
-      email: 'throve.in@gmail.com',
-      tier: 'Throve Black VIP'
+      email: '',
+      tier: 'Throve Atelier Member'
     };
     setUser(customer);
     try {
       localStorage.setItem('throve_customer', JSON.stringify(customer));
-      document.cookie = "throve_customer_session=active; path=/; max-age=604800; SameSite=Lax";
+      const cleanPhone = (customer.phone || "").replace(/[^0-9]/g, "").slice(-10);
+      document.cookie = `throve_customer_session=${cleanPhone || "active"}; path=/; max-age=604800; SameSite=Lax`;
     } catch {}
   };
 

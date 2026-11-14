@@ -21,12 +21,14 @@ export default function LoginPage() {
     e.preventDefault();
     // Verify & establish authenticated customer session
     if (otp.length === 6) {
+      const cleanPhone = phone.replace(/[^0-9]/g, "").slice(-10);
       loginUser({
-        name: 'Aryan Sharma',
-        phone: `+91 ${phone}`,
-        email: 'aryan@example.com',
-        tier: 'Throve Black VIP'
+        name: 'Client',
+        phone: `+91 ${cleanPhone}`,
+        email: '',
+        tier: 'Throve Atelier Member'
       });
+      document.cookie = `throve_customer_session=${cleanPhone}; path=/; max-age=604800; SameSite=Lax`;
       window.location.href = "/account";
     }
   };

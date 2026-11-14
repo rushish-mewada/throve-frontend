@@ -187,21 +187,25 @@ export default function AccountDashboard({ user, orders, addresses }) {
                 </div>
 
                 <h3 className={styles.sectionSubTitle}>Recent Orders</h3>
-                {orders.slice(0,1).map(order => (
-                  <div key={order.id} className={styles.orderCard}>
-                    <div className={styles.orderCardImage}>
-                      <Image src={order.image} alt="Product" fill style={{ objectFit: 'cover' }} />
+                {orders.length === 0 ? (
+                  <p style={{ color: "#78716c", fontSize: "14px", margin: "12px 0" }}>No recent orders. Your atelier purchases will appear here.</p>
+                ) : (
+                  orders.slice(0,1).map(order => (
+                    <div key={order.id} className={styles.orderCard}>
+                      <div className={styles.orderCardImage}>
+                        <Image src={order.image} alt="Product" fill style={{ objectFit: 'cover' }} />
+                      </div>
+                      <div className={styles.orderCardInfo}>
+                        <h4>{order.id}</h4>
+                        <p>Ordered on {order.date}</p>
+                        <span className={`${styles.statusBadge} ${styles[order.status.toLowerCase()] || ''}`}>{order.status}</span>
+                      </div>
+                      <div className={styles.orderCardAction}>
+                        <Link href="/track" className={styles.viewBtn} style={{ textDecoration: 'none', display: 'inline-block' }}>Track</Link>
+                      </div>
                     </div>
-                    <div className={styles.orderCardInfo}>
-                      <h4>{order.id}</h4>
-                      <p>Ordered on {order.date}</p>
-                      <span className={`${styles.statusBadge} ${styles[order.status.toLowerCase()]}`}>{order.status}</span>
-                    </div>
-                    <div className={styles.orderCardAction}>
-                      <button className={styles.viewBtn}>Track</button>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             )}
 
@@ -210,24 +214,35 @@ export default function AccountDashboard({ user, orders, addresses }) {
               <div className={styles.tabContent}>
                 <h2 className={styles.tabTitle}>Orders & Returns</h2>
                 <div className={styles.orderList}>
-                  {orders.map(order => (
-                    <div key={order.id} className={styles.orderCard}>
-                      <div className={styles.orderCardImage}>
-                        <Image src={order.image} alt="Product" fill style={{ objectFit: 'cover' }} />
-                      </div>
-                      <div className={styles.orderCardInfo}>
-                        <h4>{order.id}</h4>
-                        <p>Total: {order.total}</p>
-                        <p>Placed on {order.date}</p>
-                        <span className={`${styles.statusBadge} ${styles[order.status.toLowerCase()]}`}>{order.status}</span>
-                      </div>
-                      <div className={styles.orderCardAction}>
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2">
-                          <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                      </div>
+                  {orders.length === 0 ? (
+                    <div style={{ textAlign: "center", padding: "40px 20px" }}>
+                      <p style={{ color: "#78716c", fontSize: "14px", marginBottom: "16px" }}>You have not placed any orders yet.</p>
+                      <Link href="/collections" className={styles.primaryBtn} style={{ display: "inline-block", textDecoration: "none" }}>
+                        Discover Collection
+                      </Link>
                     </div>
-                  ))}
+                  ) : (
+                    orders.map(order => (
+                      <div key={order.id} className={styles.orderCard}>
+                        <div className={styles.orderCardImage}>
+                          <Image src={order.image} alt="Product" fill style={{ objectFit: 'cover' }} />
+                        </div>
+                        <div className={styles.orderCardInfo}>
+                          <h4>{order.id}</h4>
+                          <p>Total: {order.total}</p>
+                          <p>Placed on {order.date}</p>
+                          <span className={`${styles.statusBadge} ${styles[order.status.toLowerCase()] || ''}`}>{order.status}</span>
+                        </div>
+                        <div className={styles.orderCardAction}>
+                          <Link href={`/order/${encodeURIComponent(order.id)}`} style={{ textDecoration: 'none' }}>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2">
+                              <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                          </Link>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             )}

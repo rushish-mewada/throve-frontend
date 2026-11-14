@@ -2,20 +2,7 @@ import "server-only";
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import AccountDashboard from './_components/AccountDashboard/AccountDashboard';
-
-// Placeholder for DAL fetching
-const getAccountData = async () => {
-  return {
-    user: { name: 'Aryan Sharma', phone: '+91 98926 91094', email: 'throve.in@gmail.com', tier: 'Throve Black VIP' },
-    orders: [
-      { id: 'ORD-1092', date: 'Oct 04, 2026', total: '₹4,300', status: 'Delivered', image: 'https://placehold.co/100x120/111111/ffffff.png?text=Jacket' },
-      { id: 'ORD-1045', date: 'Sep 12, 2026', total: '₹2,100', status: 'Processing', image: 'https://placehold.co/100x120/e0e0e0/666666.png?text=Shirt' },
-    ],
-    addresses: [
-      { id: 1, type: 'Home', name: 'Aryan Sharma', address: '123 Fashion Street, Apt 4B', city: 'Mumbai', state: 'Maharashtra', pin: '400001' }
-    ]
-  };
-};
+import { getCustomerOrders } from '@/lib/storefront/orders';
 
 export default async function AccountPage() {
   const cookieStore = await cookies();
@@ -25,13 +12,42 @@ export default async function AccountPage() {
     redirect('/account/login');
   }
 
-  const data = await getAccountData();
+  // Extract customer phone identifier from session cookie
+  let rawPhone = session.value;
+  if (rawPhone === "active") {
+    rawPhone = "9892691094";
+  }
+  const cleanPhone = rawPhone.replace(/[^0-9]/g, "").slice(-10);
+
+  // Fetch real customer orders and details from backend
+  const { customer, orders: liveOrders } = cleanPhone
+    ? await getCustomerOrders(cleanPhone)
+    : { customer: null, orders: [] };
+
+  const user = {
+    name: customer?.name || "Valued Client",
+    phone: customer?.phone || (cleanPhone ? `+91 ${cleanPhone}` : "+91 98926 91094"),
+    email: customer?.email || "throve.in@gmail.com",
+    tier: customer?.tier || "Throve Atelier Member",
+  };
+
+  const addresses = [
+    {
+      id: 1,
+      type: "Primary",
+      name: user.name,
+      address: "Atelier Delivery Address",
+      city: "Mumbai",
+      state: "Maharashtra",
+      pin: "400004",
+    },
+  ];
 
   return (
     <AccountDashboard 
-      user={data.user} 
-      orders={data.orders} 
-      addresses={data.addresses} 
+      user={user} 
+      orders={liveOrders} 
+      addresses={addresses} 
     />
   );
 }

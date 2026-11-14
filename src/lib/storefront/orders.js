@@ -66,3 +66,46 @@ export async function getOrderById(id) {
     return null;
   }
 }
+
+/**
+ * Server-only helper to fetch order history and profile for an authenticated customer.
+ *
+ * @param {string} identifier - Phone or Email
+ * @returns {Promise<{ customer: Object|null, orders: Array<Object> }>}
+ */
+export async function getCustomerOrders(identifier) {
+  if (!identifier) return { customer: null, orders: [] };
+
+  try {
+    const isEmail = String(identifier).includes("@");
+    const param = isEmail
+      ? `email=${encodeURIComponent(identifier)}`
+      : `phone=${encodeURIComponent(identifier)}`;
+
+    const res = await fetchStorefront(`/v1/orders?${param}`, {
+      cache: "no-store",
+    });
+
+    const raw = res?.data;
+    if (!raw) return { customer: null, orders: [] };
+
+    return {
+      customer: raw.customer || null,
+      orders: (raw.orders || []).map((o) => ({
+        id: o.displayId || o.id,
+        date: o.createdAt
+          ? new Date(o.createdAt).toLocaleDateString("en-IN", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+            })
+          : "Recent",
+        total: formatMoney(o.totalPaise || 0, o.currency || "INR"),
+        status: o.status || "Processing",
+        image: "/products/asymmetric-mandarin-shirt/main.png",
+      })),
+    };
+  } catch {
+    return { customer: null, orders: [] };
+  }
+}
