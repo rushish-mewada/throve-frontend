@@ -53,18 +53,39 @@ const COLLECTIONS = [
   },
 ];
 
+const COLLECTION_IMAGE_MAP = {
+  women: '/products/navy-tailored-mini-dress/main.jpg?v=3',
+  men: '/products/asymmetric-mandarin-shirt/main.jpg?v=3',
+  'new-arrivals': '/products/scalloped-sweetheart-top/main.jpg?v=3',
+  dresses: '/products/sleeveless-princess-sheath-dress/main.jpg?v=3',
+  shirts: '/products/asymmetric-mandarin-shirt/front.jpg?v=3',
+  trousers: '/products/pleated-formal-pants/main.jpg?v=3',
+};
+
 export default async function CollectionsPage() {
   let displayCollections = COLLECTIONS;
   try {
     const liveList = await getCollections();
     if (Array.isArray(liveList) && liveList.length > 0) {
-      displayCollections = liveList.map((col) => ({
-        handle: col.handle,
-        title: col.title,
-        subtitle: col.description || col.subtitle || 'Collection',
-        itemCount: col.productsCount ? `${col.productsCount} Styles` : (col.itemCount || 'Curated Styles'),
-        image: col.image || col.thumbnail || '/products/navy-tailored-mini-dress/main.jpg?v=3',
-      }));
+      displayCollections = liveList.map((col) => {
+        const handleLower = String(col.handle || '').toLowerCase();
+        const fallbackCol = COLLECTIONS.find((c) => c.handle.toLowerCase() === handleLower);
+        const resolvedImage = col.image
+          || col.thumbnail
+          || COLLECTION_IMAGE_MAP[handleLower]
+          || fallbackCol?.image
+          || (handleLower === 'men'
+              ? '/products/asymmetric-mandarin-shirt/main.jpg?v=3'
+              : '/products/navy-tailored-mini-dress/main.jpg?v=3');
+
+        return {
+          handle: col.handle,
+          title: col.title || fallbackCol?.title || col.handle,
+          subtitle: col.description || fallbackCol?.subtitle || 'Collection',
+          itemCount: col.productsCount ? `${col.productsCount} Styles` : (col.itemCount || fallbackCol?.itemCount || 'Curated Styles'),
+          image: resolvedImage,
+        };
+      });
     }
   } catch {
     displayCollections = COLLECTIONS;
