@@ -176,6 +176,7 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
         <Link
           href={`/product/${productHandle}`}
           className={styles.productTitle}
+          title={product.title}
         >
           {product.title}
         </Link>
