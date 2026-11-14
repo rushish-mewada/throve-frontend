@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import ProductGallery from './_components/ProductGallery/ProductGallery';
 import ProductInfo from './_components/ProductInfo/ProductInfo';
 import ProductGrid from './_components/ProductGrid/ProductGrid';
@@ -25,6 +26,10 @@ export default async function ProductPage({ params }) {
 
   if (!product) {
     product = getProductByHandle(handle);
+  }
+
+  if (!product) {
+    notFound();
   }
   const sourcePool = catalogPool.length > 0 ? catalogPool : LAUNCH_PRODUCTS;
 

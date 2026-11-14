@@ -1,0 +1,85 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.labelRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.label {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #44403c;
+}
+
+.requiredStar {
+  color: #dc2626;
+}
+
+.charCount {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.72rem;
+  color: #a8a29e;
+}
+
+.textareaContainer {
+  display: flex;
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  background-color: #ffffff;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.textareaContainer:hover {
+  border-color: #a8a29e;
+}
+
+.textareaContainer:focus-within {
+  border-color: #1c1917;
+  box-shadow: 0 0 0 1px #1c1917;
+}
+
+.hasError {
+  border-color: #dc2626 !important;
+}
+
+.textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.88rem;
+  color: #1c1917;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.textarea::placeholder {
+  color: #a8a29e;
+  font-size: 0.84rem;
+}
+
+.hint {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.72rem;
+  color: #78716c;
+}
+
+.errorText {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.72rem;
+  color: #dc2626;
+}

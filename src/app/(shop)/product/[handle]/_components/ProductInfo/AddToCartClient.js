@@ -8,30 +8,43 @@ import DeliveryTermsModal from './DeliveryTermsModal';
 import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 
-export default function AddToCartClient({ variants, colors, product }) {
+export default function AddToCartClient({ variants = [], colors = [], product }) {
   const router = useRouter();
   const { addToCart, setIsCartDrawerOpen } = useStore();
-  const [selectedSize, setSelectedSize] = useState(variants[1] || variants[0]);
-  const [selectedColor, setSelectedColor] = useState(colors[0]);
+
+  const safeVariants = Array.isArray(variants) && variants.length > 0
+    ? variants
+    : [{ id: 'v_s', name: 'S' }, { id: 'v_m', name: 'M' }, { id: 'v_l', name: 'L' }];
+
+  const safeColors = Array.isArray(colors) && colors.length > 0
+    ? colors
+    : [{ id: 'c_default', name: 'Atelier Classic', hex: '#18181b' }];
+
+  const [selectedSize, setSelectedSize] = useState(safeVariants[1] || safeVariants[0]);
+  const [selectedColor, setSelectedColor] = useState(safeColors[0]);
   const [isAdding, setIsAdding] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (isAdding) return;
     setIsAdding(true);
-    await new Promise((r) => setTimeout(r, 2000));
-    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1);
+    const sizeName = selectedSize?.name || selectedSize?.title || 'M';
+    const colorName = selectedColor?.name || 'Standard';
+    addToCart(product, sizeName, colorName, 1);
     setIsAdding(false);
     setAddedSuccess(true);
     setIsCartDrawerOpen(true);
-    setTimeout(() => setAddedSuccess(false), 3000);
+    setTimeout(() => setAddedSuccess(false), 2500);
   };
 
   const handleCheckoutNow = () => {
-    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1);
+    setIsCheckingOut(true);
+    const sizeName = selectedSize?.name || selectedSize?.title || 'M';
+    const colorName = selectedColor?.name || 'Standard';
+    addToCart(product, sizeName, colorName, 1);
     router.push('/checkout');
   };
 
@@ -40,13 +53,13 @@ export default function AddToCartClient({ variants, colors, product }) {
 
       {/* Colors */}
       <div className={styles.optionGroup}>
-        <span className={styles.optionLabel}>Color: <span>{selectedColor?.name}</span></span>
+        <span className={styles.optionLabel}>Color: <span>{selectedColor?.name || 'Atelier'}</span></span>
         <div className={styles.swatchList}>
-          {colors.map(color => (
+          {safeColors.map(color => (
             <button
               key={color.id}
               className={`${styles.swatch} ${selectedColor?.id === color.id ? styles.swatchActive : ''}`}
-              style={{ backgroundColor: color.hex }}
+              style={{ backgroundColor: color.hex || '#18181b' }}
               onClick={() => setSelectedColor(color)}
               aria-label={`Select color ${color.name}`}
             />
@@ -57,7 +70,7 @@ export default function AddToCartClient({ variants, colors, product }) {
       {/* Sizes */}
       <div className={styles.optionGroup}>
         <div className={styles.sizeHeader}>
-          <span className={styles.optionLabel}>Size: <span>{selectedSize?.name}</span></span>
+          <span className={styles.optionLabel}>Size: <span>{selectedSize?.name || selectedSize?.title || 'M'}</span></span>
           <button
             type="button"
             className={styles.sizeGuideBtn}
@@ -67,13 +80,13 @@ export default function AddToCartClient({ variants, colors, product }) {
           </button>
         </div>
         <div className={styles.sizeList}>
-          {variants.map(v => (
+          {safeVariants.map(v => (
             <button
               key={v.id}
-              className={`${styles.sizeBtn} ${selectedSize?.id === v.id ? styles.sizeActive : ''}`}
+              className={`${styles.sizeBtn} ${(selectedSize?.id === v.id || selectedSize?.name === v.name) ? styles.sizeActive : ''}`}
               onClick={() => setSelectedSize(v)}
             >
-              {v.name}
+              {v.name || v.title}
             </button>
           ))}
         </div>
