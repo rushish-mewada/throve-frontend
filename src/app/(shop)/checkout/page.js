@@ -10,7 +10,7 @@ import { processCheckoutAction, initiateCashfreeCheckoutAction } from '@/actions
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 import CustomInput from '@/components/ui/CustomInput/CustomInput';
 import CustomSelect from '@/components/ui/CustomSelect/CustomSelect';
-import { UpiIcon, GPayIcon, PhonePeIcon, PaytmIcon, CardsIcon, CodIcon } from '@/components/ui/PaymentIcons';
+import { UpiIcon, GPayIcon, PhonePeIcon, RuPayIcon, MastercardIcon, VisaIcon, CodIcon } from '@/components/ui/PaymentIcons';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
@@ -875,8 +875,9 @@ export default function CheckoutPage() {
                             <UpiIcon />
                             <GPayIcon />
                             <PhonePeIcon />
-                            <PaytmIcon />
-                            <CardsIcon />
+                            <RuPayIcon />
+                            <MastercardIcon />
+                            <VisaIcon />
                           </div>
                         ) : (
                           <div className={styles.paymentIconsRow}>
