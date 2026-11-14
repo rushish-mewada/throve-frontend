@@ -16,6 +16,8 @@ function buildCollectionsConfig(sourceProducts) {
     colors: p.colorHexes,
     sizes: p.sizes,
     handle: p.handle,
+    vton: p.vton || p.metadata?.vton,
+    vtonActive: p.vtonActive !== undefined ? p.vtonActive : Boolean(p.vton?.enabled || p.metadata?.vton?.enabled),
   });
 
   const men = sourceProducts.filter((p) => String(p.category).toLowerCase() === 'men').map(mapCard);

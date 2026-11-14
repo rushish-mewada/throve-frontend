@@ -36,6 +36,13 @@ export const LAUNCH_PRODUCTS = [
     ],
     featured: true,
     newArrival: true,
+    vton: {
+      enabled: true,
+      cutout_url: '/products/navy-tailored-mini-dress/front.jpg?v=3',
+      garment_type: 'dress',
+      fit_profile: 'tailored',
+    },
+    vtonActive: true,
   },
   {
     id: 'throve_lp_02',

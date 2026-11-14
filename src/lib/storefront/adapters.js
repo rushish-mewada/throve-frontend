@@ -47,7 +47,8 @@ export function toProductProps(raw) {
       vton: v.vton || undefined,
     })),
     seo: raw.metadata?.seo || undefined,
-    vton: raw.metadata?.vton || undefined,
+    vton: raw.vton || raw.metadata?.vton || undefined,
+    vtonActive: Boolean(raw.vton?.enabled || raw.metadata?.vton?.enabled || raw.vtonActive),
   };
 }
 

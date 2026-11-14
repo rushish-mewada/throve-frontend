@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
+import { isProductVtonActive } from '@/lib/vton';
 import DecartLucyVtonModal from '../DecartLucyVton/DecartLucyVtonModal';
 import styles from './ProductGallery.module.css';
 
@@ -12,10 +13,7 @@ export default function ProductGallery({ images, product }) {
   const { isInWishlist, toggleWishlist } = useStore();
 
   const isWishlisted = isInWishlist(product?.id || product?.handle);
-  const isVtonEnabled = Boolean(
-    (product?.vton?.enabled && product?.vton?.cutout_url) ||
-    (product?.metadata?.vton?.enabled && product?.metadata?.vton?.cutout_url)
-  );
+  const isVtonEnabled = isProductVtonActive(product);
 
   return (
     <div className={styles.gallery}>

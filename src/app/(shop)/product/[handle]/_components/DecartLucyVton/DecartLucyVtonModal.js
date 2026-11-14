@@ -30,7 +30,7 @@ export default function DecartLucyVtonModal({ isOpen, onClose, product }) {
   const fileInputRef = useRef(null);
   const decartConnectionRef = useRef(null);
 
-  const vtonData = product?.metadata?.vton || {
+  const vtonData = product?.vton || product?.metadata?.vton || {
     enabled: true,
     garment_type: "designer_apparel",
     fit_profile: "architectural",
