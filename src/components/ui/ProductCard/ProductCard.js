@@ -173,13 +173,15 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
 
       {/* Product Metadata Block (Flex pinned for perfect baseline alignment) */}
       <div className={styles.productInfo}>
-        <div className={styles.titleRow}>
-          <Link
-            href={`/product/${productHandle}`}
-            className={styles.productTitle}
-          >
-            {product.title}
-          </Link>
+        <Link
+          href={`/product/${productHandle}`}
+          className={styles.productTitle}
+        >
+          {product.title}
+        </Link>
+
+        {/* Rating row positioned below title text, spaced equally between title and price */}
+        <div className={styles.ratingRow}>
           {hasRating && (
             <span className={styles.productRating}>
               ★ {ratingNumber.toFixed(1)}
