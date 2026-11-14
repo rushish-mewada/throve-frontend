@@ -594,6 +594,13 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
                   </form>
                 )}
 
+                {addresses.length === 0 && !isAddingAddress && (
+                  <div style={{ padding: '32px 20px', textAlign: 'center', backgroundColor: '#fafaf9', borderRadius: '8px', border: '1px solid #e7e5e4', color: '#78716c' }}>
+                    <p style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 500, color: '#1c1917' }}>No saved addresses yet</p>
+                    <p style={{ margin: 0, fontSize: '13px' }}>Your delivery address will be gathered seamlessly at the time of checkout, or you can add one now.</p>
+                  </div>
+                )}
+
                 <div className={styles.addressGrid}>
                   {addresses.map(addr => (
                     <div key={addr.id} className={styles.addressCard}>

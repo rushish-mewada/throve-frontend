@@ -2,6 +2,26 @@ import "server-only";
 import { fetchStorefront } from "./client.js";
 
 /**
+ * Server-only helper to fetch customer profile data by phone.
+ *
+ * @param {string} phone
+ * @returns {Promise<Object|null>}
+ */
+export async function getCustomerProfile(phone) {
+  if (!phone) return null;
+  const cleanPhone = phone.replace(/[^0-9]/g, "").slice(-10);
+
+  try {
+    const res = await fetchStorefront(`/v1/customers/profile?phone=${encodeURIComponent(cleanPhone)}`, {
+      cache: "no-store",
+    });
+    return res?.data || null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Server-only helper to update customer profile data.
  *
  * @param {Object} data

@@ -24,24 +24,33 @@ export default async function AccountPage() {
     ? await getCustomerOrders(cleanPhone)
     : { customer: null, orders: [] };
 
+  const hasValidName = Boolean(customer?.name && customer.name !== "Client" && customer.name !== "Valued Client");
+  const hasValidEmail = Boolean(customer?.email && customer.email.includes("@"));
+
+  // Strictly gate My Account: if it is first login or basic info (Name, Email) is missing, require profile completion first
+  if (!customer || !hasValidName || !hasValidEmail) {
+    redirect(`/account/login?step=profile&phone=${cleanPhone}`);
+  }
+
   const user = {
-    name: customer?.name || "Valued Client",
+    name: customer.name,
     phone: customer?.phone || (cleanPhone ? `+91 ${cleanPhone}` : "+91 98926 91094"),
-    email: customer?.email || "throve.in@gmail.com",
+    email: customer.email,
     tier: customer?.tier || "Throve Member",
   };
 
-  const addresses = [
+  const lastOrder = liveOrders?.[0];
+  const addresses = lastOrder?.shippingAddress?.address ? [
     {
       id: 1,
       type: "Primary",
-      name: user.name,
-      address: "Primary Delivery Address",
-      city: "Mumbai",
-      state: "Maharashtra",
-      pin: "400004",
+      name: lastOrder.shippingAddress.name || user.name,
+      address: lastOrder.shippingAddress.address,
+      city: lastOrder.shippingAddress.city || "Mumbai",
+      state: lastOrder.shippingAddress.state || "Maharashtra",
+      pin: lastOrder.shippingAddress.pin || "",
     },
-  ];
+  ] : [];
 
   return (
     <AccountDashboard 

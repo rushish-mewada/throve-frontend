@@ -1,35 +1,131 @@
 "use client";
-import { useState } from 'react';
+
+import { useState, useEffect, Suspense } from 'react';
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
+import { checkCustomerStatusAction, completeFirstLoginAction } from '@/actions/customer';
 import styles from './page.module.css';
 
-export default function LoginPage() {
-  const [step, setStep] = useState(1); // 1: Phone, 2: OTP
+function LoginFormContent() {
+  const searchParams = useSearchParams();
+  const redirectTarget = searchParams.get('redirect') || '/account';
+
+  const [step, setStep] = useState(1); // 1: Phone, 2: OTP, 3: Profile Setup
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+
   const { loginUser } = useStore();
+
+  useEffect(() => {
+    const stepParam = searchParams.get('step');
+    const phoneParam = searchParams.get('phone');
+    if (phoneParam) {
+      const clean = phoneParam.replace(/[^0-9]/g, '').slice(-10);
+      setPhone(clean);
+    }
+    if (stepParam === 'profile') {
+      setStep(3);
+    }
+  }, [searchParams]);
 
   const handleSendOtp = (e) => {
     e.preventDefault();
-    if (phone.length > 9) {
-      setStep(2);
+    setErrorMsg('');
+    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+    if (cleanPhone.length !== 10) {
+      setErrorMsg('Please enter a valid 10-digit mobile number.');
+      return;
+    }
+    setStep(2);
+  };
+
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    setErrorMsg('');
+    if (otp.length !== 6) {
+      setErrorMsg('Please enter the 6-digit OTP received on WhatsApp.');
+      return;
+    }
+
+    setIsLoading(true);
+    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+
+    try {
+      const statusRes = await checkCustomerStatusAction(cleanPhone);
+
+      if (statusRes.isFirstLogin) {
+        // First login: basic profile (Name & Email) is missing. Strictly gate access!
+        if (statusRes.customer?.name && statusRes.customer.name !== 'Client' && statusRes.customer.name !== 'Valued Client') {
+          setName(statusRes.customer.name);
+        }
+        if (statusRes.customer?.email) {
+          setEmail(statusRes.customer.email);
+        }
+        setStep(3);
+      } else {
+        // Returning customer with existing profile
+        const cust = statusRes.customer;
+        loginUser({
+          name: cust.name,
+          phone: `+91 ${cleanPhone}`,
+          email: cust.email,
+          tier: cust.tier || 'Throve Member',
+        });
+        document.cookie = `throve_customer_session=${cleanPhone}; path=/; max-age=604800; SameSite=Lax`;
+        window.location.href = redirectTarget;
+      }
+    } catch {
+      setErrorMsg('Failed to verify customer profile. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleVerify = (e) => {
+  const handleCompleteProfile = async (e) => {
     e.preventDefault();
-    // Verify & establish authenticated customer session
-    if (otp.length === 6) {
-      const cleanPhone = phone.replace(/[^0-9]/g, "").slice(-10);
-      loginUser({
-        name: 'Client',
-        phone: `+91 ${cleanPhone}`,
-        email: '',
-        tier: 'Throve Member'
+    setErrorMsg('');
+
+    if (!name.trim() || name.trim().length < 2) {
+      setErrorMsg('Please enter your full legal name.');
+      return;
+    }
+    if (!email.trim() || !email.includes('@') || !email.includes('.')) {
+      setErrorMsg('Please enter a valid email address for order receipts and updates.');
+      return;
+    }
+
+    setIsLoading(true);
+    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
+
+    try {
+      const result = await completeFirstLoginAction({
+        phone: cleanPhone,
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
       });
-      document.cookie = `throve_customer_session=${cleanPhone}; path=/; max-age=604800; SameSite=Lax`;
-      window.location.href = "/account";
+
+      if (!result.ok) {
+        setErrorMsg(result.error || 'Failed to save profile. Please try again.');
+        setIsLoading(false);
+        return;
+      }
+
+      loginUser({
+        name: name.trim(),
+        phone: `+91 ${cleanPhone}`,
+        email: email.trim().toLowerCase(),
+        tier: 'Throve Member',
+      });
+
+      window.location.href = redirectTarget;
+    } catch {
+      setErrorMsg('An unexpected error occurred while saving your profile.');
+      setIsLoading(false);
     }
   };
 
@@ -50,15 +146,25 @@ export default function LoginPage() {
       <div className={styles.formCol}>
         <div className={styles.formContainer}>
           <div className={styles.header}>
-            <h1>{step === 1 ? 'Welcome to Throve.' : 'Verify Number'}</h1>
+            <h1>
+              {step === 1 && 'Welcome to Throve.'}
+              {step === 2 && 'Verify Number'}
+              {step === 3 && 'Complete Profile'}
+            </h1>
             <p>
-              {step === 1
-                ? 'Enter your mobile number to securely log in or create an account.'
-                : `We've sent a 6-digit code to your WhatsApp on +91 ${phone}`}
+              {step === 1 && 'Enter your mobile number to securely log in or create your account.'}
+              {step === 2 && `We've sent a 6-digit code to your WhatsApp on +91 ${phone}`}
+              {step === 3 && 'Please provide your basic details before accessing your account dashboard.'}
             </p>
           </div>
 
-          {step === 1 ? (
+          {errorMsg && (
+            <div className={styles.errorBanner} style={{ marginBottom: '20px' }}>
+              {errorMsg}
+            </div>
+          )}
+
+          {step === 1 && (
             <form className={styles.form} onSubmit={handleSendOtp}>
               <div className={styles.inputGroup}>
                 <label>Mobile Number</label>
@@ -83,37 +189,89 @@ export default function LoginPage() {
                 Send OTP via WhatsApp
               </button>
             </form>
-          ) : (
-            <form className={styles.form} onSubmit={handleVerify}>
+          )}
+
+          {step === 2 && (
+            <>
+              <form className={styles.form} onSubmit={handleVerifyOtp}>
+                <div className={styles.inputGroup}>
+                  <label>Enter 6-digit OTP</label>
+                  <input
+                    type="text"
+                    placeholder="• • • • • •"
+                    className={styles.otpInput}
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
+                    maxLength={6}
+                    required
+                  />
+                </div>
+
+                <button type="submit" disabled={isLoading} className={styles.submitBtn}>
+                  {isLoading ? 'Verifying...' : 'Verify & Continue'}
+                </button>
+              </form>
+
+              <div className={styles.toggleText}>
+                Didn't receive the code?{' '}
+                <button type="button" className={styles.toggleBtn}>Resend via WhatsApp</button>
+                <br /><br />
+                <button type="button" className={styles.toggleBtn} onClick={() => setStep(1)}>Change Number</button>
+              </div>
+            </>
+          )}
+
+          {step === 3 && (
+            <form className={styles.form} onSubmit={handleCompleteProfile}>
               <div className={styles.inputGroup}>
-                <label>Enter 6-digit OTP</label>
+                <label>Full Legal Name *</label>
                 <input
                   type="text"
-                  placeholder="• • • • • •"
-                  className={styles.otpInput}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))}
-                  maxLength={6}
+                  placeholder="e.g. Aarav Sharma"
+                  className={styles.textInput}
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   required
                 />
               </div>
 
-              <button type="submit" className={styles.submitBtn}>
-                Verify & Login
+              <div className={styles.inputGroup}>
+                <label>Email Address *</label>
+                <input
+                  type="email"
+                  placeholder="e.g. aarav@gmail.com"
+                  className={styles.textInput}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className={styles.noticeBox}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" className={styles.noticeIcon}>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+                <span>
+                  <strong>Checkout Delivery Note:</strong> Your shipping and billing addresses are collected and verified securely at the time of checking out.
+                </span>
+              </div>
+
+              <button type="submit" disabled={isLoading} className={styles.submitBtn}>
+                {isLoading ? 'Saving Profile...' : 'Complete & Access My Account'}
               </button>
             </form>
-          )}
-
-          {step === 2 && (
-            <div className={styles.toggleText}>
-              Didn't receive the code?{' '}
-              <button className={styles.toggleBtn}>Resend via WhatsApp</button>
-              <br /><br />
-              <button className={styles.toggleBtn} onClick={() => setStep(1)}>Change Number</button>
-            </div>
           )}
         </div>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className={styles.authLayout}><div className={styles.formCol}>Loading...</div></main>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }
