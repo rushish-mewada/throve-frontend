@@ -374,56 +374,6 @@ export default function ProductReviews({ productHandle = 'default', productTitle
 
         {reviewCount > 0 && (
           <div className={styles.headerActionsCol}>
-            {/* Verification Notice Banner placed ABOVE the button */}
-            {eligibilityChecked && !isEligibleToReview && !showManualVerify && (
-              <div className={styles.verifiedNoticeBox}>
-                <div className={styles.verifiedNoticeIcon}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                    <path d="M9 12l2 2 4-4" />
-                  </svg>
-                </div>
-                <div className={styles.verifiedNoticeContent}>
-                  <div className={styles.verifiedNoticeHeaderRow}>
-                    <span className={styles.verifiedNoticeTitle}>Verified Purchases Only</span>
-                  </div>
-                  <p className={styles.verifiedNoticeText}>
-                    Only clients who have purchased this garment may publish a review.
-                    {!isLoggedIn ? (
-                      <>
-                        {' '}
-                        <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeLinkBtn}>
-                          Log in
-                        </Link>
-                        {' or '}
-                        <button
-                          type="button"
-                          className={styles.verifiedNoticeLinkBtn}
-                          onClick={() => setShowManualVerify(true)}
-                        >
-                          verify with Order ID →
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        {' '}
-                        <span className={styles.verifiedNoticeSub}>
-                          (No order found under your number).
-                        </span>{' '}
-                        <button
-                          type="button"
-                          className={styles.verifiedNoticeLinkBtn}
-                          onClick={() => setShowManualVerify(true)}
-                        >
-                          Guest or other number? Verify here →
-                        </button>
-                      </>
-                    )}
-                  </p>
-                </div>
-              </div>
-            )}
-
             {isEligibleToReview ? (
               <button
                 type="button"
@@ -447,6 +397,14 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                 {showManualVerify ? 'Close Verification' : 'Verify Purchase to Review'}
               </button>
             )}
+
+            <span className={styles.verifiedBuyerTag}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                <path d="M9 12l2 2 4-4" />
+              </svg>
+              {isEligibleToReview ? 'Verified Buyer Confirmed' : 'Verified Purchases Only'}
+            </span>
           </div>
         )}
       </div>
@@ -777,55 +735,6 @@ export default function ProductReviews({ productHandle = 'default', productTitle
             </p>
 
             <div className={styles.emptyReviewsAction}>
-              {eligibilityChecked && !isEligibleToReview && (
-                <div className={styles.verifiedNoticeBox} style={{ maxWidth: '440px', margin: '0 auto 12px auto', textAlign: 'left' }}>
-                  <div className={styles.verifiedNoticeIcon}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                      <path d="M9 12l2 2 4-4" />
-                    </svg>
-                  </div>
-                  <div className={styles.verifiedNoticeContent}>
-                    <div className={styles.verifiedNoticeHeaderRow}>
-                      <span className={styles.verifiedNoticeTitle}>Verified Purchases Only</span>
-                    </div>
-                    <p className={styles.verifiedNoticeText}>
-                      Only clients who have purchased this garment may publish a review.
-                      {!isLoggedIn ? (
-                        <>
-                          {' '}
-                          <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeLinkBtn}>
-                            Log in
-                          </Link>
-                          {' or '}
-                          <button
-                            type="button"
-                            className={styles.verifiedNoticeLinkBtn}
-                            onClick={() => setShowManualVerify(true)}
-                          >
-                            verify with Order ID →
-                          </button>
-                        </>
-                      ) : (
-                        <>
-                          {' '}
-                          <span className={styles.verifiedNoticeSub}>
-                            (No order found under your number).
-                          </span>{' '}
-                          <button
-                            type="button"
-                            className={styles.verifiedNoticeLinkBtn}
-                            onClick={() => setShowManualVerify(true)}
-                          >
-                            Guest or other number? Verify here →
-                          </button>
-                        </>
-                      )}
-                    </p>
-                  </div>
-                </div>
-              )}
-
               {isEligibleToReview ? (
                 <button
                   type="button"
@@ -843,6 +752,14 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                   Verify Purchase to Review
                 </button>
               )}
+
+              <span className={styles.verifiedBuyerTag}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+                {isEligibleToReview ? 'Verified Buyer Confirmed' : 'Verified Purchases Only'}
+              </span>
             </div>
           </div>
         )

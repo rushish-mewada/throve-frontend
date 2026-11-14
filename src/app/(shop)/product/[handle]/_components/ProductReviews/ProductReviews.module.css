@@ -35,8 +35,22 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
-  max-width: 480px;
+  gap: 6px;
+}
+
+.verifiedBuyerTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #78716c;
+  letter-spacing: 0.02em;
+}
+
+.verifiedBuyerTag svg {
+  color: #16a34a;
 }
 
 .headerActions {
