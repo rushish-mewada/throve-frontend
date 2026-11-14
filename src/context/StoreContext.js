@@ -42,7 +42,15 @@ export function StoreProvider({ children }) {
       // 2. Hydrate user session
       const savedUser = localStorage.getItem('throve_customer');
       if (savedUser) {
-        setUser(JSON.parse(savedUser));
+        try {
+          if (typeof savedUser === 'string' && (savedUser.startsWith('{') || savedUser.startsWith('['))) {
+            setUser(JSON.parse(savedUser));
+          } else {
+            localStorage.removeItem('throve_customer');
+          }
+        } catch {
+          localStorage.removeItem('throve_customer');
+        }
       }
     } catch {
       // Ignore parse errors

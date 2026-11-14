@@ -26,6 +26,8 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
   const [addressForm, setAddressForm] = useState({
     type: 'Primary',
     name: initialUser.name || '',
+    phone: (initialUser.phone || '').replace(/[^0-9]/g, '').slice(-10),
+    email: initialUser.email || '',
     address: '',
     city: 'Mumbai',
     state: 'Maharashtra',
@@ -74,7 +76,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
         setProfileMsg({ type: 'success', text: 'Profile details saved successfully.' });
         try {
           const storedCust = localStorage.getItem('throve_customer');
-          const parsed = storedCust ? JSON.parse(storedCust) : {};
+          const parsed = (storedCust && typeof storedCust === 'string' && storedCust.startsWith('{')) ? JSON.parse(storedCust) : {};
           localStorage.setItem('throve_customer', JSON.stringify({
             ...parsed,
             name: profileName,
@@ -97,16 +99,28 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
       return;
     }
 
+    const cleanPhone = (addressForm.phone || '').replace(/[^0-9]/g, '').slice(-10);
+    const normalized = {
+      ...addressForm,
+      phone: cleanPhone,
+      email: addressForm.email || '',
+      address1: addressForm.address,
+      pincode: addressForm.pin,
+    };
+
     let nextAddresses = [];
     if (editingAddressId) {
       nextAddresses = addresses.map((addr) =>
-        addr.id === editingAddressId ? { ...addressForm, id: editingAddressId } : addr
+        addr.id === editingAddressId ? { ...normalized, id: editingAddressId } : addr
       );
     } else {
+      if (addresses.length >= 5) {
+        return;
+      }
       nextAddresses = [
         ...addresses,
         {
-          ...addressForm,
+          ...normalized,
           id: Date.now(),
         },
       ];
@@ -122,6 +136,8 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
     setAddressForm({
       type: 'Home',
       name: user.name || '',
+      phone: (user.phone || '').replace(/[^0-9]/g, '').slice(-10),
+      email: user.email || '',
       address: '',
       city: 'Mumbai',
       state: 'Maharashtra',
@@ -135,10 +151,12 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
     setAddressForm({
       type: addr.type || 'Home',
       name: addr.name || '',
-      address: addr.address || '',
+      phone: (addr.phone || '').replace(/[^0-9]/g, '').slice(-10),
+      email: addr.email || '',
+      address: addr.address || addr.address1 || '',
       city: addr.city || 'Mumbai',
       state: addr.state || 'Maharashtra',
-      pin: addr.pin || '',
+      pin: addr.pin || addr.pincode || '',
     });
   };
 
@@ -507,25 +525,29 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
             {displayTab === 'addresses' && (
               <div className={styles.tabContent}>
                 <div className={styles.tabHeader}>
-                  <h2 className={styles.tabTitle}>Saved Addresses ({addresses.length})</h2>
-                  <button
-                    type="button"
-                    className={styles.outlineBtn}
-                    onClick={() => {
-                      setIsAddingAddress(!isAddingAddress);
-                      setEditingAddressId(null);
-                      setAddressForm({
-                        type: 'Home',
-                        name: user.name || '',
-                        address: '',
-                        city: 'Mumbai',
-                        state: 'Maharashtra',
-                        pin: '',
-                      });
-                    }}
-                  >
-                    {isAddingAddress ? 'Cancel' : '+ Add New'}
-                  </button>
+                  <h2 className={styles.tabTitle}>Saved Addresses ({addresses.length} / 5)</h2>
+                  {addresses.length < 5 && (
+                    <button
+                      type="button"
+                      className={styles.outlineBtn}
+                      onClick={() => {
+                        setIsAddingAddress(!isAddingAddress);
+                        setEditingAddressId(null);
+                        setAddressForm({
+                          type: 'Home',
+                          name: user.name || '',
+                          phone: (user.phone || '').replace(/[^0-9]/g, '').slice(-10),
+                          email: user.email || '',
+                          address: '',
+                          city: 'Mumbai',
+                          state: 'Maharashtra',
+                          pin: '',
+                        });
+                      }}
+                    >
+                      {isAddingAddress ? 'Cancel' : '+ Add New'}
+                    </button>
+                  )}
                 </div>
 
                 {isAddingAddress && (
@@ -552,6 +574,30 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
                         onChange={(e) => setAddressForm({ ...addressForm, name: e.target.value })}
                         required
                       />
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                      <div className={styles.inputGroup}>
+                        <label>Mobile Number (for delivery)</label>
+                        <input
+                          type="tel"
+                          maxLength={10}
+                          className={styles.input}
+                          placeholder="10-digit number"
+                          value={addressForm.phone}
+                          onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value.replace(/\D/g, '') })}
+                          required
+                        />
+                      </div>
+                      <div className={styles.inputGroup}>
+                        <label>Email Address (for invoice)</label>
+                        <input
+                          type="email"
+                          className={styles.input}
+                          placeholder="client@throve.in"
+                          value={addressForm.email}
+                          onChange={(e) => setAddressForm({ ...addressForm, email: e.target.value })}
+                        />
+                      </div>
                     </div>
                     <div className={styles.inputGroup}>
                       <label>Flat, Suite, Street Address</label>
@@ -616,8 +662,15 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
                     <div key={addr.id} className={styles.addressCard}>
                       <span className={styles.addressType}>{addr.type}</span>
                       <h4>{addr.name}</h4>
-                      <p>{addr.address}</p>
-                      <p>{addr.city}, {addr.state} {addr.pin}</p>
+                      {(addr.phone || addr.email) && (
+                        <p style={{ fontSize: '13px', color: '#57534e', margin: '2px 0 6px 0', fontWeight: 500 }}>
+                          {addr.phone && `+91 ${addr.phone}`}
+                          {addr.phone && addr.email && ' • '}
+                          {addr.email}
+                        </p>
+                      )}
+                      <p>{addr.address || addr.address1}</p>
+                      <p>{addr.city}, {addr.state} — {addr.pin || addr.pincode}</p>
                       <div className={styles.cardActions}>
                         <button
                           type="button"

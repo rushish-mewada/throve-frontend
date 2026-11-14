@@ -89,20 +89,25 @@ export default function CheckoutPage() {
   // Mobile Order Summary Dropdown State (Shopflo Mobile Standard)
   const [isSummaryExpanded, setIsSummaryExpanded] = useState(false);
 
-  // Contact & Delivery State
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address1, setAddress1] = useState('');
-  const [address2, setAddress2] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('Maharashtra');
-  const [pincode, setPincode] = useState('');
+  // Multi-Address State (Up to 5 addresses with individual Name, Email & Phone)
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState(null);
+  const [isManagingAddresses, setIsManagingAddresses] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [isAddingNew, setIsAddingNew] = useState(false);
 
-  // Saved Address Handling
-  const [hasSavedAddress, setHasSavedAddress] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
+  // Address Form State (used for adding new, editing existing, or guest initial address)
+  const [addressFormData, setAddressFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: 'Maharashtra',
+    pincode: '',
+    type: 'Home',
+  });
   
   // Payment & Coupon State
   const [paymentMethod, setPaymentMethod] = useState('cashfree');
@@ -112,59 +117,101 @@ export default function CheckoutPage() {
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Load saved address from localStorage or user context
+  // Hydrate saved addresses from localStorage or user context
   useEffect(() => {
     if (!isMounted) return;
 
+    let list = [];
+
+    // 1. Try loading from throve_user_addresses (multi-address storage)
     try {
-      const saved = localStorage.getItem('throve_shipping_address');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed.firstName && parsed.phone && parsed.address1 && parsed.city && parsed.pincode) {
-          setFirstName(parsed.firstName || '');
-          setLastName(parsed.lastName || '');
-          setPhone(parsed.phone || '');
-          setEmail(parsed.email || '');
-          setAddress1(parsed.address1 || '');
-          setAddress2(parsed.address2 || '');
-          setCity(parsed.city || '');
-          setState(parsed.state || 'Maharashtra');
-          setPincode(parsed.pincode || '');
-          setHasSavedAddress(true);
-          setIsEditingAddress(false);
-          return;
+      const stored = localStorage.getItem('throve_user_addresses');
+      if (stored && typeof stored === 'string' && (stored.startsWith('[') || stored.startsWith('{'))) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          list = parsed.slice(0, 5).map((addr, idx) => ({
+            id: addr.id || `addr_${idx + 1}_${Date.now()}`,
+            name: addr.name || `${addr.firstName || ''} ${addr.lastName || ''}`.trim() || 'Valued Customer',
+            phone: (addr.phone || '').replace(/[^0-9]/g, '').slice(-10),
+            email: addr.email || '',
+            address1: addr.address1 || addr.address || '',
+            address2: addr.address2 || '',
+            city: addr.city || '',
+            state: addr.state || 'Maharashtra',
+            pincode: (addr.pincode || addr.pin || '').replace(/\D/g, '').slice(0, 6),
+            type: addr.type || (idx === 0 ? 'Home' : 'Office'),
+          }));
         }
       }
     } catch {}
 
-    // Fallback: Populate from logged in user if available
-    if (user) {
-      if (user.email && user.email !== 'throve.in@gmail.com') setEmail(user.email);
-      if (user.phone) {
-        const clean = user.phone.replace(/[^0-9]/g, '').slice(-10);
-        if (clean) setPhone(clean);
-      }
-      if (user.name && user.name !== 'Client' && user.name !== 'Valued Client') {
-        const parts = user.name.split(' ');
-        setFirstName(parts[0] || '');
-        setLastName(parts.slice(1).join(' ') || '');
-      }
+    // 2. Fallback: Check single throve_shipping_address
+    if (list.length === 0) {
+      try {
+        const saved = localStorage.getItem('throve_shipping_address');
+        if (saved && typeof saved === 'string' && saved.startsWith('{')) {
+          const parsed = JSON.parse(saved);
+          const parsedPhone = (parsed.phone || '').replace(/[^0-9]/g, '').slice(-10);
+          if (parsed.address1 && parsed.city && parsed.pincode && parsedPhone) {
+            const parsedName = parsed.name || `${parsed.firstName || ''} ${parsed.lastName || ''}`.trim() || 'Valued Customer';
+            list = [{
+              id: `addr_init_${Date.now()}`,
+              name: parsedName,
+              phone: parsedPhone,
+              email: parsed.email || '',
+              address1: parsed.address1 || '',
+              address2: parsed.address2 || '',
+              city: parsed.city || '',
+              state: parsed.state || 'Maharashtra',
+              pincode: (parsed.pincode || '').replace(/\D/g, '').slice(0, 6),
+              type: parsed.type || 'Home',
+            }];
+          }
+        }
+      } catch {}
     }
-    setIsEditingAddress(true);
+
+    // 3. Fallback: Pre-populate guest inputs from logged in user if available
+    if (user && user.phone) {
+      const cleanPhone = user.phone.replace(/[^0-9]/g, '').slice(-10);
+      const cleanEmail = user.email && user.email !== 'throve.in@gmail.com' ? user.email : '';
+      const cleanName = user.name && user.name !== 'Client' && user.name !== 'Valued Client' ? user.name : '';
+      setAddressFormData((prev) => ({
+        ...prev,
+        name: cleanName || prev.name,
+        phone: cleanPhone || prev.phone,
+        email: cleanEmail || prev.email,
+      }));
+    }
+
+    if (list.length > 0) {
+      setSavedAddresses(list);
+      setSelectedAddressId(list[0].id);
+      setIsManagingAddresses(false);
+      try {
+        localStorage.setItem('throve_user_addresses', JSON.stringify(list));
+      } catch {}
+    }
   }, [isMounted, user]);
+
+  // Active address being used for checkout
+  const activeSelectedAddress = savedAddresses.find((a) => a.id === selectedAddressId) || savedAddresses[0] || null;
 
   // Smart Indian PIN code auto-population
   const handlePincodeChange = useCallback(async (rawPin) => {
     const cleanPin = rawPin.replace(/\D/g, '').slice(0, 6);
-    setPincode(cleanPin);
+    setAddressFormData((prev) => ({ ...prev, pincode: cleanPin }));
 
     if (cleanPin.length === 6) {
       // 1. Instant heuristic fallback by prefix
       const prefix2 = cleanPin.substring(0, 2);
       if (PIN_PREFIX_STATE_MAP[prefix2]) {
         const mapped = PIN_PREFIX_STATE_MAP[prefix2];
-        if (!city) setCity(mapped.city);
-        if (mapped.state) setState(mapped.state);
+        setAddressFormData((prev) => ({
+          ...prev,
+          city: prev.city || mapped.city,
+          state: mapped.state || prev.state,
+        }));
       }
 
       // 2. Exact PIN postal verification
@@ -174,17 +221,177 @@ export default function CheckoutPage() {
           const data = await res.json();
           if (data && data[0]?.Status === 'Success' && data[0]?.PostOffice?.length > 0) {
             const po = data[0].PostOffice[0];
-            if (po.District) setCity(po.District);
-            if (po.State && INDIAN_STATES.includes(po.State)) {
-              setState(po.State);
-            }
+            setAddressFormData((prev) => ({
+              ...prev,
+              city: po.District || prev.city,
+              state: po.State && INDIAN_STATES.includes(po.State) ? po.State : prev.state,
+            }));
           }
         }
       } catch {
         // Fallback already assigned
       }
     }
-  }, [city]);
+  }, []);
+
+  // Handle address selection from saved list
+  const handleSelectAddress = (id) => {
+    setSelectedAddressId(id);
+    setIsManagingAddresses(false);
+    setIsAddingNew(false);
+    setEditingAddressId(null);
+
+    const chosen = savedAddresses.find((a) => a.id === id);
+    if (chosen) {
+      try {
+        const parts = (chosen.name || '').trim().split(/\s+/);
+        localStorage.setItem('throve_shipping_address', JSON.stringify({
+          firstName: parts[0] || '',
+          lastName: parts.slice(1).join(' ') || '',
+          name: chosen.name,
+          phone: chosen.phone,
+          email: chosen.email,
+          address1: chosen.address1,
+          address2: chosen.address2,
+          city: chosen.city,
+          state: chosen.state,
+          pincode: chosen.pincode,
+          type: chosen.type,
+        }));
+      } catch {}
+    }
+  };
+
+  // Start adding a new address (capped at 5)
+  const handleStartAddNewAddress = () => {
+    if (savedAddresses.length >= 5) {
+      setErrorMessage('You can add up to 5 delivery addresses.');
+      return;
+    }
+    setEditingAddressId(null);
+    setIsAddingNew(true);
+    setAddressFormData({
+      name: '',
+      phone: '',
+      email: '',
+      address1: '',
+      address2: '',
+      city: '',
+      state: 'Maharashtra',
+      pincode: '',
+      type: 'Home',
+    });
+  };
+
+  // Start editing an existing address
+  const handleStartEditAddress = (addr) => {
+    setEditingAddressId(addr.id);
+    setIsAddingNew(false);
+    setAddressFormData({
+      name: addr.name || '',
+      phone: addr.phone || '',
+      email: addr.email || '',
+      address1: addr.address1 || '',
+      address2: addr.address2 || '',
+      city: addr.city || '',
+      state: addr.state || 'Maharashtra',
+      pincode: addr.pincode || '',
+      type: addr.type || 'Home',
+    });
+  };
+
+  // Delete an address (only if more than 1 address exists)
+  const handleDeleteAddress = (id) => {
+    if (savedAddresses.length <= 1) return;
+    const nextList = savedAddresses.filter((a) => a.id !== id);
+    setSavedAddresses(nextList);
+    if (selectedAddressId === id) {
+      setSelectedAddressId(nextList[0].id);
+    }
+    try {
+      localStorage.setItem('throve_user_addresses', JSON.stringify(nextList));
+    } catch {}
+  };
+
+  // Save address from form (adds new or updates existing)
+  const handleSaveAddressForm = (e) => {
+    e?.preventDefault?.();
+    setErrorMessage('');
+
+    const cleanPhone = (addressFormData.phone || '').replace(/[^0-9]/g, '').slice(-10);
+    if (!cleanPhone || cleanPhone.length !== 10) {
+      setErrorMessage('Please enter a valid 10-digit mobile number for order delivery updates.');
+      return;
+    }
+    if (addressFormData.email.trim() && (!addressFormData.email.includes('@') || !addressFormData.email.includes('.'))) {
+      setErrorMessage('Please enter a valid email address for order confirmation & tax invoice.');
+      return;
+    }
+    if (!addressFormData.name.trim()) {
+      setErrorMessage('Please enter recipient full name.');
+      return;
+    }
+    if (!addressFormData.address1.trim()) {
+      setErrorMessage('Please enter street address (Flat / House No., Building Name, Street).');
+      return;
+    }
+    if (!addressFormData.city.trim()) {
+      setErrorMessage('Please enter delivery city.');
+      return;
+    }
+    if (!addressFormData.pincode.trim() || addressFormData.pincode.trim().length !== 6) {
+      setErrorMessage('Please enter a valid 6-digit Indian PIN code.');
+      return;
+    }
+
+    const newOrUpdated = {
+      id: editingAddressId || `addr_${Date.now()}`,
+      name: addressFormData.name.trim(),
+      phone: cleanPhone,
+      email: addressFormData.email.trim(),
+      address1: addressFormData.address1.trim(),
+      address2: addressFormData.address2.trim(),
+      city: addressFormData.city.trim(),
+      state: addressFormData.state || 'Maharashtra',
+      pincode: addressFormData.pincode.trim(),
+      type: addressFormData.type || 'Home',
+    };
+
+    let nextList = [];
+    if (editingAddressId) {
+      nextList = savedAddresses.map((a) => (a.id === editingAddressId ? newOrUpdated : a));
+    } else {
+      if (savedAddresses.length >= 5) {
+        setErrorMessage('You can add up to 5 delivery addresses.');
+        return;
+      }
+      nextList = [...savedAddresses, newOrUpdated];
+    }
+
+    setSavedAddresses(nextList);
+    setSelectedAddressId(newOrUpdated.id);
+    setIsManagingAddresses(false);
+    setIsAddingNew(false);
+    setEditingAddressId(null);
+
+    try {
+      localStorage.setItem('throve_user_addresses', JSON.stringify(nextList));
+      const parts = newOrUpdated.name.split(/\s+/);
+      localStorage.setItem('throve_shipping_address', JSON.stringify({
+        firstName: parts[0] || '',
+        lastName: parts.slice(1).join(' ') || '',
+        name: newOrUpdated.name,
+        phone: newOrUpdated.phone,
+        email: newOrUpdated.email,
+        address1: newOrUpdated.address1,
+        address2: newOrUpdated.address2,
+        city: newOrUpdated.city,
+        state: newOrUpdated.state,
+        pincode: newOrUpdated.pincode,
+        type: newOrUpdated.type,
+      }));
+    } catch {}
+  };
 
   // Handle Coupon Application
   const handleApplyCoupon = (e) => {
@@ -211,26 +418,6 @@ export default function CheckoutPage() {
     setCouponError('');
   };
 
-  // Save current address inputs to localStorage
-  const persistAddressLocally = () => {
-    try {
-      const addressData = {
-        firstName: firstName.trim(),
-        lastName: lastName.trim(),
-        phone: phone.replace(/[^0-9]/g, '').slice(-10),
-        email: email.trim(),
-        address1: address1.trim(),
-        address2: address2.trim(),
-        city: city.trim(),
-        state,
-        pincode: pincode.trim(),
-      };
-      localStorage.setItem('throve_shipping_address', JSON.stringify(addressData));
-      setHasSavedAddress(true);
-      setIsEditingAddress(false);
-    } catch {}
-  };
-
   // Redirect if cart is empty after hydration
   useEffect(() => {
     if (isMounted && (!cartItems || cartItems.length === 0)) {
@@ -250,35 +437,81 @@ export default function CheckoutPage() {
   const handlePayNow = () => {
     setErrorMessage('');
 
-    // Comprehensive client validation
-    const cleanPhone = phone.replace(/[^0-9]/g, '').slice(-10);
-    if (!cleanPhone || cleanPhone.length < 10) {
-      setErrorMessage('Please enter a valid 10-digit mobile number for order delivery updates.');
-      return;
-    }
-    if (email.trim() && (!email.includes('@') || !email.includes('.'))) {
-      setErrorMessage('Please enter a valid email address for your order confirmation and invoice.');
-      return;
-    }
-    if (!firstName.trim()) {
-      setErrorMessage('Please enter your first name for shipping.');
-      return;
-    }
-    if (!address1.trim()) {
-      setErrorMessage('Please enter your street address (Flat / House No., Building, Street).');
-      return;
-    }
-    if (!city.trim()) {
-      setErrorMessage('Please enter your delivery city.');
-      return;
-    }
-    if (!pincode.trim() || pincode.trim().length !== 6) {
-      setErrorMessage('Please enter a valid 6-digit Indian PIN code.');
-      return;
+    // Determine the active delivery address to use
+    let activeAddr = activeSelectedAddress;
+
+    // If no saved address exists yet, use the current form inputs
+    if (!activeAddr) {
+      const cleanPhone = (addressFormData.phone || '').replace(/[^0-9]/g, '').slice(-10);
+      if (!cleanPhone || cleanPhone.length !== 10) {
+        setErrorMessage('Please enter a valid 10-digit mobile number for order delivery updates.');
+        return;
+      }
+      if (addressFormData.email.trim() && (!addressFormData.email.includes('@') || !addressFormData.email.includes('.'))) {
+        setErrorMessage('Please enter a valid email address for order confirmation & tax invoice.');
+        return;
+      }
+      if (!addressFormData.name.trim()) {
+        setErrorMessage('Please enter recipient full name for shipping.');
+        return;
+      }
+      if (!addressFormData.address1.trim()) {
+        setErrorMessage('Please enter your street address (Flat / House No., Building Name, Street).');
+        return;
+      }
+      if (!addressFormData.city.trim()) {
+        setErrorMessage('Please enter delivery city.');
+        return;
+      }
+      if (!addressFormData.pincode.trim() || addressFormData.pincode.trim().length !== 6) {
+        setErrorMessage('Please enter a valid 6-digit Indian PIN code.');
+        return;
+      }
+
+      activeAddr = {
+        id: `addr_${Date.now()}`,
+        name: addressFormData.name.trim(),
+        phone: cleanPhone,
+        email: addressFormData.email.trim(),
+        address1: addressFormData.address1.trim(),
+        address2: addressFormData.address2.trim(),
+        city: addressFormData.city.trim(),
+        state: addressFormData.state || 'Maharashtra',
+        pincode: addressFormData.pincode.trim(),
+        type: addressFormData.type || 'Home',
+      };
+
+      // Save as the initial address (1 of 5)
+      setSavedAddresses([activeAddr]);
+      setSelectedAddressId(activeAddr.id);
+      try {
+        localStorage.setItem('throve_user_addresses', JSON.stringify([activeAddr]));
+      } catch {}
     }
 
-    // Persist address for future visits
-    persistAddressLocally();
+    const cleanPhone = activeAddr.phone.replace(/[^0-9]/g, '').slice(-10);
+    const emailToUse = activeAddr.email.trim() || `${cleanPhone}@customer.throve.in`;
+    const nameParts = activeAddr.name.trim().split(/\s+/);
+    const fName = nameParts[0] || 'Valued';
+    const lName = nameParts.slice(1).join(' ') || 'Customer';
+    const fullStreet = [activeAddr.address1.trim(), activeAddr.address2.trim()].filter(Boolean).join(', ');
+
+    // Persist active address for future visits
+    try {
+      localStorage.setItem('throve_shipping_address', JSON.stringify({
+        firstName: fName,
+        lastName: lName,
+        name: activeAddr.name,
+        phone: cleanPhone,
+        email: emailToUse,
+        address1: activeAddr.address1,
+        address2: activeAddr.address2,
+        city: activeAddr.city,
+        state: activeAddr.state,
+        pincode: activeAddr.pincode,
+        type: activeAddr.type,
+      }));
+    } catch {}
 
     startTransition(async () => {
       try {
@@ -289,50 +522,46 @@ export default function CheckoutPage() {
           pricePaise: Math.round((item.priceNum || 2900) * 100),
         }));
 
-        const customerName = `${firstName.trim()} ${lastName.trim()}`.trim() || 'Valued Customer';
-        const fullAddress = [address1.trim(), address2.trim()].filter(Boolean).join(', ');
-
-        // 1. ONLINE PAYMENT: Cashfree One Click / Dropin Checkout
+        // 1. ONLINE PAYMENT: Cashfree Dropin Checkout
         if (paymentMethod === 'cashfree') {
           const res = await initiateCashfreeCheckoutAction({
             items: orderItems,
             phone: cleanPhone,
-            email: email.trim() || `${cleanPhone}@customer.throve.in`,
-            firstName: firstName.trim(),
-            lastName: lastName.trim(),
+            email: emailToUse,
+            firstName: fName,
+            lastName: lName,
             couponCode: appliedCoupon?.code || '',
             shippingAddress: {
-              firstName: firstName.trim(),
-              lastName: lastName.trim(),
-              email: email.trim(),
+              firstName: fName,
+              lastName: lName,
+              email: emailToUse,
               phone: cleanPhone,
-              address1: address1.trim(),
-              address2: address2.trim(),
-              city: city.trim(),
-              state,
-              pincode: pincode.trim(),
+              address1: activeAddr.address1.trim(),
+              address2: activeAddr.address2.trim(),
+              city: activeAddr.city.trim(),
+              state: activeAddr.state,
+              pincode: activeAddr.pincode.trim(),
             },
           });
 
           if (res.success && res.paymentSessionId) {
-            // Snapshot order locally for immediate confirmation page rendering
             const targetId = res.displayId || res.orderId;
             const snapshot = {
               id: targetId,
               publicId: res.orderId,
               date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
-              email: email || `${cleanPhone}@customer.throve.in`,
+              email: emailToUse,
               total: `₹${finalTotal.toLocaleString('en-IN')}.00`,
               subtotal: `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
               discount: discountAmount ? `₹${discountAmount.toLocaleString('en-IN')}.00` : null,
               shipping: 'Free',
               paymentMethod: 'Online Payment (Cashfree)',
               shippingAddress: {
-                name: customerName,
-                address: fullAddress,
-                city: city.trim(),
-                state,
-                pin: pincode.trim(),
+                name: activeAddr.name,
+                address: fullStreet,
+                city: activeAddr.city.trim(),
+                state: activeAddr.state,
+                pin: activeAddr.pincode.trim(),
               },
               items: cartItems.map((item, idx) => ({
                 id: item.id || idx + 1,
@@ -348,7 +577,6 @@ export default function CheckoutPage() {
               sessionStorage.setItem('throve_last_order', JSON.stringify(snapshot));
             } catch {}
 
-            // Launch Cashfree Checkout Modal with customer's real phone & details
             await launchCashfreeCheckout({
               paymentSessionId: res.paymentSessionId,
               environment: res.environment || 'production',
@@ -362,15 +590,15 @@ export default function CheckoutPage() {
         // 2. CASH ON DELIVERY (COD)
         const codRes = await processCheckoutAction({
           items: orderItems,
-          email: email.trim() || `${cleanPhone}@customer.throve.in`,
+          email: emailToUse,
           phone: cleanPhone,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
-          address1: address1.trim(),
-          address2: address2.trim(),
-          city: city.trim(),
-          state,
-          pincode: pincode.trim(),
+          firstName: fName,
+          lastName: lName,
+          address1: activeAddr.address1.trim(),
+          address2: activeAddr.address2.trim(),
+          city: activeAddr.city.trim(),
+          state: activeAddr.state,
+          pincode: activeAddr.pincode.trim(),
           paymentMethod: 'cod',
           couponCode: appliedCoupon?.code || '',
         });
@@ -381,18 +609,18 @@ export default function CheckoutPage() {
             id: targetId,
             publicId: codRes.orderId,
             date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
-            email: email || `${cleanPhone}@customer.throve.in`,
+            email: emailToUse,
             total: `₹${finalTotal.toLocaleString('en-IN')}.00`,
             subtotal: `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
             discount: discountAmount ? `₹${discountAmount.toLocaleString('en-IN')}.00` : null,
             shipping: 'Free',
             paymentMethod: 'Cash on Delivery (COD)',
             shippingAddress: {
-              name: customerName,
-              address: fullAddress,
-              city: city.trim(),
-              state,
-              pin: pincode.trim(),
+              name: activeAddr.name,
+              address: fullStreet,
+              city: activeAddr.city.trim(),
+              state: activeAddr.state,
+              pin: activeAddr.pincode.trim(),
             },
             items: cartItems.map((item, idx) => ({
               id: item.id || idx + 1,
@@ -635,64 +863,30 @@ export default function CheckoutPage() {
         )}
 
         <form className={styles.checkoutForm} onSubmit={(e) => { e.preventDefault(); handlePayNow(); }}>
-          {/* 1. CONTACT INFORMATION (CUSTOM COMPONENTS) */}
+          {/* SECTION 1: DELIVERY ADDRESS (WITH UP TO 5 SAVED ADDRESSES & PER-ADDRESS NAME, EMAIL & NUMBER) */}
           <div className={styles.sectionBlock}>
             <div className={styles.sectionHeading}>
               <div className={styles.headingLeft}>
                 <span className={styles.stepPill}>1</span>
-                <span>Contact Information</span>
-              </div>
-            </div>
-
-            <div className={styles.formGrid}>
-              <CustomInput
-                label="Mobile Number (for WhatsApp delivery alerts) *"
-                id="contact-phone"
-                name="tel"
-                type="tel"
-                autoComplete="tel"
-                placeholder="98926 91094"
-                prefix="+91"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                required
-                fullWidth
-              />
-
-              <CustomInput
-                label="Email Address (for GST tax invoice)"
-                id="contact-email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="client@throve.in"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                fullWidth
-              />
-            </div>
-          </div>
-
-          {/* 2. DELIVERY ADDRESS: SAVED CARD OR EDITABLE FORM (CUSTOM COMPONENTS) */}
-          <div className={styles.sectionBlock}>
-            <div className={styles.sectionHeading}>
-              <div className={styles.headingLeft}>
-                <span className={styles.stepPill}>2</span>
                 <span>Delivery Address</span>
               </div>
-              {hasSavedAddress && isEditingAddress && (
+              {savedAddresses.length > 0 && !isManagingAddresses && (
                 <button
                   type="button"
                   className={styles.changeAddressBtn}
-                  onClick={() => setIsEditingAddress(false)}
+                  onClick={() => {
+                    setIsManagingAddresses(true);
+                    setIsAddingNew(false);
+                    setEditingAddressId(null);
+                  }}
                 >
-                  Use Saved Address
+                  Change Address
                 </button>
               )}
             </div>
 
-            {hasSavedAddress && !isEditingAddress ? (
-              /* SHOPFLO SAVED ADDRESS CARD */
+            {/* A: Saved Address Card (Active Selection) */}
+            {savedAddresses.length > 0 && !isManagingAddresses && activeSelectedAddress && (
               <div className={styles.savedAddressCard}>
                 <div className={styles.savedAddressHeader}>
                   <span className={styles.savedAddressBadge}>
@@ -700,142 +894,297 @@ export default function CheckoutPage() {
                       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
                       <circle cx="12" cy="10" r="3"/>
                     </svg>
-                    Delivering To
+                    Delivering To ({activeSelectedAddress.type || 'Home'})
                   </span>
                   <button
                     type="button"
                     className={styles.changeAddressBtn}
-                    onClick={() => setIsEditingAddress(true)}
+                    onClick={() => {
+                      setIsManagingAddresses(true);
+                      setIsAddingNew(false);
+                      setEditingAddressId(null);
+                    }}
                   >
                     Change
                   </button>
                 </div>
                 <div className={styles.savedNamePhone}>
-                  <span className={styles.savedName}>{firstName} {lastName}</span>
-                  <span className={styles.savedPhone}>+91 {phone}</span>
+                  <span className={styles.savedName}>{activeSelectedAddress.name}</span>
+                  <span className={styles.savedPhone}>+91 {activeSelectedAddress.phone}</span>
                 </div>
                 <div className={styles.savedAddressText}>
-                  {[address1, address2].filter(Boolean).join(', ')}
+                  {[activeSelectedAddress.address1, activeSelectedAddress.address2].filter(Boolean).join(', ')}
                 </div>
                 <div className={styles.savedCityState}>
-                  {city}, {state} — {pincode}
+                  {activeSelectedAddress.city}, {activeSelectedAddress.state} — {activeSelectedAddress.pincode}
                 </div>
-                {email && (
+                {activeSelectedAddress.email && (
                   <div className={styles.savedEmail}>
-                    Tax Invoice sent to: {email}
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* EDITABLE ADDRESS FORM WITH CUSTOM COMPONENTS & PRECISION AUTOFILL */
-              <div className={styles.formGrid}>
-                <CustomInput
-                  label="First Name *"
-                  id="shipping-firstName"
-                  name="firstName"
-                  type="text"
-                  autoComplete="given-name"
-                  placeholder="First Name *"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                />
-
-                <CustomInput
-                  label="Last Name"
-                  id="shipping-lastName"
-                  name="lastName"
-                  type="text"
-                  autoComplete="family-name"
-                  placeholder="Last Name"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-
-                {/* Exact WHATWG address-line1 mapping prevents autofill from inverting lines */}
-                <CustomInput
-                  label="Street Address *"
-                  id="shipping-address1"
-                  name="address1"
-                  type="text"
-                  autoComplete="address-line1"
-                  placeholder="House / Flat No., Building Name, Street *"
-                  value={address1}
-                  onChange={(e) => setAddress1(e.target.value)}
-                  required
-                  fullWidth
-                />
-
-                {/* Exact WHATWG address-line2 mapping */}
-                <CustomInput
-                  label="Apartment, Suite, Landmark (optional)"
-                  id="shipping-address2"
-                  name="address2"
-                  type="text"
-                  autoComplete="address-line2"
-                  placeholder="Apartment, Suite, Unit, Landmark (optional)"
-                  value={address2}
-                  onChange={(e) => setAddress2(e.target.value)}
-                  fullWidth
-                />
-
-                <CustomInput
-                  label="PIN Code *"
-                  id="shipping-pincode"
-                  name="postal-code"
-                  type="text"
-                  autoComplete="postal-code"
-                  placeholder="6-digit PIN code *"
-                  value={pincode}
-                  onChange={(e) => handlePincodeChange(e.target.value)}
-                  maxLength={6}
-                  required
-                />
-
-                <CustomInput
-                  label="City *"
-                  id="shipping-city"
-                  name="address-level2"
-                  type="text"
-                  autoComplete="address-level2"
-                  placeholder="City *"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  required
-                />
-
-                {/* BESPOKE CUSTOM DROPDOWN COMPONENT MATCHING BRAND THEME */}
-                <div className={styles.fullWidth}>
-                  <CustomSelect
-                    label="State *"
-                    id="shipping-state"
-                    name="address-level1"
-                    autoComplete="address-level1"
-                    value={state}
-                    onChange={(val) => setState(val)}
-                    options={INDIAN_STATES}
-                    placeholder="Select State *"
-                    required
-                    searchable
-                  />
-                </div>
-
-                {hasSavedAddress && (
-                  <div className={styles.fullWidth} style={{ marginTop: '4px' }}>
-                    <button
-                      type="button"
-                      className={styles.saveAddressBtn}
-                      onClick={persistAddressLocally}
-                    >
-                      Update Delivery Address
-                    </button>
+                    GST Tax Invoice & tracking updates: {activeSelectedAddress.email}
                   </div>
                 )}
               </div>
             )}
+
+            {/* B: Address Selection List (Capped at 5, with Edit, Delete, and Add Another) */}
+            {savedAddresses.length > 0 && isManagingAddresses && !isAddingNew && !editingAddressId && (
+              <div className={styles.addressListContainer}>
+                <div className={styles.addressListHeader}>
+                  <span className={styles.addressCountBadge}>
+                    {savedAddresses.length} / 5 Addresses Saved
+                  </span>
+                  <button
+                    type="button"
+                    className={styles.textLinkBtn}
+                    onClick={() => setIsManagingAddresses(false)}
+                  >
+                    Done
+                  </button>
+                </div>
+
+                <div className={styles.addressChoicesList}>
+                  {savedAddresses.map((addr) => {
+                    const isSelected = addr.id === selectedAddressId;
+                    return (
+                      <div
+                        key={addr.id}
+                        className={`${styles.addressChoiceCard} ${isSelected ? styles.addressChoiceCardSelected : ''}`}
+                        onClick={() => handleSelectAddress(addr.id)}
+                      >
+                        <div className={styles.addressChoiceTop}>
+                          <div className={styles.addressChoiceRadio}>
+                            <div className={`${styles.radioCircle} ${isSelected ? styles.radioCircleSelected : ''}`}>
+                              {isSelected && <div className={styles.radioDot} />}
+                            </div>
+                            <span className={styles.addressTypeBadge}>{addr.type || 'Home'}</span>
+                            <span className={styles.addressRecipientName}>{addr.name}</span>
+                          </div>
+                          <div className={styles.addressCardActions} onClick={(e) => e.stopPropagation()}>
+                            <button
+                              type="button"
+                              className={styles.addressActionBtn}
+                              onClick={() => handleStartEditAddress(addr)}
+                            >
+                              Edit
+                            </button>
+                            {savedAddresses.length > 1 && (
+                              <button
+                                type="button"
+                                className={`${styles.addressActionBtn} ${styles.deleteActionBtn}`}
+                                onClick={() => handleDeleteAddress(addr.id)}
+                              >
+                                Delete
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className={styles.addressChoiceBody}>
+                          <p className={styles.addressContactLine}>
+                            <span>+91 {addr.phone}</span>
+                            {addr.email && <span> • {addr.email}</span>}
+                          </p>
+                          <p className={styles.addressStreetLine}>
+                            {[addr.address1, addr.address2].filter(Boolean).join(', ')}
+                          </p>
+                          <p className={styles.addressCityPinLine}>
+                            {addr.city}, {addr.state} — {addr.pincode}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {savedAddresses.length < 5 ? (
+                    <button
+                      type="button"
+                      className={styles.addNewAddressBtn}
+                      onClick={handleStartAddNewAddress}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                      </svg>
+                      <span>Add Another Address ({savedAddresses.length}/5)</span>
+                    </button>
+                  ) : (
+                    <div className={styles.addressMaxNotice}>
+                      Maximum limit of 5 delivery addresses reached. Edit or remove an address to add a new one.
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* C: Add New / Edit Address Form OR Initial Guest Address Form */}
+            {(isAddingNew || editingAddressId || savedAddresses.length === 0) && (
+              <div className={savedAddresses.length > 0 ? styles.addressFormBox : ''}>
+                {savedAddresses.length > 0 && (
+                  <div className={styles.addressFormHeader}>
+                    <h4 className={styles.addressFormTitle}>
+                      {editingAddressId ? 'Edit Delivery Address' : 'Add New Delivery Address'}
+                    </h4>
+                    <button
+                      type="button"
+                      className={styles.textLinkBtn}
+                      onClick={() => {
+                        setIsAddingNew(false);
+                        setEditingAddressId(null);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
+
+                <div className={styles.formGrid}>
+                  <CustomInput
+                    label="Recipient Full Name *"
+                    id="address-name"
+                    name="name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="Full Legal Name *"
+                    value={addressFormData.name}
+                    onChange={(e) => setAddressFormData({ ...addressFormData, name: e.target.value })}
+                    required
+                    fullWidth
+                  />
+
+                  <CustomInput
+                    label="Mobile Number (for WhatsApp delivery alerts) *"
+                    id="address-phone"
+                    name="tel"
+                    type="tel"
+                    autoComplete="tel"
+                    placeholder="98926 91094"
+                    prefix="+91"
+                    value={addressFormData.phone}
+                    onChange={(e) => setAddressFormData({ ...addressFormData, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                    required
+                  />
+
+                  <CustomInput
+                    label="Email Address (for GST tax invoice) *"
+                    id="address-email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="client@throve.in"
+                    value={addressFormData.email}
+                    onChange={(e) => setAddressFormData({ ...addressFormData, email: e.target.value })}
+                    required
+                  />
+
+                  <CustomInput
+                    label="Street Address *"
+                    id="address-line1"
+                    name="address1"
+                    type="text"
+                    autoComplete="address-line1"
+                    placeholder="House / Flat No., Building Name, Street *"
+                    value={addressFormData.address1}
+                    onChange={(e) => setAddressFormData({ ...addressFormData, address1: e.target.value })}
+                    required
+                    fullWidth
+                  />
+
+                  <CustomInput
+                    label="Apartment, Suite, Landmark (optional)"
+                    id="address-line2"
+                    name="address2"
+                    type="text"
+                    autoComplete="address-line2"
+                    placeholder="Apartment, Suite, Unit, Landmark (optional)"
+                    value={addressFormData.address2}
+                    onChange={(e) => setAddressFormData({ ...addressFormData, address2: e.target.value })}
+                    fullWidth
+                  />
+
+                  <CustomInput
+                    label="PIN Code *"
+                    id="address-pincode"
+                    name="postal-code"
+                    type="text"
+                    autoComplete="postal-code"
+                    placeholder="6-digit PIN code *"
+                    value={addressFormData.pincode}
+                    onChange={(e) => handlePincodeChange(e.target.value)}
+                    maxLength={6}
+                    required
+                  />
+
+                  <CustomInput
+                    label="City *"
+                    id="address-city"
+                    name="address-level2"
+                    type="text"
+                    autoComplete="address-level2"
+                    placeholder="City *"
+                    value={addressFormData.city}
+                    onChange={(e) => setAddressFormData({ ...addressFormData, city: e.target.value })}
+                    required
+                  />
+
+                  <div className={styles.fullWidth}>
+                    <CustomSelect
+                      label="State *"
+                      id="address-state"
+                      name="address-level1"
+                      autoComplete="address-level1"
+                      value={addressFormData.state}
+                      onChange={(val) => setAddressFormData({ ...addressFormData, state: val })}
+                      options={INDIAN_STATES}
+                      placeholder="Select State *"
+                      required
+                      searchable
+                    />
+                  </div>
+
+                  <div className={styles.fullWidth}>
+                    <label style={{ display: 'block', fontSize: '0.78rem', fontWeight: 600, color: '#44403c', marginBottom: '6px' }}>
+                      Address Type
+                    </label>
+                    <div className={styles.addressTypeSelector}>
+                      {['Home', 'Office', 'Other'].map((t) => (
+                        <div
+                          key={t}
+                          className={`${styles.addressTypeOption} ${addressFormData.type === t ? styles.addressTypeOptionActive : ''}`}
+                          onClick={() => setAddressFormData({ ...addressFormData, type: t })}
+                        >
+                          {t}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {savedAddresses.length > 0 && (
+                    <div className={`${styles.fullWidth} ${styles.addressFormActions}`}>
+                      <button
+                        type="button"
+                        className={styles.saveAddressSubmitBtn}
+                        onClick={handleSaveAddressForm}
+                      >
+                        {editingAddressId ? 'Update & Deliver Here' : 'Save & Deliver Here'}
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.cancelFormBtn}
+                        onClick={() => {
+                          setIsAddingNew(false);
+                          setEditingAddressId(null);
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* 3. SHIPPING METHOD BANNER */}
+          {/* SHIPPING METHOD BANNER */}
           <div className={styles.shippingBanner}>
             <div className={styles.shippingInfo}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -849,11 +1198,11 @@ export default function CheckoutPage() {
             <span className={styles.shippingPrice}>Free</span>
           </div>
 
-          {/* 4. PAYMENT METHOD SELECTOR (REFINED CLEAN UI) */}
+          {/* SECTION 2: PAYMENT METHOD (CLEAN ACCORDION & REAL PAYMENT ICONS) */}
           <div className={styles.sectionBlock}>
             <div className={styles.sectionHeading}>
               <div className={styles.headingLeft}>
-                <span className={styles.stepPill}>3</span>
+                <span className={styles.stepPill}>2</span>
                 <span>Payment Method</span>
               </div>
             </div>

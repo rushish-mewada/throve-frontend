@@ -273,6 +273,302 @@
   cursor: pointer;
 }
 
+/* Multi-Address Management (Up to 5 addresses with individual Name, Email & Phone) */
+.addressListContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.addressListHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #f0eeeb;
+}
+
+.addressCountBadge {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #57534e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background-color: #f5f5f4;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #e7e5e4;
+}
+
+.textLinkBtn {
+  background: none;
+  border: none;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1c1917;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 4px;
+}
+
+.textLinkBtn:hover {
+  color: #78716c;
+}
+
+.addressChoicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.addressChoiceCard {
+  border: 1.5px solid #e7e5e4;
+  border-radius: 6px;
+  padding: 14px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addressChoiceCard:hover {
+  border-color: #a8a29e;
+  background-color: #fafaf9;
+}
+
+.addressChoiceCardSelected {
+  border-color: #1c1917;
+  background-color: #fcfbf9;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.addressChoiceTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.addressChoiceRadio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.addressTypeBadge {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background-color: #f5f5f4;
+  color: #44403c;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e7e5e4;
+}
+
+.addressRecipientName {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1c1917;
+}
+
+.addressCardActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.addressActionBtn {
+  background: none;
+  border: none;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #1c1917;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 2px 4px;
+}
+
+.addressActionBtn:hover {
+  color: #57534e;
+}
+
+.deleteActionBtn {
+  color: #dc2626;
+}
+
+.deleteActionBtn:hover {
+  color: #b91c1c;
+}
+
+.addressChoiceBody {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 28px;
+}
+
+.addressContactLine {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #57534e;
+  margin: 0;
+}
+
+.addressStreetLine {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.84rem;
+  color: #44403c;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.addressCityPinLine {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  color: #57534e;
+  margin: 0;
+}
+
+.addNewAddressBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  color: #1c1917;
+  border: 1.5px dashed #d6d3d1;
+  border-radius: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 4px;
+}
+
+.addNewAddressBtn:hover {
+  border-color: #1c1917;
+  background-color: #fafaf9;
+}
+
+.addressMaxNotice {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  color: #78716c;
+  background-color: #f5f5f4;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #e7e5e4;
+  text-align: center;
+  margin-top: 4px;
+}
+
+.addressFormBox {
+  background-color: #fafaf9;
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  padding: 18px 16px;
+}
+
+.addressFormHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e7e5e4;
+}
+
+.addressFormTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1c1917;
+  margin: 0;
+}
+
+.addressTypeSelector {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.addressTypeOption {
+  flex: 1;
+  padding: 7px 10px;
+  background-color: #ffffff;
+  border: 1.5px solid #e7e5e4;
+  border-radius: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #57534e;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.addressTypeOptionActive {
+  border-color: #1c1917;
+  color: #1c1917;
+  font-weight: 600;
+  background-color: #f5f5f4;
+}
+
+.addressFormActions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.saveAddressSubmitBtn {
+  flex: 1;
+  padding: 11px 18px;
+  background-color: #1c1917;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.saveAddressSubmitBtn:hover {
+  background-color: #292524;
+}
+
+.cancelFormBtn {
+  padding: 11px 16px;
+  background-color: #ffffff;
+  color: #57534e;
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.cancelFormBtn:hover {
+  background-color: #f5f5f4;
+  color: #1c1917;
+}
+
 /* Shipping Method Banner */
 .shippingBanner {
   display: flex;
