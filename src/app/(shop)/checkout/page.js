@@ -256,6 +256,10 @@ export default function CheckoutPage() {
       setErrorMessage('Please enter a valid 10-digit mobile number for order delivery updates.');
       return;
     }
+    if (email.trim() && (!email.includes('@') || !email.includes('.'))) {
+      setErrorMessage('Please enter a valid email address for your order confirmation and invoice.');
+      return;
+    }
     if (!firstName.trim()) {
       setErrorMessage('Please enter your first name for shipping.');
       return;
