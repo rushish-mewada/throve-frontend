@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
+import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
+import { launchCashfreeCheckout } from '@/lib/cashfree';
 
 export default function CartPage() {
   const router = useRouter();
@@ -29,11 +31,32 @@ export default function CartPage() {
   };
 
   const handleProceedToCheckout = async () => {
-    if (isCheckingOut) return;
+    if (isCheckingOut || items.length === 0) return;
     setIsCheckingOut(true);
-    // 2-second cart serialization & inventory reservation
-    await new Promise((r) => setTimeout(r, 2000));
-    router.push('/checkout');
+    try {
+      const orderItems = items.map((item) => ({
+        variantId: item.productId || item.handle || "var_01",
+        title: item.title,
+        quantity: item.qty || 1,
+        pricePaise: Math.round((item.priceNum || 2900) * 100),
+      }));
+
+      const res = await initiateCashfreeCheckoutAction({
+        items: orderItems,
+        couponCode: appliedDiscount ? "PROMO500" : "",
+      });
+
+      if (res.success && res.paymentSessionId) {
+        await launchCashfreeCheckout({
+          paymentSessionId: res.paymentSessionId,
+          environment: res.environment || "production",
+        });
+      }
+    } catch (err) {
+      console.error("Cashfree checkout error:", err);
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (

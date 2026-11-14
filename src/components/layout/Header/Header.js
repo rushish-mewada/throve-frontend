@@ -3,17 +3,21 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import FloatingSearch from '@/components/layout/FloatingSearch/FloatingSearch';
 import styles from './Header.module.css';
+import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
+import { launchCashfreeCheckout } from '@/lib/cashfree';
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMenuClosing, setIsMenuClosing] = useState(false);
   const [isCartClosing, setIsCartClosing] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isDrawerCheckingOut, setIsDrawerCheckingOut] = useState(false);
 
   const {
     cartItems,
@@ -80,6 +84,34 @@ export default function Header() {
     window.addEventListener('keydown', handleGlobalKeyDown);
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, []);
+
+  const handleDrawerCheckout = async () => {
+    if (isDrawerCheckingOut || cartItems.length === 0) return;
+    setIsDrawerCheckingOut(true);
+    closeCart();
+    try {
+      const orderItems = cartItems.map((item) => ({
+        variantId: item.productId || item.handle || "var_01",
+        title: item.title,
+        quantity: item.qty || 1,
+        pricePaise: Math.round((item.priceNum || 2900) * 100),
+      }));
+
+      const res = await initiateCashfreeCheckoutAction({ items: orderItems });
+      if (res.success && res.paymentSessionId) {
+        await launchCashfreeCheckout({
+          paymentSessionId: res.paymentSessionId,
+          environment: res.environment || "production",
+        });
+      } else {
+        router.push("/cart");
+      }
+    } catch {
+      router.push("/cart");
+    } finally {
+      setIsDrawerCheckingOut(false);
+    }
+  };
 
   return (
     <header className={styles.header}>
@@ -405,13 +437,14 @@ export default function Header() {
                 >
                   View Bag
                 </Link>
-                <Link
-                  href="/checkout"
-                  onClick={closeCart}
+                <button
+                  type="button"
+                  onClick={handleDrawerCheckout}
+                  disabled={isDrawerCheckingOut}
                   className={styles.checkoutBtn}
                 >
-                  Checkout
-                </Link>
+                  {isDrawerCheckingOut ? "Connecting..." : "Checkout"}
+                </button>
               </div>
             </div>
           </div>

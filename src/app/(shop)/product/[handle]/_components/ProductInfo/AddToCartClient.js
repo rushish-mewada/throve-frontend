@@ -5,6 +5,8 @@ import { useStore } from '@/context/StoreContext';
 import styles from './ProductInfo.module.css';
 import SizeChartModal from './SizeChartModal';
 import DeliveryTermsModal from './DeliveryTermsModal';
+import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
+import { launchCashfreeCheckout } from '@/lib/cashfree';
 
 export default function AddToCartClient({ variants, colors, product }) {
   const router = useRouter();
@@ -32,10 +34,31 @@ export default function AddToCartClient({ variants, colors, product }) {
     if (isCheckingOut) return;
     setIsCheckingOut(true);
     setIsCartDrawerOpen(false);
-    await new Promise((r) => setTimeout(r, 600));
-    addToCart(product, selectedSize?.name || 'M', selectedColor?.name || 'Standard', 1, false);
-    setIsCartDrawerOpen(false);
-    router.push('/checkout');
+    try {
+      const orderItems = [
+        {
+          variantId: selectedSize?.id || product?.id || product?.handle,
+          title: `${product?.title || "THROVE Atelier"} - ${selectedSize?.name || "M"} / ${selectedColor?.name || "Standard"}`,
+          quantity: 1,
+          pricePaise: Math.round((product?.priceNum || 2900) * 100),
+        },
+      ];
+
+      const res = await initiateCashfreeCheckoutAction({ items: orderItems });
+      if (res.success && res.paymentSessionId) {
+        await launchCashfreeCheckout({
+          paymentSessionId: res.paymentSessionId,
+          environment: res.environment || "production",
+        });
+      } else {
+        router.push('/cart');
+      }
+    } catch (err) {
+      console.error("Cashfree checkout error:", err);
+      router.push('/cart');
+    } finally {
+      setIsCheckingOut(false);
+    }
   };
 
   return (

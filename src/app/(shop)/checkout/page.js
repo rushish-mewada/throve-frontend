@@ -1,396 +1,103 @@
 "use client";
-import { useEffect, useState, useTransition } from 'react';
+
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useStore } from '@/context/StoreContext';
 import styles from './page.module.css';
-import { getCheckoutPaymentOptionsAction, processCheckoutAction } from '@/actions/checkout';
-
-const FALLBACK_PAYMENT_OPTIONS = [
-  {
-    id: 'cod',
-    kind: 'offline',
-    label: 'Cash on Delivery (COD) · Zero Upfront Payment',
-    subtitle: 'Your pre-order will be tailored and dispatched with priority. Pay via Cash or UPI QR only when your parcel arrives.',
-  },
-];
+import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
+import { launchCashfreeCheckout } from '@/lib/cashfree';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { cartItems, cartSubtotal, clearCart } = useStore();
-  const [step, setStep] = useState(1);
-  const [email, setEmail] = useState('user@example.com');
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [address, setAddress] = useState('');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('Maharashtra');
-  const [pincode, setPincode] = useState('');
-  const [paymentOptions, setPaymentOptions] = useState(FALLBACK_PAYMENT_OPTIONS);
-  const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [isPending, startTransition] = useTransition();
+  const { cartItems } = useStore();
+  const [statusText, setStatusText] = useState('Initiating Cashfree One Click Checkout...');
+  const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
     let active = true;
-    getCheckoutPaymentOptionsAction().then((res) => {
-      if (!active || !res?.methods?.length) return;
-      setPaymentOptions(res.methods);
-      setPaymentMethod(res.methods[0].id);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
 
-  const selectedMethodMeta = paymentOptions.find((m) => m.id === paymentMethod) || paymentOptions[0];
+    async function launch() {
+      if (!cartItems || cartItems.length === 0) {
+        router.replace('/cart');
+        return;
+      }
 
-  const handlePayNow = () => {
-    startTransition(async () => {
       try {
-        const orderItems = cartItems.length > 0 ? cartItems.map((item) => ({
+        const orderItems = cartItems.map((item) => ({
           variantId: item.productId || item.handle || "var_01",
           title: item.title,
           quantity: item.qty || 1,
-          pricePaise: (item.priceNum || 2900) * 100,
-        })) : [
-          {
-            variantId: "throve_lp_02",
-            title: "Overlapping Mandarin Collar Shirt",
-            quantity: 1,
-            pricePaise: 390000,
-          }
-        ];
+          pricePaise: Math.round((item.priceNum || 2900) * 100),
+        }));
 
-        const res = await processCheckoutAction({
-          items: orderItems,
-          email,
-          firstName: firstName || 'Customer',
-          lastName: lastName || 'User',
-          address1: address || '123 Fashion Street',
-          city: city || 'Mumbai',
-          state: state || 'Maharashtra',
-          pincode: pincode || '400001',
-          paymentMethod,
-        });
+        const res = await initiateCashfreeCheckoutAction({ items: orderItems });
+        if (!active) return;
 
-        if (res.success) {
-          const targetId = res.displayId || res.orderId || `THR-${Date.now().toString().slice(-4)}`;
-          const snapshot = {
-            id: targetId,
-            publicId: res.orderId,
-            date: new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }),
-            email: email || 'user@example.com',
-            total: res.totalFormatted,
-            subtotal: res.totalFormatted,
-            shipping: 'Free',
-            paymentMethod: res.paymentMethodLabel || selectedMethodMeta?.label || 'Cash on Delivery (COD)',
-            paymentSession: res.paymentSession || null,
-            shippingAddress: {
-              name: `${firstName || 'Customer'} ${lastName || 'User'}`.trim(),
-              address: address || '123 Fashion Street',
-              city: city || 'Mumbai',
-              state: state || 'Maharashtra',
-              pin: pincode || '400001',
-            },
-            items: cartItems.length > 0 ? cartItems.map((item, idx) => ({
-              id: item.id || idx + 1,
-              image: item.image || '/images/hero/slide4.png',
-              title: item.title,
-              variant: [item.color, item.size].filter(Boolean).join(' / ') || 'Standard',
-              price: item.price || `₹${(item.priceNum || 0).toLocaleString('en-IN')}`,
-              qty: item.qty || 1,
-            })) : [
-              {
-                id: 1,
-                image: '/images/hero/slide4.png',
-                title: 'Overlapping Mandarin Collar Shirt',
-                variant: 'Standard',
-                price: res.totalFormatted,
-                qty: 1,
-              }
-            ],
-          };
-
-          try {
-            sessionStorage.setItem('throve_last_order', JSON.stringify(snapshot));
-          } catch {
-            // Ignore storage errors in restricted browsing contexts
-          }
-
-          clearCart();
-          const externalCheckoutUrl = res.paymentSession?.checkoutUrl;
-          if (res.paymentMethod !== 'cod' && externalCheckoutUrl && /^https?:\/\//i.test(externalCheckoutUrl)) {
-            window.location.assign(externalCheckoutUrl);
-            return;
-          }
-          router.push(`/order/${encodeURIComponent(targetId)}`);
+        if (res.success && res.paymentSessionId) {
+          setStatusText('Launching Cashfree One Click Checkout...');
+          await launchCashfreeCheckout({
+            paymentSessionId: res.paymentSessionId,
+            environment: res.environment || 'production',
+          });
         } else {
-          alert(res.error || 'Failed to place order');
+          setErrorMsg(res.error || 'Failed to initialize payment');
         }
       } catch (err) {
-        console.error("Checkout submission failed:", err);
-        alert(err.message || 'Checkout failed. Please check backend connection.');
+        if (!active) return;
+        setErrorMsg(err.message || 'Payment initialization failed');
       }
-    });
-  };
+    }
+
+    launch();
+
+    return () => {
+      active = false;
+    };
+  }, [cartItems, router]);
 
   return (
-    <main className={styles.checkoutLayout}>
-      <div className={styles.leftCol}>
-        <div className={styles.header}>
-          <Link href="/" className={styles.logoLink}>
-            <Image 
-              src="/assets/images/inline-logo.svg" 
-              alt="Throve" 
-              width={140} 
-              height={32} 
-              priority
-            />
-          </Link>
-          <div className={styles.breadcrumbs}>
-            <Link href="/cart" className={styles.breadcrumbLink}>Cart</Link> &gt; <span>Information</span> &gt; <span>Shipping</span> &gt; <span>Payment</span>
+    <main className={styles.checkoutLayout} style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center', maxWidth: '440px', padding: '32px' }}>
+        {errorMsg ? (
+          <div>
+            <h2 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px', color: '#111' }}>Checkout Notice</h2>
+            <p style={{ fontSize: '14px', color: '#666', marginBottom: '24px' }}>{errorMsg}</p>
+            <Link
+              href="/cart"
+              style={{
+                display: 'inline-block',
+                padding: '12px 24px',
+                background: '#111',
+                color: '#fff',
+                fontSize: '13px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                borderRadius: '2px',
+              }}
+            >
+              Return to Cart
+            </Link>
           </div>
-        </div>
-
-        {/* STEP 1: CONTACT */}
-        <div className={`${styles.section} ${step === 1 ? styles.sectionActive : styles.sectionCompleted}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.stepTitle}>
-              <span className={styles.stepNum}>1</span>
-              <h3>Contact</h3>
-            </div>
-            {step > 1 ? (
-              <button className={styles.editBtn} onClick={() => setStep(1)}>Edit</button>
-            ) : (
-              <a href="/login" className={styles.loginLink}>Log in</a>
-            )}
+        ) : (
+          <div>
+            <div style={{
+              width: '40px',
+              height: '40px',
+              border: '2px solid #e5e5e5',
+              borderTopColor: '#111',
+              borderRadius: '50%',
+              animation: 'spin 0.8s linear infinite',
+              margin: '0 auto 16px',
+            }} />
+            <h2 style={{ fontSize: '16px', fontWeight: 500, letterSpacing: '0.04em', color: '#111', marginBottom: '8px' }}>
+              {statusText}
+            </h2>
+            <p style={{ fontSize: '13px', color: '#888' }}>
+              Secure 256-bit encrypted checkout via Cashfree Payments
+            </p>
           </div>
-          
-          {step === 1 ? (
-            <div className={styles.sectionBody}>
-              <input 
-                type="email" 
-                placeholder="Email or mobile phone number" 
-                className={styles.input} 
-                defaultValue={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              <label className={styles.checkbox}>
-                <input type="checkbox" />
-                <span>Email me with news and offers</span>
-              </label>
-              <button className={styles.continueBtn} onClick={() => setStep(2)}>Continue to Delivery</button>
-            </div>
-          ) : (
-            <div className={styles.summaryText}>{email || 'No contact provided'}</div>
-          )}
-        </div>
-
-        {/* STEP 2: DELIVERY */}
-        <div className={`${styles.section} ${step === 2 ? styles.sectionActive : (step > 2 ? styles.sectionCompleted : styles.sectionPending)}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.stepTitle}>
-              <span className={styles.stepNum}>2</span>
-              <h3>Delivery</h3>
-            </div>
-            {step > 2 && (
-              <button className={styles.editBtn} onClick={() => setStep(2)}>Edit</button>
-            )}
-          </div>
-          
-          {step === 2 ? (
-            <div className={styles.sectionBody}>
-              <div className={styles.formGrid}>
-                <input 
-                  type="text" 
-                  placeholder="First name" 
-                  className={styles.input} 
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-                <input 
-                  type="text" 
-                  placeholder="Last name" 
-                  className={styles.input} 
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-                <input 
-                  type="text" 
-                  placeholder="Address" 
-                  className={`${styles.input} ${styles.fullWidth}`} 
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-                <input type="text" placeholder="Apartment, suite, etc. (optional)" className={`${styles.input} ${styles.fullWidth}`} />
-                <input 
-                  type="text" 
-                  placeholder="City" 
-                  className={styles.input} 
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                />
-                <select 
-                  className={styles.input}
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
-                >
-                  <option value="Maharashtra">Maharashtra</option>
-                  <option value="Delhi">Delhi</option>
-                  <option value="Karnataka">Karnataka</option>
-                  <option value="Gujarat">Gujarat</option>
-                  <option value="Tamil Nadu">Tamil Nadu</option>
-                </select>
-                <input 
-                  type="text" 
-                  placeholder="PIN code" 
-                  className={styles.input} 
-                  value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
-                />
-              </div>
-              <button className={styles.continueBtn} onClick={() => setStep(3)}>Continue to Payment</button>
-            </div>
-          ) : (
-            step > 2 && <div className={styles.summaryText}>{address || 'No address provided'}</div>
-          )}
-        </div>
-
-        {/* STEP 3: PAYMENT */}
-        <div className={`${styles.section} ${step === 3 ? styles.sectionActive : styles.sectionPending}`}>
-          <div className={styles.sectionHeader}>
-            <div className={styles.stepTitle}>
-              <span className={styles.stepNum}>3</span>
-              <h3>Payment</h3>
-            </div>
-          </div>
-          
-          {step === 3 && (
-            <div className={styles.sectionBody}>
-              <p className={styles.paymentSub}>
-                {selectedMethodMeta?.id === 'cod' ? (
-                  <><strong>Pre-Order Edition:</strong> Pay zero rupees today. 100% Cash on Delivery (COD) upon doorstep arrival.</>
-                ) : (
-                  <><strong>Secure Online Checkout:</strong> Encrypted payment session via {selectedMethodMeta?.label}.</>
-                )}
-              </p>
-
-              <div className={styles.paymentMethods}>
-                {paymentOptions.map((opt) => {
-                  const isSelected = paymentMethod === opt.id;
-                  return (
-                    <label
-                      key={opt.id}
-                      className={styles.paymentMethod}
-                      style={{
-                        borderColor: isSelected ? '#111111' : undefined,
-                        backgroundColor: isSelected ? '#fcfcfc' : undefined,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <div className={styles.radioGroup}>
-                        <input
-                          type="radio"
-                          name="payment"
-                          checked={isSelected}
-                          onChange={() => setPaymentMethod(opt.id)}
-                        />
-                        <div>
-                          <span style={{ fontWeight: 600, display: 'block', color: '#111111' }}>
-                            {opt.label}
-                          </span>
-                          <span style={{ fontSize: '12px', color: '#71717a', marginTop: '2px', display: 'block' }}>
-                            {opt.subtitle}
-                          </span>
-                        </div>
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-              <button
-                className={styles.payBtn}
-                onClick={handlePayNow}
-                disabled={isPending}
-                style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-              >
-                {isPending ? (
-                  <>
-                    <span className={styles.spinner} />
-                    <span>Processing Order...</span>
-                  </>
-                ) : selectedMethodMeta?.id === 'cod' ? (
-                  "Confirm Pre-Order (Pay on Delivery)"
-                ) : (
-                  `Pay Now via ${selectedMethodMeta?.label || "Online Gateway"}`
-                )}
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className={styles.rightCol}>
-        <div className={styles.summaryItems}>
-          {cartItems.length === 0 ? (
-            <p style={{ color: '#666666', fontSize: '0.9rem' }}>No items in checkout</p>
-          ) : (
-            cartItems.map((item) => (
-              <div key={item.id} className={styles.summaryItem}>
-                <div className={styles.itemImageWrapper}>
-                  <div className={styles.itemImage} style={{ position: 'relative', overflow: 'hidden' }}>
-                    {item.image && (
-                      <Image
-                        src={item.image}
-                        alt={item.title || item.name}
-                        fill
-                        sizes="64px"
-                        style={{ objectFit: 'cover' }}
-                      />
-                    )}
-                  </div>
-                  <span className={styles.itemBadge}>{item.qty}</span>
-                </div>
-                <div className={styles.itemInfo}>
-                  <h4>{item.title || item.name}</h4>
-                  <p>{item.variant}</p>
-                </div>
-                <span className={styles.itemPrice}>
-                  ₹{(((item.priceNum || item.price || 0) * item.qty)).toLocaleString('en-IN')}.00
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className={styles.couponBox}>
-          <div className={styles.couponHeader}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
-            </svg>
-            <span>Apply Coupon</span>
-          </div>
-          <div className={styles.discountRow}>
-            <input type="text" placeholder="Enter coupon code" className={styles.input} />
-            <button className={styles.applyBtn}>Apply</button>
-          </div>
-        </div>
-
-        <div className={styles.totals}>
-          <div className={styles.totalRow}>
-            <span>Subtotal</span>
-            <span>₹{cartSubtotal.toLocaleString('en-IN')}.00</span>
-          </div>
-          <div className={styles.totalRow}>
-            <span>Shipping</span>
-            <span>Free</span>
-          </div>
-          <div className={`${styles.totalRow} ${styles.finalTotal}`}>
-            <span>Total</span>
-            <span className={styles.priceLarge}><span className={styles.currency}>INR</span> ₹{cartSubtotal.toLocaleString('en-IN')}.00</span>
-          </div>
-        </div>
+        )}
       </div>
     </main>
   );

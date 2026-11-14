@@ -12,6 +12,10 @@ export default function ProductGallery({ images, product }) {
   const { isInWishlist, toggleWishlist } = useStore();
 
   const isWishlisted = isInWishlist(product?.id || product?.handle);
+  const isVtonEnabled = Boolean(
+    (product?.vton?.enabled && product?.vton?.cutout_url) ||
+    (product?.metadata?.vton?.enabled && product?.metadata?.vton?.cutout_url)
+  );
 
   return (
     <div className={styles.gallery}>
@@ -39,9 +43,10 @@ export default function ProductGallery({ images, product }) {
                     url: window.location.href,
                   });
                 } catch (_) {}
-              } else {
-                navigator?.clipboard?.writeText(window.location.href);
-                alert('Product link copied to clipboard!');
+              } else if (navigator?.clipboard) {
+                try {
+                  await navigator.clipboard.writeText(window.location.href);
+                } catch (_) {}
               }
             }}
           >
@@ -68,17 +73,19 @@ export default function ProductGallery({ images, product }) {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
           </button>
-          <button
-            className={styles.iconBtn}
-            aria-label="Virtual Try-On"
-            title="Virtual Try-On · Live Stream"
-            onClick={() => setIsVtonOpen(true)}
-          >
-            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M11 2.5a2.5 2.5 0 0 0-2.5 2.5c0 1.1.7 2 1.7 2.3L2.4 14.7A2 2 0 0 0 2 16v.2a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5V16a2 2 0 0 0-.4-1.3L12.5 7.3c.7-.2 1.3-.8 1.5-1.5" />
-              <path d="M19 2l.8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2z" fill="currentColor" stroke="none" />
-            </svg>
-          </button>
+          {isVtonEnabled && (
+            <button
+              className={styles.iconBtn}
+              aria-label="Virtual Try-On"
+              title="Virtual Try-On · Live Stream"
+              onClick={() => setIsVtonOpen(true)}
+            >
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 2.5a2.5 2.5 0 0 0-2.5 2.5c0 1.1.7 2 1.7 2.3L2.4 14.7A2 2 0 0 0 2 16v.2a1.5 1.5 0 0 0 1.5 1.5h13a1.5 1.5 0 0 0 1.5-1.5V16a2 2 0 0 0-.4-1.3L12.5 7.3c.7-.2 1.3-.8 1.5-1.5" />
+                <path d="M19 2l.8 2.2L22 5l-2.2.8L19 8l-.8-2.2L16 5l2.2-.8L19 2z" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+          )}
         </div>
       </div>
 
@@ -101,11 +108,13 @@ export default function ProductGallery({ images, product }) {
         ))}
       </div>
 
-      <DecartLucyVtonModal 
-        isOpen={isVtonOpen} 
-        onClose={() => setIsVtonOpen(false)} 
-        product={product} 
-      />
+      {isVtonEnabled && (
+        <DecartLucyVtonModal 
+          isOpen={isVtonOpen} 
+          onClose={() => setIsVtonOpen(false)} 
+          product={product} 
+        />
+      )}
     </div>
   );
 }

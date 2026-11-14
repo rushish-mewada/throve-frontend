@@ -131,3 +131,51 @@ export async function verifyPaymentAction(data) {
     };
   }
 }
+
+/**
+ * Server Action: Initiate Cashfree One Click Checkout session.
+ * Creates order in commerce engine and returns Cashfree payment session ID.
+ *
+ * @param {Object} data
+ * @returns {Promise<{ success: boolean, paymentSessionId?: string, environment?: string, orderId?: string, displayId?: string, checkoutUrl?: string, error?: string }>}
+ */
+export async function initiateCashfreeCheckoutAction(data = {}) {
+  try {
+    const checkoutRes = await processCheckoutAction({
+      ...data,
+      paymentMethod: "cashfree",
+    });
+
+    if (!checkoutRes.success) {
+      return {
+        success: false,
+        error: checkoutRes.error || "Failed to initiate Cashfree checkout",
+      };
+    }
+
+    const session = checkoutRes.paymentSession;
+    const paymentSessionId = session?.clientSecret || session?.payment_session_id || null;
+
+    if (!paymentSessionId) {
+      return {
+        success: false,
+        error: "Cashfree did not return a valid payment session ID",
+      };
+    }
+
+    return {
+      success: true,
+      paymentSessionId,
+      environment: session?.environment || "production",
+      orderId: checkoutRes.orderId,
+      displayId: checkoutRes.displayId,
+      checkoutUrl: session?.checkoutUrl,
+    };
+  } catch (error) {
+    console.error("[Cashfree Checkout Action Error]:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to initiate Cashfree checkout",
+    };
+  }
+}
