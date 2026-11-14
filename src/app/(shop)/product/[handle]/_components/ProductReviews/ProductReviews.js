@@ -367,12 +367,62 @@ export default function ProductReviews({ productHandle = 'default', productTitle
     <section className={styles.section}>
       {/* Header & Write Review Action */}
       <div className={styles.headerRow}>
-        <div>
+        <div className={styles.headerTitleCol}>
           <h2 className={styles.title} style={{ margin: 0 }}>Client Impressions & Reviews</h2>
           <p className={styles.subtitle}>Verified owner critiques, fabric drapes, and fit reviews</p>
         </div>
 
-        <div className={styles.headerActions}>
+        <div className={styles.headerActionsCol}>
+          {/* Verification Notice Banner placed ABOVE the button */}
+          {eligibilityChecked && !isEligibleToReview && !showManualVerify && (
+            <div className={styles.verifiedNoticeBox}>
+              <div className={styles.verifiedNoticeIcon}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                  <path d="M9 12l2 2 4-4" />
+                </svg>
+              </div>
+              <div className={styles.verifiedNoticeContent}>
+                <div className={styles.verifiedNoticeHeaderRow}>
+                  <span className={styles.verifiedNoticeTitle}>Verified Purchases Only</span>
+                </div>
+                <p className={styles.verifiedNoticeText}>
+                  Only clients who have purchased this garment may publish a review.
+                  {!isLoggedIn ? (
+                    <>
+                      {' '}
+                      <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeLinkBtn}>
+                        Log in
+                      </Link>
+                      {' or '}
+                      <button
+                        type="button"
+                        className={styles.verifiedNoticeLinkBtn}
+                        onClick={() => setShowManualVerify(true)}
+                      >
+                        verify with Order ID →
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {' '}
+                      <span className={styles.verifiedNoticeSub}>
+                        (No order found under your number).
+                      </span>{' '}
+                      <button
+                        type="button"
+                        className={styles.verifiedNoticeLinkBtn}
+                        onClick={() => setShowManualVerify(true)}
+                      >
+                        Guest or other number? Verify here →
+                      </button>
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+          )}
+
           {isEligibleToReview ? (
             <button
               type="button"
@@ -398,53 +448,6 @@ export default function ProductReviews({ productHandle = 'default', productTitle
           )}
         </div>
       </div>
-
-      {/* Verification Notice Banner if not verified */}
-      {eligibilityChecked && !isEligibleToReview && !showManualVerify && (
-        <div className={styles.verifiedNoticeBox}>
-          <div className={styles.verifiedNoticeIcon}>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#b45309" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              <path d="M9 12l2 2 4-4" />
-            </svg>
-          </div>
-          <div className={styles.verifiedNoticeContent}>
-            <h4 className={styles.verifiedNoticeTitle}>Verified Purchases Only</h4>
-            <p className={styles.verifiedNoticeText}>
-              To guarantee total honesty and protect against artificial reviews, only clients who have purchased this garment may publish an impression.
-            </p>
-            <div className={styles.verifiedNoticeLinks}>
-              {!isLoggedIn ? (
-                <>
-                  <Link href={`/account/login?redirect=/product/${productHandle}`} className={styles.verifiedNoticeBtn}>
-                    Log In to Your Account
-                  </Link>
-                  <button
-                    type="button"
-                    className={styles.verifiedNoticeLinkBtn}
-                    onClick={() => setShowManualVerify(true)}
-                  >
-                    Have an Order ID? Verify with Order & Phone →
-                  </button>
-                </>
-              ) : (
-                <>
-                  <span style={{ fontSize: '12px', color: '#78716c' }}>
-                    Logged in as {user?.name || user?.phone}. No order for this piece was found under your phone.
-                  </span>
-                  <button
-                    type="button"
-                    className={styles.verifiedNoticeLinkBtn}
-                    onClick={() => setShowManualVerify(true)}
-                  >
-                    Ordered under a different phone or guest checkout? Verify here →
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Manual Guest Order Verification Box */}
       {showManualVerify && !isEligibleToReview && (
