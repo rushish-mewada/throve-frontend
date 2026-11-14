@@ -1,0 +1,16 @@
+{
+  "name": "Throve | Premium Lifestyle Goods",
+  "short_name": "Throve",
+  "description": "Curated luxury and premium lifestyle apparel exclusively for India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    {
+      "src": "/assets/images/logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

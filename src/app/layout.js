@@ -17,7 +17,8 @@ const abhaya = Abhaya_Libre({
 
 export const metadata = {
   title: "Throve | Premium Lifestyle Goods",
-  description: "Curated exclusively for India. Zero-API Architecture natively powered by Medusa v2.",
+  description: "Curated exclusively for India. Industrial luxury apparel and fine essentials.",
+  manifest: "/manifest.json",
   icons: {
     icon: [
       { url: "/assets/images/logo.svg", type: "image/svg+xml" },
