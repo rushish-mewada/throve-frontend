@@ -50,6 +50,19 @@ export function VisaIcon({ className }) {
   );
 }
 
+export function CashfreeIcon({ className, height = 20 }) {
+  return (
+    <Image
+      src="/assets/images/payments/cashfree.svg"
+      alt="Cashfree Payments"
+      width={height}
+      height={height}
+      className={className}
+      style={{ objectFit: 'contain', height: `${height}px`, width: 'auto', display: 'inline-block', verticalAlign: 'middle' }}
+    />
+  );
+}
+
 export function CodIcon({ className }) {
   return (
     <span className={className} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: '#f5f5f4', border: '1px solid #e7e5e4', borderRadius: '4px', padding: '2px 6px', height: '22px', fontSize: '0.72rem', fontWeight: 600, color: '#1c1917' }}>

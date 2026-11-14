@@ -10,7 +10,7 @@ import { processCheckoutAction, initiateCashfreeCheckoutAction } from '@/actions
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 import CustomInput from '@/components/ui/CustomInput/CustomInput';
 import CustomSelect from '@/components/ui/CustomSelect/CustomSelect';
-import { UpiIcon, GPayIcon, PhonePeIcon, RuPayIcon, MastercardIcon, VisaIcon, CodIcon } from '@/components/ui/PaymentIcons';
+import { UpiIcon, GPayIcon, PhonePeIcon, RuPayIcon, MastercardIcon, VisaIcon, CashfreeIcon, CodIcon } from '@/components/ui/PaymentIcons';
 
 const INDIAN_STATES = [
   "Andaman and Nicobar Islands", "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar",
@@ -908,7 +908,10 @@ export default function CheckoutPage() {
               ) : paymentMethod === 'cod' ? (
                 `Confirm Order • Pay ₹${finalTotal.toLocaleString('en-IN')}.00 on Delivery`
               ) : (
-                `Pay ₹${finalTotal.toLocaleString('en-IN')}.00 via Cashfree`
+                <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                  <span>Pay ₹{finalTotal.toLocaleString('en-IN')}.00</span>
+                  <CashfreeIcon height={20} />
+                </span>
               )}
             </button>
 
