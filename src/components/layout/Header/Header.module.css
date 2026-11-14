@@ -220,7 +220,7 @@
   .floatingBottomBar {
     display: flex;
     position: fixed;
-    bottom: 16px;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     left: 16px;
     right: 16px;
     max-width: 420px;

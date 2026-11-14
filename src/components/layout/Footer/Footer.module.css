@@ -168,7 +168,7 @@
 
 @media (max-width: 768px) {
   .footer {
-    padding: 60px 24px 24px;
+    padding: 60px 24px calc(58px + 36px + env(safe-area-inset-bottom, 0px));
     gap: 60px;
   }
   .ctaHeading {
