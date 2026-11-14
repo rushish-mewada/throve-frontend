@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
 import { isProductVtonActive } from '@/lib/vton';
@@ -10,23 +10,127 @@ import styles from './ProductGallery.module.css';
 export default function ProductGallery({ images, product }) {
   const [activeImage, setActiveImage] = useState(0);
   const [isVtonOpen, setIsVtonOpen] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const startXRef = useRef(0);
+  const startYRef = useRef(0);
+  const currentDeltaXRef = useRef(0);
+  const isPointerDownRef = useRef(false);
+  const hasSwipedRef = useRef(false);
+
   const { isInWishlist, toggleWishlist } = useStore();
 
   const isWishlisted = isInWishlist(product?.id || product?.handle);
   const isVtonEnabled = isProductVtonActive(product);
+  const totalImages = Array.isArray(images) ? images.length : 0;
+
+  const handlePointerDown = (e) => {
+    if (totalImages <= 1) return;
+    if (e.button !== undefined && e.button !== 0) return;
+
+    startXRef.current = e.clientX;
+    startYRef.current = e.clientY;
+    currentDeltaXRef.current = 0;
+    isPointerDownRef.current = true;
+    hasSwipedRef.current = false;
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDownRef.current || totalImages <= 1) return;
+
+    const deltaX = e.clientX - startXRef.current;
+    const deltaY = e.clientY - startYRef.current;
+
+    if (!hasSwipedRef.current) {
+      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 6) {
+        isPointerDownRef.current = false;
+        return;
+      }
+      if (Math.abs(deltaX) > 6) {
+        hasSwipedRef.current = true;
+        setIsDragging(true);
+        try {
+          e.currentTarget.setPointerCapture?.(e.pointerId);
+        } catch (_) {}
+      }
+    }
+
+    if (hasSwipedRef.current) {
+      let effectiveDelta = deltaX;
+      if (
+        (activeImage === 0 && deltaX > 0) ||
+        (activeImage === totalImages - 1 && deltaX < 0)
+      ) {
+        effectiveDelta = deltaX * 0.32;
+      }
+      currentDeltaXRef.current = effectiveDelta;
+      setDragOffset(effectiveDelta);
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    setIsDragging(false);
+
+    try {
+      e.currentTarget.releasePointerCapture?.(e.pointerId);
+    } catch (_) {}
+
+    const deltaX = currentDeltaXRef.current;
+    const swipeThreshold = 35;
+
+    if (hasSwipedRef.current && Math.abs(deltaX) >= swipeThreshold && totalImages > 1) {
+      if (deltaX < 0 && activeImage < totalImages - 1) {
+        setActiveImage((prev) => prev + 1);
+      } else if (deltaX > 0 && activeImage > 0) {
+        setActiveImage((prev) => prev - 1);
+      }
+    }
+
+    setDragOffset(0);
+    hasSwipedRef.current = false;
+  };
+
+  const handlePointerCancel = () => {
+    isPointerDownRef.current = false;
+    setIsDragging(false);
+    setDragOffset(0);
+    hasSwipedRef.current = false;
+  };
 
   return (
     <div className={styles.gallery}>
-      {/* Main Image */}
-      <div className={styles.mainImageContainer}>
-        <Image 
-          src={images[activeImage]} 
-          alt="Product Main" 
-          fill 
-          priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
-          style={{ objectFit: 'cover' }}
-        />
+      {/* Main Image Container with Swipe-to-Slide */}
+      <div
+        className={styles.mainImageContainer}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
+      >
+        <div
+          className={styles.imageTrack}
+          style={{
+            transform: `translateX(calc(-${activeImage * 100}% + ${dragOffset}px))`,
+            transition: isDragging ? 'none' : 'transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)',
+          }}
+        >
+          {images.map((img, idx) => (
+            <div key={idx} className={styles.imageSlide}>
+              <Image 
+                src={img} 
+                alt={`${product?.title || 'Product'} - image ${idx + 1}`} 
+                fill 
+                priority={idx === 0}
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                style={{ objectFit: 'cover' }}
+                draggable={false}
+              />
+            </div>
+          ))}
+        </div>
 
         {/* Floating Icons */}
         <div className={styles.actionIcons}>

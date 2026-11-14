@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useStore } from "@/context/StoreContext";
@@ -18,6 +18,14 @@ import styles from "./ProductCard.module.css";
 export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw, 25vw" }) {
   const { isInWishlist, toggleWishlist, addToCart } = useStore();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const startXRef = useRef(0);
+  const startYRef = useRef(0);
+  const currentDeltaXRef = useRef(0);
+  const isPointerDownRef = useRef(false);
+  const hasSwipedRef = useRef(false);
 
   if (!product) return null;
 
@@ -25,19 +33,111 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
     ? product.images.map((img) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
     : (product.image ? [product.image] : ["/products/asymmetric-mandarin-shirt/main.jpg"]);
 
-  const currentImage = rawImages[activeImageIndex] || rawImages[0];
   const hasMultipleImages = rawImages.length > 1;
 
   const handlePrevImage = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     setActiveImageIndex((prev) => (prev === 0 ? rawImages.length - 1 : prev - 1));
   };
 
   const handleNextImage = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e?.preventDefault?.();
+    e?.stopPropagation?.();
     setActiveImageIndex((prev) => (prev === rawImages.length - 1 ? 0 : prev + 1));
+  };
+
+  /* Unified Swipe-to-Slide Handlers (Mobile Touch + Tablet + Desktop Mouse) */
+  const handlePointerDown = (e) => {
+    if (rawImages.length <= 1) return;
+    if (e.button !== undefined && e.button !== 0) return; // Primary button / touch only
+
+    startXRef.current = e.clientX;
+    startYRef.current = e.clientY;
+    currentDeltaXRef.current = 0;
+    isPointerDownRef.current = true;
+    hasSwipedRef.current = false;
+  };
+
+  const handlePointerMove = (e) => {
+    if (!isPointerDownRef.current || rawImages.length <= 1) return;
+
+    const deltaX = e.clientX - startXRef.current;
+    const deltaY = e.clientY - startYRef.current;
+
+    // Discard gesture early if vertical page scrolling dominates
+    if (!hasSwipedRef.current) {
+      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 6) {
+        isPointerDownRef.current = false;
+        return;
+      }
+      if (Math.abs(deltaX) > 6) {
+        hasSwipedRef.current = true;
+        setIsDragging(true);
+        try {
+          e.currentTarget.setPointerCapture?.(e.pointerId);
+        } catch (_) {}
+      }
+    }
+
+    if (hasSwipedRef.current) {
+      // Elastic rubber-band resistance at track boundaries
+      let effectiveDelta = deltaX;
+      if (
+        (activeImageIndex === 0 && deltaX > 0) ||
+        (activeImageIndex === rawImages.length - 1 && deltaX < 0)
+      ) {
+        effectiveDelta = deltaX * 0.32;
+      }
+      currentDeltaXRef.current = effectiveDelta;
+      setDragOffset(effectiveDelta);
+    }
+  };
+
+  const handlePointerUp = (e) => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    setIsDragging(false);
+
+    try {
+      e.currentTarget.releasePointerCapture?.(e.pointerId);
+    } catch (_) {}
+
+    const deltaX = currentDeltaXRef.current;
+    const swipeThreshold = 30; // px to commit slide
+
+    if (hasSwipedRef.current && Math.abs(deltaX) >= swipeThreshold && rawImages.length > 1) {
+      if (deltaX < 0 && activeImageIndex < rawImages.length - 1) {
+        // Swiped left -> next slide
+        setActiveImageIndex((prev) => prev + 1);
+      } else if (deltaX > 0 && activeImageIndex > 0) {
+        // Swiped right -> prev slide
+        setActiveImageIndex((prev) => prev - 1);
+      }
+    }
+
+    setDragOffset(0);
+
+    // Suppress pending click event on the <Link> after a swipe gesture
+    if (hasSwipedRef.current) {
+      setTimeout(() => {
+        hasSwipedRef.current = false;
+      }, 120);
+    }
+  };
+
+  const handlePointerCancel = () => {
+    isPointerDownRef.current = false;
+    setIsDragging(false);
+    setDragOffset(0);
+    hasSwipedRef.current = false;
+  };
+
+  const handleLinkClick = (e) => {
+    if (hasSwipedRef.current || isDragging) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
   };
 
   const colors = Array.isArray(product.colors)
@@ -123,15 +223,38 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
           )}
         </div>
 
-        {/* Product Image Link */}
-        <Link href={`/product/${productHandle}`} className={styles.imageLink} aria-label={product.title}>
-          <Image
-            src={currentImage}
-            alt={product.title || "Garment"}
-            fill
-            style={{ objectFit: "cover" }}
-            sizes={sizes}
-          />
+        {/* Product Image Link with Horizontal Swipe-to-Slide Track */}
+        <Link
+          href={`/product/${productHandle}`}
+          className={styles.imageLink}
+          aria-label={product.title}
+          onClick={handleLinkClick}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerCancel}
+        >
+          <div
+            className={styles.imageTrack}
+            style={{
+              transform: `translateX(calc(-${activeImageIndex * 100}% + ${dragOffset}px))`,
+              transition: isDragging ? "none" : "transform 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
+            }}
+          >
+            {rawImages.map((img, idx) => (
+              <div key={idx} className={styles.imageSlide}>
+                <Image
+                  src={img}
+                  alt={`${product.title || "Garment"} - image ${idx + 1}`}
+                  fill
+                  style={{ objectFit: "cover" }}
+                  sizes={sizes}
+                  draggable={false}
+                  priority={idx === 0}
+                />
+              </div>
+            ))}
+          </div>
         </Link>
 
         {/* Carousel Arrow Controls */}
@@ -164,6 +287,12 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
                 <span
                   key={i}
                   className={`${styles.dot} ${i === activeImageIndex ? styles.dotActive : ""}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setActiveImageIndex(i);
+                  }}
+                  style={{ cursor: "pointer", pointerEvents: "auto" }}
                 />
               ))}
             </div>

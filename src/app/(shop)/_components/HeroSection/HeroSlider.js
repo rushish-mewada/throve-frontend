@@ -182,6 +182,7 @@ export default function HeroSlider() {
 
   const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
+  const isPointerDownRef = useRef(false);
 
   const handleTouchStart = (e) => {
     if (e.targetTouches && e.targetTouches[0]) {
@@ -205,6 +206,27 @@ export default function HeroSlider() {
     }
   };
 
+  const handlePointerDown = (e) => {
+    if (e.button !== undefined && e.button !== 0) return;
+    touchStartXRef.current = e.clientX;
+    touchStartYRef.current = e.clientY;
+    isPointerDownRef.current = true;
+  };
+
+  const handlePointerUp = (e) => {
+    if (!isPointerDownRef.current) return;
+    isPointerDownRef.current = false;
+    const diffX = touchStartXRef.current - e.clientX;
+    const diffY = touchStartYRef.current - e.clientY;
+    if (Math.abs(diffX) > 40 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+  };
+
   return (
     <div
       className={styles.sliderWrapper}
@@ -212,6 +234,8 @@ export default function HeroSlider() {
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
     >
       {/* Fixed 7 Slots Carousel Container */}
       <div className={styles.carouselContainer}>
