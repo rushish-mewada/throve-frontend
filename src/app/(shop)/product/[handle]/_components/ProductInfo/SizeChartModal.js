@@ -85,6 +85,7 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true">
       <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHandle} aria-hidden="true" />
         <div className={styles.modalHeader}>
           <div>
             <h3 className={styles.modalTitle}>Size Guide</h3>
@@ -103,74 +104,76 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
           </button>
         </div>
 
-        {/* Unit Switcher */}
-        <div className={styles.unitToggleRow}>
-          <span className={styles.unitLabel}>Unit of measure:</span>
-          <div className={styles.unitButtonGroup}>
-            <button
-              type="button"
-              className={`${styles.unitBtn} ${unit === "in" ? styles.unitBtnActive : ""}`}
-              onClick={() => setUnit("in")}
-            >
-              Inches (in)
-            </button>
-            <button
-              type="button"
-              className={`${styles.unitBtn} ${unit === "cm" ? styles.unitBtnActive : ""}`}
-              onClick={() => setUnit("cm")}
-            >
-              Centimeters (cm)
-            </button>
+        <div className={styles.sizeChartBody}>
+          {/* Unit Switcher */}
+          <div className={styles.unitToggleRow}>
+            <span className={styles.unitLabel}>Unit of measure:</span>
+            <div className={styles.unitButtonGroup}>
+              <button
+                type="button"
+                className={`${styles.unitBtn} ${unit === "in" ? styles.unitBtnActive : ""}`}
+                onClick={() => setUnit("in")}
+              >
+                Inches (in)
+              </button>
+              <button
+                type="button"
+                className={`${styles.unitBtn} ${unit === "cm" ? styles.unitBtnActive : ""}`}
+                onClick={() => setUnit("cm")}
+              >
+                Centimeters (cm)
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Measurement Table */}
-        <div className={styles.tableWrapper}>
-          <table className={styles.sizeTable}>
-            <thead>
-              <tr>
-                <th className={styles.thMeasure}>Dimension</th>
-                <th>S</th>
-                <th>M</th>
-                <th>L</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.measurements.map((m) => (
-                <tr key={m.name}>
-                  <td className={styles.tdMeasure}>{m.name}</td>
-                  <td>{formatValue(m.s)} {unit}</td>
-                  <td className={styles.tdHighlight}>{formatValue(m.m)} {unit}</td>
-                  <td>{formatValue(m.l)} {unit}</td>
+          {/* Measurement Table */}
+          <div className={styles.tableWrapper}>
+            <table className={styles.sizeTable}>
+              <thead>
+                <tr>
+                  <th className={styles.thMeasure}>Dimension</th>
+                  <th>S</th>
+                  <th>M</th>
+                  <th>L</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Measurement Tips */}
-        <div className={styles.measurementTips}>
-          <div className={styles.tipIcon}>
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21.3 15.3l-6.6 6.6c-.4.4-1 .4-1.4 0l-11-11c-.4-.4-.4-1 0-1.4l6.6-6.6c.4-.4 1-.4 1.4 0l11 11c.4.4.4 1 0 1.4z" />
-              <path d="M7.5 4.5L10 7" />
-              <path d="M10.5 7.5L12 9" />
-              <path d="M13.5 10.5L16 13" />
-              <path d="M16.5 13.5L18 15" />
-            </svg>
+              </thead>
+              <tbody>
+                {data.measurements.map((m) => (
+                  <tr key={m.name}>
+                    <td className={styles.tdMeasure}>{m.name}</td>
+                    <td>{formatValue(m.s)} {unit}</td>
+                    <td className={styles.tdHighlight}>{formatValue(m.m)} {unit}</td>
+                    <td>{formatValue(m.l)} {unit}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-          <div>
-            <strong>How to Measure:</strong>
-            <p className={styles.tipText}>{data.tips}</p>
+
+          {/* Measurement Tips */}
+          <div className={styles.measurementTips}>
+            <div className={styles.tipIcon}>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21.3 15.3l-6.6 6.6c-.4.4-1 .4-1.4 0l-11-11c-.4-.4-.4-1 0-1.4l6.6-6.6c.4-.4 1-.4 1.4 0l11 11c.4.4.4 1 0 1.4z" />
+                <path d="M7.5 4.5L10 7" />
+                <path d="M10.5 7.5L12 9" />
+                <path d="M13.5 10.5L16 13" />
+                <path d="M16.5 13.5L18 15" />
+              </svg>
+            </div>
+            <div>
+              <strong>How to Measure:</strong>
+              <p className={styles.tipText}>{data.tips}</p>
+            </div>
           </div>
         </div>
 

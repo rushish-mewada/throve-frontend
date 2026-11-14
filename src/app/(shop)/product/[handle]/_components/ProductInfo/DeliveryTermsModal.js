@@ -23,6 +23,7 @@ export default function DeliveryTermsModal({ isOpen, onClose }) {
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true">
       <div className={styles.modalCard} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.modalHandle} aria-hidden="true" />
         <div className={styles.modalHeader}>
           <div>
             <h3 className={styles.modalTitle}>Delivery Terms & Conditions</h3>
