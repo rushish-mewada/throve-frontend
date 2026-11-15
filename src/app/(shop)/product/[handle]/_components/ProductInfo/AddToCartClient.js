@@ -1,5 +1,6 @@
 "use client";
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/context/StoreContext';
 import styles from './ProductInfo.module.css';
@@ -11,6 +12,8 @@ import { launchCashfreeCheckout } from '@/lib/cashfree';
 export default function AddToCartClient({ variants = [], colors = [], product, config }) {
   const router = useRouter();
   const { addToCart, setIsCartDrawerOpen } = useStore();
+  const actionsRef = useRef(null);
+  const [showStickyBar, setShowStickyBar] = useState(false);
 
   const safeVariants = Array.isArray(variants) && variants.length > 0
     ? variants
@@ -29,9 +32,38 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
 
+  const prodImg = (Array.isArray(product?.images) && product.images.length > 0)
+    ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)
+    : (typeof product?.image === 'string' ? product.image : product?.image?.url);
+  const safeProdImg = (typeof prodImg === 'string' && prodImg.trim().length > 0)
+    ? prodImg.trim()
+    : '/products/navy-tailored-mini-dress/main.jpg?v=3';
+
+  // IntersectionObserver detects when primary CTA buttons scroll out of viewport
+  useEffect(() => {
+    const target = actionsRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const isAbove = entry.boundingClientRect.bottom < 0;
+        setShowStickyBar(!entry.isIntersecting && isAbove);
+      },
+      {
+        threshold: 0,
+      }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
+
   const handleAddToCart = () => {
     if (!selectedSize) {
       setSizeError(true);
+      if (actionsRef.current) {
+        actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     if (isAdding) return;
@@ -48,6 +80,9 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
   const handleCheckoutNow = () => {
     if (!selectedSize) {
       setSizeError(true);
+      if (actionsRef.current) {
+        actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     setIsCheckingOut(true);
@@ -118,7 +153,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
       </div>
 
       {/* Actions */}
-      <div className={styles.actions}>
+      <div className={styles.actions} ref={actionsRef}>
         <button
           type="button"
           className={styles.addToCartBtn}
@@ -234,6 +269,114 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
           Delivery T&C
         </button>
       </div>
+
+      {/* Floating Sticky Bottom Bar when main CTAs are scrolled out of view */}
+      <aside
+        className={`${styles.stickyBar} ${showStickyBar ? styles.stickyBarVisible : ''}`}
+        aria-hidden={!showStickyBar}
+        aria-label="Sticky Purchase Actions"
+      >
+        <div className={styles.stickyBarInner}>
+          {/* Left: Product Thumbnail, Title & Price info */}
+          <div className={styles.stickyProdInfo}>
+            <div className={styles.stickyThumb}>
+              <Image
+                src={safeProdImg}
+                alt={product?.title || 'Product'}
+                fill
+                sizes="50px"
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+            <div className={styles.stickyTextGroup}>
+              <span className={styles.stickyTitle} title={product?.title}>
+                {product?.title}
+              </span>
+              <div className={styles.stickyMetaRow}>
+                <span className={styles.stickyPrice}>{product?.price}</span>
+                {product?.oldPrice && (
+                  <span className={styles.stickyOldPrice}>{product.oldPrice}</span>
+                )}
+                <span className={styles.stickySizeBadge}>
+                  {selectedSize ? `Size: ${selectedSize.name || selectedSize.title}` : 'Select Size'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Quick Size Selector & Action Buttons */}
+          <div className={styles.stickyActionsGroup}>
+            {/* Quick Size Options */}
+            <div className={styles.stickySizeList}>
+              {safeVariants.map((v) => {
+                const rawLabel = v.name || v.title || 'M';
+                const shortLabel = rawLabel.includes(' / ') ? rawLabel.split(' / ')[0].trim() : rawLabel;
+                const isSelected = selectedSize && (selectedSize.id === v.id || selectedSize.name === v.name || selectedSize.name === shortLabel);
+                return (
+                  <button
+                    key={v.id}
+                    type="button"
+                    className={`${styles.stickySizeBtn} ${isSelected ? styles.stickySizeActive : ''}`}
+                    onClick={() => {
+                      setSelectedSize({ ...v, name: shortLabel });
+                      setSizeError(false);
+                    }}
+                    aria-label={`Select size ${shortLabel}`}
+                  >
+                    {shortLabel}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* CTAs */}
+            <div className={styles.stickyButtons}>
+              <button
+                type="button"
+                className={styles.stickyAddBtn}
+                onClick={handleAddToCart}
+                disabled={isAdding}
+                aria-label="Add to Cart"
+              >
+                {isAdding ? (
+                  <span className={styles.spinner} />
+                ) : addedSuccess ? (
+                  <span style={{ color: '#86efac', fontWeight: 600 }}>✓ Added</span>
+                ) : (
+                  <>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                      <line x1="3" y1="6" x2="21" y2="6" />
+                      <path d="M16 10a4 4 0 0 1-8 0" />
+                    </svg>
+                    <span>Add to Cart</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                type="button"
+                className={styles.stickyBuyBtn}
+                onClick={handleCheckoutNow}
+                disabled={isCheckingOut}
+                aria-label="Buy Now"
+              >
+                {isCheckingOut ? (
+                  <span className={styles.spinnerDark} />
+                ) : (
+                  <>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                    <span>Buy Now</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
 
       {/* Modals */}
       <SizeChartModal

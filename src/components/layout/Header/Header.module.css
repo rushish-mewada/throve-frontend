@@ -144,10 +144,10 @@
   display: none;
 }
 
-/* Mobile responsiveness */
+/* Mobile & Tablet responsiveness */
 @media (max-width: 1024px) {
   .nav {
-    display: none; /* Hide nav on mobile */
+    display: none; /* Hide nav on mobile & tablet */
   }
   .inner {
     padding: 16px 24px;
@@ -162,6 +162,28 @@
   }
   .actions {
     gap: 16px;
+  }
+
+  /* Floating Bottom Navigation Bar for Mobile and Tablet */
+  .floatingBottomBar {
+    display: flex;
+    position: fixed;
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+    left: 16px;
+    right: 16px;
+    max-width: 420px;
+    margin: 0 auto;
+    height: 58px;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 9999px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+    z-index: 95;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
   }
 }
 

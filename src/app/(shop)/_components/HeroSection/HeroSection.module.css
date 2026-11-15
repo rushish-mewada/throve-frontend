@@ -260,6 +260,7 @@
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -473,28 +474,68 @@
 
 /* Responsive Scaling */
 @media (max-width: 1280px) {
-  .slot_-1 { transform: translateX(calc(-50% - 170px)) translateY(-52px); }
-  .slot_-2 { transform: translateX(calc(-50% - 320px)) translateY(-52px); }
-  .slot_-3 { transform: translateX(calc(-50% - 460px)) translateY(-52px); }
-  .slot_1  { transform: translateX(calc(-50% + 170px)) translateY(-52px); }
-  .slot_2  { transform: translateX(calc(-50% + 320px)) translateY(-52px); }
-  .slot_3  { transform: translateX(calc(-50% + 460px)) translateY(-52px); }
+  .slot_-1 {
+    transform: translateX(calc(-50% - 170px)) translateY(-52px);
+  }
+
+  .slot_-2 {
+    transform: translateX(calc(-50% - 320px)) translateY(-52px);
+  }
+
+  .slot_-3 {
+    transform: translateX(calc(-50% - 460px)) translateY(-52px);
+  }
+
+  .slot_1 {
+    transform: translateX(calc(-50% + 170px)) translateY(-52px);
+  }
+
+  .slot_2 {
+    transform: translateX(calc(-50% + 320px)) translateY(-52px);
+  }
+
+  .slot_3 {
+    transform: translateX(calc(-50% + 460px)) translateY(-52px);
+  }
 }
 
 @media (max-width: 1024px) {
-  .slot_-3, .slot_3 { display: none; }
-  .hotspotCard { width: 185px; padding: 8px 10px; }
-  .header { left: 24px; }
-  .bottomBar { left: 24px; right: 24px; }
+
+  .slot_-3,
+  .slot_3 {
+    display: none;
+  }
+
+  .hotspotCard {
+    width: 185px;
+    padding: 8px 10px;
+  }
+
+  .header {
+    left: 24px;
+  }
+
+  .bottomBar {
+    left: 24px;
+    right: 24px;
+  }
 }
 
 @media (max-width: 768px) {
-  .slot_-3, .slot_3, .slot_-2, .slot_2 { display: none; }
+
+  .slot_-3,
+  .slot_3,
+  .slot_-2,
+  .slot_2 {
+    display: none;
+  }
+
   .slot_0 {
     width: 200px;
     height: 72%;
     bottom: 75px;
   }
+
   .slot_-1 {
     transform: translateX(calc(-50% - 135px)) translateY(-35px) scale(0.68);
     opacity: 0.4;
@@ -503,6 +544,7 @@
     z-index: 4;
     pointer-events: auto;
   }
+
   .slot_1 {
     transform: translateX(calc(-50% + 135px)) translateY(-35px) scale(0.68);
     opacity: 0.4;
@@ -511,19 +553,23 @@
     z-index: 4;
     pointer-events: auto;
   }
+
   .header {
     top: 12px;
     left: 16px;
     right: 16px;
   }
+
   .subtitle {
     font-size: 0.72rem;
     letter-spacing: 0.04em;
   }
+
   .title {
     font-size: 1.6rem;
     line-height: 1.1;
   }
+
   .bottomBar {
     left: 16px;
     right: 16px;
@@ -533,6 +579,7 @@
     align-items: center;
     gap: 8px;
   }
+
   .descriptionBox {
     max-width: calc(100% - 90px);
     padding: 4px 8px;
@@ -541,6 +588,7 @@
     border-radius: 4px;
     text-align: left;
   }
+
   .descriptionText {
     font-size: 0.68rem;
     line-height: 1.35;
@@ -549,16 +597,20 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
   .exploreWrapper {
     bottom: 48px;
   }
+
   .exploreLink {
     font-size: 0.78rem;
   }
+
   .navBtn {
     width: 32px;
     height: 32px;
   }
+
   .navBtn svg {
     width: 14px;
     height: 14px;
@@ -627,32 +679,39 @@
     min-height: 480px;
     max-height: 620px;
   }
+
   .slot_0 {
     width: 180px;
     height: 70%;
     bottom: 70px;
   }
+
   .slot_-1 {
     transform: translateX(calc(-50% - 115px)) translateY(-35px) scale(0.62);
     width: 110px;
     height: 48%;
   }
+
   .slot_1 {
     transform: translateX(calc(-50% + 115px)) translateY(-35px) scale(0.62);
     width: 110px;
     height: 48%;
   }
+
   .title {
     font-size: 1.45rem;
   }
+
   .hotspotCard {
     width: clamp(116px, 36vw, 132px);
     padding: 6px 8px;
   }
+
   .cardLeft {
     right: calc(50% + 26px);
     left: auto;
   }
+
   .cardRight {
     left: calc(50% + 26px);
     right: auto;
