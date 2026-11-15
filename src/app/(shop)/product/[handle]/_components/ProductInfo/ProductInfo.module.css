@@ -974,27 +974,6 @@
   font-size: 0.74rem;
 }
 
-.stickySizeBadge {
-  display: none;
-  color: #52525b;
-  font-size: 0.74rem;
-  background: #f4f4f5;
-  border: 1px solid #e4e4e7;
-  padding: 2px 9px;
-  border-radius: 9999px;
-  font-weight: 500;
-  cursor: pointer;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.15s ease;
-  user-select: none;
-}
-
-.stickySizeBadge:hover {
-  background: #e4e4e7;
-  color: #18181b;
-}
-
 .stickyActionsGroup {
   display: flex;
   align-items: center;
@@ -1136,24 +1115,26 @@
   }
 
   .stickyMetaRow {
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 2px;
+    gap: 1px;
   }
 
   .stickyPrice {
-    font-size: 0.86rem;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #111111;
     line-height: 1.1;
   }
 
   .stickyOldPrice {
-    display: none;
-  }
-
-  .stickySizeBadge {
-    display: inline-flex;
-    font-size: 0.68rem;
-    padding: 1px 7px;
+    display: block;
+    color: #a1a1aa;
+    text-decoration: line-through;
+    font-size: 0.72rem;
+    font-weight: 400;
+    line-height: 1.1;
   }
 
   .stickyActionsGroup {
@@ -1326,35 +1307,46 @@
 
 .quickSizePill {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  height: 46px;
-  border: 1px solid #e4e4e7;
-  border-radius: 10px;
+  gap: 2px;
+  min-height: 56px;
+  padding: 8px 10px;
+  border: 1.5px solid #e4e4e7;
+  border-radius: 12px;
   background-color: #ffffff;
   color: #18181b;
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.92rem;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
 }
 
 .quickSizePill:hover {
   border-color: #18181b;
-  background-color: #fafafa;
+  background-color: #f4f4f5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
-.quickSizePillActive {
-  background-color: #18181b;
-  color: #ffffff;
-  border-color: #18181b;
+.quickSizePill:active {
+  transform: scale(0.97);
 }
 
-.quickSizePillCheck {
-  font-size: 0.8rem;
-  color: #86efac;
+.quickSizePillName {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #111111;
+  line-height: 1.1;
+}
+
+.quickSizePillSub {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.66rem;
+  font-weight: 500;
+  color: #71717a;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 .quickSizeFooter {

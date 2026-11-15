@@ -12,7 +12,6 @@ export default function QuickSizeModal({
   onSelectSize,
   onConfirm,
   actionType = 'cart', // 'cart' | 'buy'
-  isSubmitting = false,
   onOpenSizeChart,
 }) {
   useEffect(() => {
@@ -43,6 +42,14 @@ export default function QuickSizeModal({
           { id: 'v-m', name: 'M', inStock: true },
           { id: 'v-l', name: 'L', inStock: true },
         ];
+
+  const handleSizeClick = (v) => {
+    const rawLabel = v.name || v.title || 'M';
+    const shortLabel = rawLabel.includes(' / ') ? rawLabel.split(' / ')[0].trim() : rawLabel;
+    const sizeObj = { ...v, name: shortLabel };
+    onSelectSize(sizeObj);
+    onConfirm(actionType, sizeObj);
+  };
 
   return (
     <div className={styles.modalOverlay} onClick={onClose} role="dialog" aria-modal="true">
@@ -87,11 +94,11 @@ export default function QuickSizeModal({
           </button>
         </div>
 
-        {/* Size Selection Section */}
+        {/* Size Selection Section: 1-Tap Click to Add/Buy */}
         <div className={styles.quickSizeBody}>
           <div className={styles.quickSizePromptRow}>
             <span className={styles.quickSizeLabel}>
-              Select Size: <strong>{selectedSize?.name || selectedSize?.title || 'Choose a size'}</strong>
+              {actionType === 'buy' ? 'Select size to Buy Now:' : 'Select size to Add to Bag:'}
             </span>
             {onOpenSizeChart && (
               <button
@@ -111,40 +118,28 @@ export default function QuickSizeModal({
             {safeVariants.map((v) => {
               const rawLabel = v.name || v.title || 'M';
               const shortLabel = rawLabel.includes(' / ') ? rawLabel.split(' / ')[0].trim() : rawLabel;
-              const isSelected = selectedSize && (selectedSize.id === v.id || selectedSize.name === v.name || selectedSize.name === shortLabel);
               return (
                 <button
                   key={v.id}
                   type="button"
-                  className={`${styles.quickSizePill} ${isSelected ? styles.quickSizePillActive : ''}`}
-                  onClick={() => onSelectSize({ ...v, name: shortLabel })}
+                  className={styles.quickSizePill}
+                  onClick={() => handleSizeClick(v)}
+                  aria-label={`Select size ${shortLabel} and ${actionType === 'buy' ? 'buy now' : 'add to bag'}`}
                 >
                   <span className={styles.quickSizePillName}>{shortLabel}</span>
-                  {isSelected && <span className={styles.quickSizePillCheck}>✓</span>}
+                  <span className={styles.quickSizePillSub}>
+                    {actionType === 'buy' ? 'Tap to Buy' : 'Tap to Add'}
+                  </span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Action Button */}
+        {/* Footer reassurance */}
         <div className={styles.quickSizeFooter}>
-          <button
-            type="button"
-            className={styles.quickSizeConfirmBtn}
-            disabled={!selectedSize || isSubmitting}
-            onClick={() => onConfirm(actionType)}
-          >
-            {isSubmitting ? (
-              <span className={styles.spinner} />
-            ) : actionType === 'buy' ? (
-              `Buy Now · ${product?.price || ''}`
-            ) : (
-              `Add to Bag · ${product?.price || ''}`
-            )}
-          </button>
           <div className={styles.quickSizeReassurance}>
-            ✓ Complimentary Express Delivery & 7-Day Returns across India
+            ✓ Complimentary Express Delivery & 7-Day Doorstep Returns
           </div>
         </div>
       </div>

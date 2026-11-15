@@ -115,12 +115,13 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     handleCheckoutNow();
   };
 
-  const handleQuickSizeConfirm = (action) => {
+  const handleQuickSizeConfirm = (action, sizeChosen) => {
     setIsQuickSizeOpen(false);
+    const sizeToUse = sizeChosen || selectedSize;
     if (action === 'buy') {
-      handleCheckoutNow(selectedSize);
+      handleCheckoutNow(sizeToUse);
     } else {
-      handleAddToCart(selectedSize);
+      handleAddToCart(sizeToUse);
     }
   };
 
@@ -329,19 +330,6 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
                 {product?.oldPrice && (
                   <span className={styles.stickyOldPrice}>{product.oldPrice}</span>
                 )}
-                <span
-                  className={styles.stickySizeBadge}
-                  onClick={() => {
-                    setQuickSizeAction('cart');
-                    setIsQuickSizeOpen(true);
-                  }}
-                  role="button"
-                  tabIndex={0}
-                  title="Click to select or change size"
-                >
-                  {selectedSize ? `Size: ${selectedSize.name || selectedSize.title}` : 'Select Size'}
-                  <span style={{ fontSize: '9px', opacity: 0.65, marginLeft: '2px' }}>▾</span>
-                </span>
               </div>
             </div>
           </div>
