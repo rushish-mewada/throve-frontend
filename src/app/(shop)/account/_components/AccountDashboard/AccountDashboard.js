@@ -930,39 +930,47 @@ export default function AccountDashboard({
             {/* COUPONS TAB */}
             {displayTab === 'coupons' && (
               <div className={styles.tabContent}>
-                <h2 className={styles.tabTitle}>My Coupons</h2>
-                <div className={styles.couponList}>
-                  {(coupons.length > 0 ? coupons : [
-                    {
-                      code: 'THROVE15',
-                      title: 'FLAT 15% OFF',
-                      description: 'Valid on all streetwear jackets & tailoring. Min spend ₹2000.',
-                    },
-                    {
-                      code: 'FREEDEL',
-                      title: 'FREE SHIPPING',
-                      description: 'Complimentary Express Air delivery across all Indian pin codes.',
-                    },
-                  ]).map((coupon) => (
-                    <div key={coupon.code} className={styles.couponCard}>
-                      <div className={styles.couponLeft}>
-                        <span className={styles.discountAmt}>{coupon.title}</span>
-                        <p>{coupon.description}</p>
-                      </div>
-                      <div className={styles.couponRight}>
-                        <button
-                          type="button"
-                          className={styles.couponCode}
-                          onClick={() => handleCopyCoupon(coupon.code)}
-                          style={{ cursor: 'pointer', border: 'none' }}
-                          title="Click to copy code"
-                        >
-                          {copiedCoupon === coupon.code ? 'COPIED!' : coupon.code}
-                        </button>
-                      </div>
+                <h2 className={styles.tabTitle}>
+                  My Coupons {coupons.length > 0 && <span className={styles.countBadge}>{coupons.length}</span>}
+                </h2>
+
+                {coupons.length === 0 ? (
+                  <div className={styles.emptyState}>
+                    <div className={styles.emptyIcon}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#e0e0e0" strokeWidth="1">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                        <line x1="7" y1="7" x2="7.01" y2="7" />
+                      </svg>
                     </div>
-                  ))}
-                </div>
+                    <h3>No active coupons</h3>
+                    <p>Exclusive promotional codes and seasonal vouchers will appear here when available.</p>
+                    <Link href="/collections" className={styles.primaryBtn} style={{ textDecoration: 'none' }}>
+                      Explore Collections
+                    </Link>
+                  </div>
+                ) : (
+                  <div className={styles.couponList}>
+                    {coupons.map((coupon) => (
+                      <div key={coupon.code} className={styles.couponCard}>
+                        <div className={styles.couponLeft}>
+                          <span className={styles.discountAmt}>{coupon.title || coupon.code}</span>
+                          <p>{coupon.description}</p>
+                        </div>
+                        <div className={styles.couponRight}>
+                          <button
+                            type="button"
+                            className={styles.couponCode}
+                            onClick={() => handleCopyCoupon(coupon.code)}
+                            style={{ cursor: 'pointer', border: 'none' }}
+                            title="Click to copy code"
+                          >
+                            {copiedCoupon === coupon.code ? 'COPIED!' : coupon.code}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
