@@ -5,9 +5,22 @@
 
 .section {
   margin-top: 64px;
-  padding-top: 48px;
-  border-top: 1px solid #e5e5e5;
   scroll-margin-top: 80px;
+}
+
+.atelierFrame {
+  background: #ffffff;
+  border: 1px solid #e7e5e4;
+  border-radius: 16px;
+  padding: 36px 36px 8px 36px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+@media (max-width: 768px) {
+  .atelierFrame {
+    padding: 24px 20px 4px 20px;
+    border-radius: 12px;
+  }
 }
 
 /* ------------------------------------------------------------
@@ -61,6 +74,10 @@
   transition: background-color 0.15s ease;
 }
 
+.accordionItem:last-child {
+  border-bottom: none;
+}
+
 .accordionHeaderBtn {
   width: 100%;
   display: flex;
@@ -83,6 +100,36 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+.subIndexRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.subIndexBadge {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111111;
+  background-color: #f4f4f5;
+  border: 1px solid #e4e4e7;
+  padding: 2px 7px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.subIndexLabel {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #71717a;
 }
 
 .accordionTitle {

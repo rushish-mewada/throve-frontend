@@ -191,110 +191,119 @@ export default function ProductSpecsSection({ product }) {
       className={styles.section}
       aria-labelledby="specs-heading"
     >
-      {/* Section Header */}
-      <div className={styles.header}>
-        <span className={styles.tagline}>ATELIER DOSSIER · MATERIALITY & SARTORIAL FORM</span>
-        <h2 id="specs-heading" className={styles.title}>
-          Anatomy & Craftsmanship
-        </h2>
-        <p className={styles.subtitle}>
-          Material Composition, Architectural Drape & Tailoring
-        </p>
-      </div>
-
-      {/* Unified Accordion Engine for Anatomy & Craftsmanship */}
-      <div className={styles.accordionGroup}>
-        {/* Accordion Item 1: Specifications */}
-        <div className={`${styles.accordionItem} ${isDossierOpen ? styles.itemOpen : ""}`}>
-          <button
-            type="button"
-            className={styles.accordionHeaderBtn}
-            onClick={() => setIsDossierOpen((prev) => !prev)}
-            aria-expanded={isDossierOpen}
-            aria-controls="specifications-body"
-          >
-            <div className={styles.accordionHeaderLeft}>
-              <h3 className={styles.accordionTitle}>Specifications</h3>
-              <p className={styles.accordionSubtitle}>
-                Fabrication, Material Composition &amp; Garment Architecture
-              </p>
-            </div>
-            <div className={styles.accordionHeaderRight}>
-              <span
-                className={`${styles.iconButton} ${isDossierOpen ? styles.iconButtonOpen : ""}`}
-                aria-hidden="true"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`${styles.accordionChevron} ${isDossierOpen ? styles.chevronOpen : ""}`}
-                >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </span>
-            </div>
-          </button>
-
-          {isDossierOpen && (
-            <div id="specifications-body" className={styles.accordionBody}>
-              <div className={styles.specGrid}>
-                {specifications.map((item, idx) => (
-                  <div key={idx} className={styles.specCell}>
-                    <span className={styles.specLabel}>{item.label}</span>
-                    <span className={styles.specValue}>{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+      <div className={styles.atelierFrame}>
+        {/* Section Header */}
+        <div className={styles.header}>
+          <span className={styles.tagline}>ATELIER DOSSIER · MATERIALITY &amp; SARTORIAL FORM</span>
+          <h2 id="specs-heading" className={styles.title}>
+            Anatomy &amp; Craftsmanship
+          </h2>
+          <p className={styles.subtitle}>
+            Material Composition, Architectural Drape &amp; Tailoring
+          </p>
         </div>
 
-        {/* Accordion Item 2: Visual Study & Design in Detail */}
-        <div className={`${styles.accordionItem} ${isVisualStudyOpen ? styles.itemOpen : ""}`}>
-          <button
-            type="button"
-            className={styles.accordionHeaderBtn}
-            onClick={() => setIsVisualStudyOpen((prev) => !prev)}
-            aria-expanded={isVisualStudyOpen}
-            aria-controls="visual-study-body"
-          >
-            <div className={styles.accordionHeaderLeft}>
-              <h3 className={styles.accordionTitle}>Visual Study &amp; Design in Detail</h3>
-              <p className={styles.accordionSubtitle}>
-                An intimate study of textile purity, architectural silhouette, and artisanal hardware.
-              </p>
-            </div>
-            <div className={styles.accordionHeaderRight}>
-              <span
-                className={`${styles.iconButton} ${isVisualStudyOpen ? styles.iconButtonOpen : ""}`}
-                aria-hidden="true"
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`${styles.accordionChevron} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}
+        {/* Unified Accordion Sub-Sections */}
+        <div className={styles.accordionGroup}>
+          {/* Sub-Section 1: Anatomy & Specifications */}
+          <div className={`${styles.accordionItem} ${isDossierOpen ? styles.itemOpen : ""}`}>
+            <button
+              type="button"
+              className={styles.accordionHeaderBtn}
+              onClick={() => setIsDossierOpen((prev) => !prev)}
+              aria-expanded={isDossierOpen}
+              aria-controls="specifications-body"
+            >
+              <div className={styles.accordionHeaderLeft}>
+                <div className={styles.subIndexRow}>
+                  <span className={styles.subIndexBadge}>SUB-SECTION 01</span>
+                  <span className={styles.subIndexLabel}>ANATOMY · SPECIFICATIONS</span>
+                </div>
+                <h3 className={styles.accordionTitle}>Specifications</h3>
+                <p className={styles.accordionSubtitle}>
+                  Fabrication, Material Composition &amp; Garment Architecture
+                </p>
+              </div>
+              <div className={styles.accordionHeaderRight}>
+                <span
+                  className={`${styles.iconButton} ${isDossierOpen ? styles.iconButtonOpen : ""}`}
+                  aria-hidden="true"
                 >
-                  <polyline points="6 9 12 15 18 9" />
-                </svg>
-              </span>
-            </div>
-          </button>
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`${styles.accordionChevron} ${isDossierOpen ? styles.chevronOpen : ""}`}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </div>
+            </button>
 
-          {isVisualStudyOpen && (
-            <div id="visual-study-body" className={styles.accordionBody}>
-              <div className={styles.visualBlocksList}>
+            {isDossierOpen && (
+              <div id="specifications-body" className={styles.accordionBody}>
+                <div className={styles.specGrid}>
+                  {specifications.map((item, idx) => (
+                    <div key={idx} className={styles.specCell}>
+                      <span className={styles.specLabel}>{item.label}</span>
+                      <span className={styles.specValue}>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Sub-Section 2: Craftsmanship & Visual Study */}
+          <div className={`${styles.accordionItem} ${isVisualStudyOpen ? styles.itemOpen : ""}`}>
+            <button
+              type="button"
+              className={styles.accordionHeaderBtn}
+              onClick={() => setIsVisualStudyOpen((prev) => !prev)}
+              aria-expanded={isVisualStudyOpen}
+              aria-controls="visual-study-body"
+            >
+              <div className={styles.accordionHeaderLeft}>
+                <div className={styles.subIndexRow}>
+                  <span className={styles.subIndexBadge}>SUB-SECTION 02</span>
+                  <span className={styles.subIndexLabel}>CRAFTSMANSHIP · VISUAL STUDY</span>
+                </div>
+                <h3 className={styles.accordionTitle}>Visual Study &amp; Design in Detail</h3>
+                <p className={styles.accordionSubtitle}>
+                  An intimate study of textile purity, architectural silhouette, and artisanal hardware.
+                </p>
+              </div>
+              <div className={styles.accordionHeaderRight}>
+                <span
+                  className={`${styles.iconButton} ${isVisualStudyOpen ? styles.iconButtonOpen : ""}`}
+                  aria-hidden="true"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`${styles.accordionChevron} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}
+                  >
+                    <polyline points="6 9 12 15 18 9" />
+                  </svg>
+                </span>
+              </div>
+            </button>
+
+            {isVisualStudyOpen && (
+              <div id="visual-study-body" className={styles.accordionBody}>
+                <div className={styles.visualBlocksList}>
             {visualBlocks.map((block) => {
               // Layout: image_left (Image 1:1 on Left, Text on Right)
               if (block.layout === "image_left") {
@@ -444,6 +453,7 @@ export default function ProductSpecsSection({ product }) {
           )}
         </div>
       </div>
-    </section>
-  );
+    </div>
+  </section>
+);
 }
