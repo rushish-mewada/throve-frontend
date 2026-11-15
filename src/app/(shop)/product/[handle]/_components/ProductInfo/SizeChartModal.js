@@ -75,6 +75,12 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
 
   const data = getCategoryData(product?.handle, product?.title);
 
+  const availableSizes = Array.isArray(product?.sizes) && product.sizes.length > 0
+    ? product.sizes
+    : Array.isArray(product?.variants) && product.variants.length > 0
+      ? [...new Set(product.variants.map((v) => (v.name || v.title || 'M').split(' / ')[0].trim()))]
+      : ['S', 'M', 'L'];
+
   const formatValue = (valInches) => {
     if (unit === "cm") {
       return (valInches * 2.54).toFixed(1);
@@ -132,18 +138,25 @@ export default function SizeChartModal({ isOpen, onClose, product }) {
               <thead>
                 <tr>
                   <th className={styles.thMeasure}>Dimension</th>
-                  <th>S</th>
-                  <th>M</th>
-                  <th>L</th>
+                  {availableSizes.map((size) => (
+                    <th key={size}>{size}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {data.measurements.map((m) => (
                   <tr key={m.name}>
                     <td className={styles.tdMeasure}>{m.name}</td>
-                    <td>{formatValue(m.s)} {unit}</td>
-                    <td className={styles.tdHighlight}>{formatValue(m.m)} {unit}</td>
-                    <td>{formatValue(m.l)} {unit}</td>
+                    {availableSizes.map((size) => {
+                      const lower = size.toLowerCase();
+                      const val = m[lower] ?? (lower === 'xs' ? (m.s - 2) : lower === 's' ? m.s : lower === 'm' ? m.m : lower === 'l' ? m.l : lower === 'xl' ? (m.l + 2) : m.m);
+                      const isDefault = lower === 'm';
+                      return (
+                        <td key={size} className={isDefault ? styles.tdHighlight : undefined}>
+                          {val !== undefined ? `${formatValue(val)} ${unit}` : '—'}
+                        </td>
+                      );
+                    })}
                   </tr>
                 ))}
               </tbody>

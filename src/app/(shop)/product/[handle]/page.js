@@ -6,6 +6,8 @@ import ProductGrid from './_components/ProductGrid/ProductGrid';
 import ProductReviews from './_components/ProductReviews/ProductReviews';
 import { getProductByHandle, LAUNCH_PRODUCTS } from '@/lib/catalog';
 import { getProduct, getProducts } from '@/lib/storefront/products';
+import { getStorefrontConfig } from '@/lib/storefront/config';
+import { getReviewsForProduct } from '@/lib/storefront/reviews';
 import styles from './page.module.css';
 
 export default async function ProductPage({ params }) {
@@ -14,13 +16,20 @@ export default async function ProductPage({ params }) {
 
   let product = null;
   let catalogPool = [];
+  let config = null;
+  let initialReviews = [];
+
   try {
-    const [liveProd, liveList] = await Promise.all([
+    const [liveProd, liveList, liveConfig, liveReviews] = await Promise.all([
       getProduct(handle).catch(() => null),
       getProducts().catch(() => []),
+      getStorefrontConfig().catch(() => null),
+      getReviewsForProduct(handle).catch(() => []),
     ]);
     product = liveProd;
-    catalogPool = liveList;
+    catalogPool = liveList || [];
+    config = liveConfig;
+    initialReviews = liveReviews || [];
   } catch {
     product = null;
   }
@@ -32,11 +41,24 @@ export default async function ProductPage({ params }) {
   if (!product) {
     notFound();
   }
+
+  if (!initialReviews || initialReviews.length === 0) {
+    initialReviews = await getReviewsForProduct(product.handle).catch(() => []);
+  }
+
   const sourcePool = catalogPool.length > 0 ? catalogPool : LAUNCH_PRODUCTS;
 
-  const relatedProducts = sourcePool
-    .filter((p) => p.handle !== product.handle)
-    .slice(0, 4);
+  // Dynamically match related items within the same category
+  const categoryMatches = sourcePool.filter(
+    (p) => p.category?.toLowerCase() === product.category?.toLowerCase() && p.handle !== product.handle
+  );
+  const relatedProducts = (categoryMatches.length >= 4
+    ? categoryMatches
+    : [
+        ...categoryMatches,
+        ...sourcePool.filter((p) => p.handle !== product.handle && !categoryMatches.some((m) => m.handle === p.handle)),
+      ]
+  ).slice(0, 4);
 
   const popularProducts = [...sourcePool]
     .reverse()
@@ -95,7 +117,7 @@ export default async function ProductPage({ params }) {
           <ProductGallery images={product.images} product={product} />
         </div>
         <div className={styles.infoColumn}>
-          <ProductInfo product={product} />
+          <ProductInfo product={product} config={config} />
         </div>
       </div>
       
@@ -105,7 +127,11 @@ export default async function ProductPage({ params }) {
         seeAllLink={`/collections/${product.category.toLowerCase() === 'men' ? 'men' : 'women'}`}
       />
       
-      <ProductReviews productHandle={product?.handle} productTitle={product?.title} />
+      <ProductReviews
+        productHandle={product?.handle}
+        productTitle={product?.title}
+        initialReviews={initialReviews}
+      />
 
       <ProductGrid
         title="Popular This Week"

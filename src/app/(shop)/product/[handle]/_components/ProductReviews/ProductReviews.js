@@ -9,27 +9,6 @@ import CustomTextarea from '@/components/ui/CustomTextarea/CustomTextarea';
 import { verifyReviewEligibilityAction, submitVerifiedReviewAction } from '@/actions/reviews';
 import styles from './ProductReviews.module.css';
 
-const VERIFIED_REVIEWS_BY_HANDLE = {
-  'sleeveless-princess-sheath-dress': [
-    {
-      id: 'rev-kanta-01',
-      name: 'Kanta Jain',
-      verified: true,
-      orderId: 'THR-MXPGSL',
-      stars: 5,
-      date: '08 Nov 2026',
-      title: 'Exceptional tailoring and contoured sheath fit',
-      comment: 'The princess seams and structured silhouette are flawless. Delivered to Charni Road, Mumbai in bespoke packaging within 2 days.',
-      fitFeedback: 'True to Size',
-      tags: ['Flattering Seams', 'Tailored Fit'],
-      media: [
-        { type: 'image', url: '/products/sleeveless-princess-sheath-dress/front.jpg?v=3', alt: 'Kanta Jain fit' },
-      ],
-      likes: 1,
-    },
-  ],
-};
-
 const RATING_DESCRIPTIONS = {
   5: '5.0 · Exceptional Couture Standard',
   4: '4.0 · Very Good Tailoring & Fit',
@@ -38,13 +17,16 @@ const RATING_DESCRIPTIONS = {
   1: '1.0 · Dissatisfied with Garment',
 };
 
-export default function ProductReviews({ productHandle = 'default', productTitle = 'this style' }) {
+export default function ProductReviews({
+  productHandle = 'default',
+  productTitle = 'this style',
+  initialReviews = [],
+}) {
   const { user, isLoggedIn } = useStore();
   const fileInputRef = useRef(null);
 
-  // Reviews list & filters: only Kanta Jain's review for 'sleeveless-princess-sheath-dress', empty for others
-  const baseReviews = VERIFIED_REVIEWS_BY_HANDLE[productHandle] || [];
-  const [reviews, setReviews] = useState(baseReviews);
+  // Reviews list & filters hydrated dynamically from server initialReviews and local guest reviews
+  const [reviews, setReviews] = useState(initialReviews);
   const [selectedRatingFilter, setSelectedRatingFilter] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // 'all', 'media', '5stars', '4stars'
 
@@ -80,7 +62,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
   // 1. Hydrate stored reviews for this product
   useEffect(() => {
     try {
-      const base = VERIFIED_REVIEWS_BY_HANDLE[productHandle] || [];
+      const base = initialReviews || [];
       const stored = localStorage.getItem(`throve_reviews_${productHandle}`);
       if (stored) {
         const parsed = JSON.parse(stored);
@@ -101,9 +83,9 @@ export default function ProductReviews({ productHandle = 'default', productTitle
       }
       setReviews(base);
     } catch {
-      // Ignore storage errors
+      setReviews(initialReviews || []);
     }
-  }, [productHandle]);
+  }, [productHandle, initialReviews]);
 
   // 2. Automatically check verification eligibility when user logs in or page loads
   useEffect(() => {

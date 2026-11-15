@@ -4,7 +4,7 @@ import { useState } from 'react';
 import styles from './ProductInfo.module.css';
 import AddToCartClient from './AddToCartClient';
 
-export default function ProductInfo({ product }) {
+export default function ProductInfo({ product, config }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -42,7 +42,7 @@ export default function ProductInfo({ product }) {
               <span className={styles.starIcon}>★</span>
               <span>{product.rating}</span>
               <span className={styles.reviewsCountText}>
-                ({product.reviewsCount || (product.handle === 'sleeveless-princess-sheath-dress' ? '1' : '1')})
+                ({product.reviewsCount ?? (product.rating ? 1 : 0)})
               </span>
             </button>
           )}
@@ -84,20 +84,23 @@ export default function ProductInfo({ product }) {
             }}
           >
             <div>
-              <strong style={{ color: '#1c1917' }}>Fabric & Drape:</strong> Japanese-grade high-density structured weave with breathable soft-touch hand feel.
+              <strong style={{ color: '#1c1917' }}>Fabric & Drape:</strong>{' '}
+              {product.specs?.fabric || 'Curated high-grade weave with soft-touch luxury drape.'}
             </div>
             <div>
-              <strong style={{ color: '#1c1917' }}>Tailoring:</strong> Precision contouring princess seams, reinforced bonded hems, and antique hardware.
+              <strong style={{ color: '#1c1917' }}>Tailoring:</strong>{' '}
+              {product.specs?.tailoring || 'Precision contouring seams and bespoke reinforced finish.'}
             </div>
             <div>
-              <strong style={{ color: '#1c1917' }}>Garment Care:</strong> Specialist dry clean recommended or gentle cold hand wash. Steam iron on low heat.
+              <strong style={{ color: '#1c1917' }}>Garment Care:</strong>{' '}
+              {product.specs?.care || 'Specialist dry clean recommended or gentle cold hand wash. Steam iron on low heat.'}
             </div>
           </div>
         )}
       </div>
 
       {/* Client Component for interactivity (Color, Size, Buttons, VTON, Size Guide, Delivery T&C) */}
-      <AddToCartClient variants={product.variants} colors={product.colors} product={product} />
+      <AddToCartClient variants={product.variants} colors={product.colors} product={product} config={config} />
     </div>
   );
 }

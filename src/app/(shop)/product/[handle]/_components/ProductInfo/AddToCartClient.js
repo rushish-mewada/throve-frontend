@@ -8,7 +8,7 @@ import DeliveryTermsModal from './DeliveryTermsModal';
 import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 
-export default function AddToCartClient({ variants = [], colors = [], product }) {
+export default function AddToCartClient({ variants = [], colors = [], product, config }) {
   const router = useRouter();
   const { addToCart, setIsCartDrawerOpen } = useStore();
 
@@ -214,7 +214,12 @@ export default function AddToCartClient({ variants = [], colors = [], product })
             Complimentary Express Delivery & 7-Day Returns
           </strong>
           <span>
-            Handcrafted luxury piece in ready stock. Secured instant order processing with Cashfree One-Click Checkout & COD available across India.
+            {product?.inStock !== false ? 'Handcrafted luxury piece in ready stock.' : 'Limited allocation bespoke order.'}{' '}
+            Secured instant order processing with{' '}
+            {config?.commerce?.activePaymentGateway
+              ? (config.commerce.activePaymentGateway.charAt(0).toUpperCase() + config.commerce.activePaymentGateway.slice(1))
+              : '1-Click Checkout'}
+            {config?.commerce?.codEnabled !== false ? ' & COD available across India.' : ' with secure prepaid delivery.'}
           </span>
         </div>
       </div>
@@ -240,6 +245,7 @@ export default function AddToCartClient({ variants = [], colors = [], product })
       <DeliveryTermsModal
         isOpen={isDeliveryOpen}
         onClose={() => setIsDeliveryOpen(false)}
+        config={config}
       />
     </div>
   );

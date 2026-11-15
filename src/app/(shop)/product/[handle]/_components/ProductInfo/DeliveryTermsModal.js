@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import styles from "./ProductInfo.module.css";
 
-export default function DeliveryTermsModal({ isOpen, onClose }) {
+export default function DeliveryTermsModal({ isOpen, onClose, config }) {
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e) => {
@@ -53,7 +53,7 @@ export default function DeliveryTermsModal({ isOpen, onClose }) {
               <div>
                 <h4 className={styles.deliveryItemTitle}>Dispatch & Timelines</h4>
                 <p className={styles.deliveryItemDesc}>
-                  Orders are packed and dispatched within 24–48 business hours from our fulfillment hub.
+                  Orders are packed and dispatched within {config?.shipping?.dispatchSlaHours ? `${config.shipping.dispatchSlaHours} business hours` : '24–48 business hours'} from our fulfillment hub.
                   Metro cities receive delivery in <strong>2–4 business days</strong>; regional destinations in <strong>4–7 business days</strong>.
                 </p>
               </div>
@@ -71,7 +71,11 @@ export default function DeliveryTermsModal({ isOpen, onClose }) {
               <div>
                 <h4 className={styles.deliveryItemTitle}>Complimentary Shipping</h4>
                 <p className={styles.deliveryItemDesc}>
-                  We extend <strong>Free Express Shipping</strong> on all prepaid orders across India via Blue Dart and Delhivery.
+                  We extend <strong>Free Express Shipping</strong> on{' '}
+                  {config?.commerce?.freeShippingThresholdPaise
+                    ? `all orders above ₹${Math.round(config.commerce.freeShippingThresholdPaise / 100).toLocaleString('en-IN')}`
+                    : 'all prepaid orders across India'}{' '}
+                  via Blue Dart and Delhivery.
                 </p>
               </div>
             </div>
@@ -87,7 +91,9 @@ export default function DeliveryTermsModal({ isOpen, onClose }) {
               <div>
                 <h4 className={styles.deliveryItemTitle}>Cash On Delivery (COD)</h4>
                 <p className={styles.deliveryItemDesc}>
-                  Cash on Delivery is available PAN-India up to ₹15,000 with a nominal verification fee of ₹99. OTP verification is requested upon placing order.
+                  {config?.commerce?.codEnabled === false
+                    ? 'Cash on Delivery is currently disabled. We support 100% secure prepaid payment options.'
+                    : `Cash on Delivery is available PAN-India up to ₹${config?.commerce?.codMaxOrderPaise ? Math.round(config.commerce.codMaxOrderPaise / 100).toLocaleString('en-IN') : '15,000'} with a nominal verification fee of ₹99. OTP verification is requested upon placing order.`}
                 </p>
               </div>
             </div>

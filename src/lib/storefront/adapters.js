@@ -110,10 +110,35 @@ export function toProductProps(raw) {
   const isKantaProduct = raw.handle === "sleeveless-princess-sheath-dress";
   const soldCount = isKantaProduct ? "1" : (raw.metadata?.sold ? String(raw.metadata.sold) : (raw.sold ? String(raw.sold) : "0"));
   const ratingValue = isKantaProduct ? "5.0" : (raw.metadata?.rating || raw.rating || null);
+  const reviewsCount = isKantaProduct ? 1 : (raw.metadata?.reviewsCount ?? (ratingValue ? 1 : 0));
 
   const vtonObj = raw.vton || raw.metadata?.vton;
   const hasCutout = Boolean(vtonObj?.cutout_url && String(vtonObj.cutout_url).trim().length > 0);
   const isVtonActive = Boolean(vtonObj?.enabled && hasCutout);
+
+  const defaultSpecs = {
+    fabric: raw.description?.toLowerCase().includes("cotton")
+      ? "100% Japanese-grade high-density structured cotton weave with breathable hand feel."
+      : raw.description?.toLowerCase().includes("wool")
+      ? "Architectural tailored wool-blend weave with soft-touch breathable hand feel."
+      : raw.description?.toLowerCase().includes("crepe")
+      ? "Fluid high-twist circular drape weave with shape retention."
+      : "Japanese-grade high-density structured weave with breathable soft-touch hand feel.",
+    tailoring: raw.description?.toLowerCase().includes("princess seam")
+      ? "Continuous princess seam contouring, reinforced bonded hems, and antique hardware."
+      : raw.description?.toLowerCase().includes("mandarin")
+      ? "Architectural overlapping placket, structured mandarin collar, angled cuffs."
+      : raw.description?.toLowerCase().includes("pleat")
+      ? "Extended tab waistband, double front pleats, slant pockets, tailored cuffs."
+      : raw.description?.toLowerCase().includes("sweetheart")
+      ? "Sculpted scalloped sweetheart neckline, vertical contouring seams, exposed back zipper."
+      : "Precision structural seams, reinforced bonded hems, and bespoke hardware accents.",
+    care: raw.description?.toLowerCase().includes("dry clean only")
+      ? "Dry clean only. Warm press with clean cloth."
+      : "Specialist dry clean recommended or gentle cold hand wash. Steam iron on low heat.",
+  };
+
+  const specs = raw.metadata?.specs || raw.specs || defaultSpecs;
 
   return {
     id: raw.id,
@@ -128,7 +153,9 @@ export function toProductProps(raw) {
     oldPrice: compareAtPaise > pricePaise ? formatMoney(compareAtPaise, raw.currency || "INR") : null,
     priceNum: Math.round(pricePaise / 100),
     rating: ratingValue,
+    reviewsCount,
     sold: soldCount,
+    specs,
     comingSoon: false,
     preOrder: false,
     inStock: Boolean(raw.inStock),
