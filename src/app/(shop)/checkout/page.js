@@ -429,12 +429,12 @@ export default function CheckoutPage() {
     }
   }, [isMounted, cartItems, router]);
 
-  // Loyalty Points calculation (10 Pts = ₹1 rebate)
-  const availablePoints = user?.points ?? 4200;
-  const pointsConversion = 10;
-  const maxPointsDiscount = Math.floor(availablePoints / pointsConversion);
-  const pointsDiscount = redeemLoyalty ? Math.min(maxPointsDiscount, Math.floor(cartSubtotal * 0.25)) : 0;
-  const pointsRedeemed = pointsDiscount * pointsConversion;
+  // Loyalty Points calculation: 1 Pt = ₹1 instant discount
+  const availablePoints = user?.points ?? 500;
+  const maxPointsDiscount = availablePoints;
+  const pointsToRedeem = Math.min(maxPointsDiscount, cartSubtotal);
+  const pointsDiscount = redeemLoyalty ? pointsToRedeem : 0;
+  const pointsRedeemed = pointsDiscount; // 1 Pt = ₹1
 
   // Calculate pricing breakdown
   const couponDiscount = appliedCoupon?.discount || 0;
@@ -752,7 +752,7 @@ export default function CheckoutPage() {
             className={`${styles.loyaltyToggleBtn} ${redeemLoyalty ? styles.loyaltyActiveBtn : ''}`}
             onClick={() => setRedeemLoyalty(!redeemLoyalty)}
           >
-            {redeemLoyalty ? 'Redeemed ✓' : `Redeem ₹${Math.min(maxPointsDiscount, Math.floor(cartSubtotal * 0.25)).toLocaleString('en-IN')}`}
+            {redeemLoyalty ? 'Redeemed ✓' : `Redeem ₹${pointsToRedeem.toLocaleString('en-IN')}`}
           </button>
         </div>
       )}
