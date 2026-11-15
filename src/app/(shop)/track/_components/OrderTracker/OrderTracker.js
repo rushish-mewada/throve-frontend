@@ -1,19 +1,72 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { trackOrderAction } from '@/actions/tracking';
 import styles from './OrderTracker.module.css';
 
-export default function OrderTracker() {
-  const [orderId, setOrderId] = useState('');
-  const [contact, setContact] = useState('');
+/**
+ * Universal Order & Shipment Tracker Component
+ * Automatically displays live tracking for logged-in users with zero manual input.
+ * Allows guest users to look up orders via Order Number + Phone/Email.
+ */
+export default function OrderTracker({
+  loggedInUser = null,
+  initialOrders = [],
+  initialSelectedId = null,
+}) {
+  const hasUserOrders = Boolean(loggedInUser && Array.isArray(initialOrders) && initialOrders.length > 0);
+
+  // Determine initial active order for logged-in users
+  const defaultOrder = hasUserOrders
+    ? (initialOrders.find((o) => o.id === initialSelectedId || o.publicId === initialSelectedId) || initialOrders[0])
+    : null;
+
+  const [selectedOrder, setSelectedOrder] = useState(defaultOrder);
+  const [showManualForm, setShowManualForm] = useState(!hasUserOrders);
+
+  // Manual search form states
+  const [orderId, setOrderId] = useState(initialSelectedId || '');
+  const [contact, setContact] = useState(loggedInUser?.phone || '');
   const [isLoading, setIsLoading] = useState(false);
   const [trackingResult, setTrackingResult] = useState(null);
   const [error, setError] = useState('');
 
-  const handleTrack = async (e) => {
+  // Fetch tracking for a selected order
+  const fetchTrackingForOrder = useCallback(async (orderToTrack) => {
+    if (!orderToTrack) return;
+    setIsLoading(true);
+    setError('');
+    try {
+      const contactVal = loggedInUser?.phone || loggedInUser?.email || orderToTrack.email || '';
+      const result = await trackOrderAction({
+        orderId: orderToTrack.id || orderToTrack.publicId,
+        contact: contactVal,
+      });
+
+      if (result.ok && result.data) {
+        setTrackingResult(result.data);
+      } else {
+        setTrackingResult(null);
+        setError(result.error || 'Unable to locate tracking details for this order.');
+      }
+    } catch {
+      setTrackingResult(null);
+      setError('An error occurred while tracking your shipment. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [loggedInUser]);
+
+  // Automatically fetch tracking on load for logged-in user's active order
+  useEffect(() => {
+    if (hasUserOrders && selectedOrder && !showManualForm) {
+      fetchTrackingForOrder(selectedOrder);
+    }
+  }, [hasUserOrders, selectedOrder, showManualForm, fetchTrackingForOrder]);
+
+  const handleManualTrack = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -45,55 +98,145 @@ export default function OrderTracker() {
 
   return (
     <div className={styles.wrapper}>
-      {/* Search Card */}
-      <form onSubmit={handleTrack} className={styles.searchCard}>
-        <div className={styles.inputGroup}>
-          <label htmlFor="orderId" className={styles.label}>Order Number</label>
-          <input
-            id="orderId"
-            type="text"
-            placeholder="e.g. THR-1001 or 1"
-            value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </div>
+      {/* Logged-In User Banner & Order Selector */}
+      {hasUserOrders && !showManualForm && (
+        <div className={styles.loggedInSection}>
+          <div className={styles.clientWelcomeBar}>
+            <div>
+              <span className={styles.clientEyebrow}>VERIFIED CLIENT ACCOUNT</span>
+              <h3 className={styles.clientName}>{loggedInUser.name}</h3>
+            </div>
+            <button
+              type="button"
+              className={styles.switchModeBtn}
+              onClick={() => setShowManualForm(true)}
+            >
+              Track Another Order ↗
+            </button>
+          </div>
 
-        <div className={styles.inputGroup}>
-          <label htmlFor="contact" className={styles.label}>Phone Number or Email</label>
-          <input
-            id="contact"
-            type="text"
-            placeholder="+91 98926 91094 or client@throve.in"
-            value={contact}
-            onChange={(e) => setContact(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </div>
-
-        {error && <p className={styles.errorMessage}>⚠ {error}</p>}
-
-        <button
-          type="submit"
-          disabled={isLoading}
-          className={styles.submitBtn}
-          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
-        >
-          {isLoading ? (
-            <>
-              <span className={styles.spinner} />
-              <span>Scanning Logistics Network...</span>
-            </>
-          ) : (
-            'Track Live Shipment'
+          {/* Multiple Orders Selector Pills */}
+          {initialOrders.length > 1 && (
+            <div className={styles.orderSelectBox}>
+              <span className={styles.orderSelectLabel}>Select Order to Track:</span>
+              <div className={styles.orderPillsList}>
+                {initialOrders.map((o) => {
+                  const isSelected = selectedOrder?.id === o.id;
+                  return (
+                    <button
+                      key={o.id}
+                      type="button"
+                      className={`${styles.orderPill} ${isSelected ? styles.orderPillActive : ''}`}
+                      onClick={() => {
+                        setSelectedOrder(o);
+                        fetchTrackingForOrder(o);
+                      }}
+                    >
+                      <span className={styles.orderPillId}>#{o.id}</span>
+                      <span className={styles.orderPillMeta}>{o.date || 'Recent'}</span>
+                      <span className={styles.orderPillStatus}>
+                        {o.status === 'delivered' ? 'Delivered' : (o.status || 'Active')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           )}
-        </button>
-      </form>
+        </div>
+      )}
+
+      {/* Manual Search Form (For Guests or when toggled) */}
+      {showManualForm && (
+        <form onSubmit={handleManualTrack} className={styles.searchCard}>
+          {hasUserOrders && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#111' }}>GUEST ORDER LOOKUP</span>
+              <button
+                type="button"
+                className={styles.switchModeBtn}
+                onClick={() => {
+                  setShowManualForm(false);
+                  if (selectedOrder) fetchTrackingForOrder(selectedOrder);
+                }}
+              >
+                ← Back to My Orders
+              </button>
+            </div>
+          )}
+
+          <div className={styles.inputGroup}>
+            <label htmlFor="orderId" className={styles.label}>Order Number</label>
+            <input
+              id="orderId"
+              type="text"
+              placeholder="e.g. THR-6XXS4P or 1001"
+              value={orderId}
+              onChange={(e) => setOrderId(e.target.value)}
+              className={styles.input}
+              required
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
+            <label htmlFor="contact" className={styles.label}>Phone Number or Email</label>
+            <input
+              id="contact"
+              type="text"
+              placeholder="+91 98926 91094 or client@throve.in"
+              value={contact}
+              onChange={(e) => setContact(e.target.value)}
+              className={styles.input}
+              required
+            />
+          </div>
+
+          {error && <p className={styles.errorMessage}>⚠ {error}</p>}
+
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={styles.submitBtn}
+            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+          >
+            {isLoading ? (
+              <>
+                <span className={styles.spinner} />
+                <span>Scanning Logistics Network...</span>
+              </>
+            ) : (
+              'Track Live Shipment'
+            )}
+          </button>
+        </form>
+      )}
+
+      {/* Loading Skeleton */}
+      {isLoading && (
+        <div className={styles.loadingCard}>
+          <div className={styles.spinnerDark} />
+          <p className={styles.loadingText}>
+            Connecting to Shiprocket Multi-Carrier Hub &amp; fetching live telemetry...
+          </p>
+        </div>
+      )}
+
+      {/* Error Message for Logged-In Flow */}
+      {!isLoading && error && !showManualForm && (
+        <div className={styles.errorBox}>
+          <p>⚠ {error}</p>
+          <button
+            type="button"
+            className={styles.retryBtn}
+            onClick={() => selectedOrder && fetchTrackingForOrder(selectedOrder)}
+          >
+            Retry Tracking
+          </button>
+        </div>
+      )}
 
       {/* Results View */}
-      {trackingResult && (
+      {!isLoading && trackingResult && (
         <div className={styles.resultCard}>
           <div className={styles.resultHeader}>
             <div>

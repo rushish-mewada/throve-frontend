@@ -9,6 +9,7 @@ import DeliveryTermsModal from './DeliveryTermsModal';
 import QuickSizeModal from './QuickSizeModal';
 import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
 import { launchCashfreeCheckout } from '@/lib/cashfree';
+import { checkPincodeAction } from '@/actions/serviceability';
 
 export default function AddToCartClient({ variants = [], colors = [], product, config }) {
   const router = useRouter();
@@ -34,6 +35,32 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [isQuickSizeOpen, setIsQuickSizeOpen] = useState(false);
   const [quickSizeAction, setQuickSizeAction] = useState('cart'); // 'cart' | 'buy'
+  const [pincode, setPincode] = useState('');
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [pincodeResult, setPincodeResult] = useState(null);
+
+  const handleCheckPincode = async (e) => {
+    e?.preventDefault?.();
+    const cleanPin = pincode.trim().replace(/\D/g, '');
+    if (cleanPin.length !== 6) {
+      setPincodeResult({ ok: false, error: 'Please enter a valid 6-digit Indian pincode.' });
+      return;
+    }
+    setPincodeLoading(true);
+    setPincodeResult(null);
+    try {
+      const res = await checkPincodeAction(cleanPin);
+      if (res.ok) {
+        setPincodeResult(res);
+      } else {
+        setPincodeResult({ ok: false, error: res.error || 'Unable to verify pincode.' });
+      }
+    } catch {
+      setPincodeResult({ ok: false, error: 'Failed to verify pincode.' });
+    } finally {
+      setPincodeLoading(false);
+    }
+  };
 
   const prodImg = (Array.isArray(product?.images) && product.images.length > 0)
     ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)
@@ -258,6 +285,64 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
         </button>
       </div>
 
+      {/* Pincode Serviceability Checker */}
+      <div className={styles.pincodeBox}>
+        <div className={styles.pincodeHeader}>
+          <span className={styles.pincodeTitle}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+              <circle cx="12" cy="10" r="3" />
+            </svg>
+            <span>Delivery &amp; Serviceability</span>
+          </span>
+          <button
+            type="button"
+            className={styles.deliveryLink}
+            onClick={() => setIsDeliveryOpen(true)}
+            style={{ margin: 0 }}
+          >
+            Delivery T&amp;C
+          </button>
+        </div>
+
+        <form onSubmit={handleCheckPincode} className={styles.pincodeForm}>
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={6}
+            placeholder="Enter 6-digit Pincode"
+            value={pincode}
+            onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            className={styles.pincodeInput}
+            aria-label="Delivery Pincode"
+          />
+          <button
+            type="submit"
+            disabled={pincodeLoading || pincode.length !== 6}
+            className={styles.pincodeBtn}
+          >
+            {pincodeLoading ? 'Checking...' : 'Check'}
+          </button>
+        </form>
+
+        {pincodeResult && (
+          <div>
+            {pincodeResult.serviceable ? (
+              <div className={styles.pincodeResultSuccess}>
+                <div style={{ fontWeight: 600 }}>✓ {pincodeResult.message}</div>
+                <div style={{ color: '#166534', fontSize: '0.74rem' }}>
+                  • {pincodeResult.codStatus} · Dispatched via {pincodeResult.carrier}
+                </div>
+              </div>
+            ) : (
+              <div className={styles.pincodeResultError}>
+                ✕ {pincodeResult.error || pincodeResult.message}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* Luxury Delivery & Service Guarantee */}
       <div
         style={{
@@ -293,17 +378,6 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
             {config?.commerce?.codEnabled !== false ? ' & COD available across India.' : ' with secure prepaid delivery.'}
           </span>
         </div>
-      </div>
-
-      {/* Delivery T&C Trigger */}
-      <div>
-        <button
-          type="button"
-          className={styles.deliveryLink}
-          onClick={() => setIsDeliveryOpen(true)}
-        >
-          Delivery T&C
-        </button>
       </div>
 
       {/* Floating Sticky Bottom Bar when main CTAs are scrolled out of view */}
