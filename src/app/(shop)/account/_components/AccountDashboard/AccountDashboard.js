@@ -179,11 +179,10 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
     }
   };
 
-  // On desktop, we always want to show content. If state is 'menu', default to 'overview'.
-  const displayTab = activeTab === 'menu' ? 'overview' : activeTab;
+  // On desktop, default to 'orders' when menu state
+  const displayTab = activeTab === 'menu' ? 'orders' : activeTab;
 
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: <><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></> },
     { id: 'orders', label: 'Orders & Returns', icon: <><path d="M21 8V21H3V8"></path><path d="M1 3h22v5H1z"></path></> },
     { id: 'wishlist', label: 'Wishlist', icon: <><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></> },
     { id: 'coupons', label: 'My Coupons', icon: <><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></> },
@@ -226,7 +225,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
           
           <div className={styles.throveMenuList}>
             <div className={styles.throveMenuDivider}></div>
-            {navItems.filter(item => item.id !== 'overview').map(item => (
+            {navItems.map(item => (
               <div key={item.id} className={styles.throveMenuItem} onClick={() => setActiveTab(item.id)}>
                 <div className={styles.throveMenuLeft}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -322,70 +321,6 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
 
           {/* Main Panel */}
           <section className={styles.panel}>
-            
-            {/* OVERVIEW TAB */}
-            {displayTab === 'overview' && (
-              <div className={styles.tabContent}>
-                <h2 className={styles.tabTitle}>Overview</h2>
-                
-                <div className={styles.overviewGrid}>
-                  <div className={styles.overviewCard} onClick={() => setActiveTab('orders')}>
-                    <div className={styles.cardIcon}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M21 8V21H3V8"></path><path d="M1 3h22v5H1z"></path>
-                      </svg>
-                    </div>
-                    <div className={styles.cardText}>
-                      <h3>Orders</h3>
-                      <p>Check your order status</p>
-                    </div>
-                  </div>
-                  <div className={styles.overviewCard} onClick={() => setActiveTab('coupons')}>
-                    <div className={styles.cardIcon}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line>
-                      </svg>
-                    </div>
-                    <div className={styles.cardText}>
-                      <h3>Coupons</h3>
-                      <p>Manage discounts & offers</p>
-                    </div>
-                  </div>
-                  <div className={styles.overviewCard} onClick={() => setActiveTab('addresses')}>
-                    <div className={styles.cardIcon}>
-                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle>
-                      </svg>
-                    </div>
-                    <div className={styles.cardText}>
-                      <h3>Addresses</h3>
-                      <p>Save delivery locations</p>
-                    </div>
-                  </div>
-                </div>
-
-                <h3 className={styles.sectionSubTitle}>Recent Orders</h3>
-                {orders.length === 0 ? (
-                  <p style={{ color: "#78716c", fontSize: "14px", margin: "12px 0" }}>No recent orders. Your purchases will appear here.</p>
-                ) : (
-                  orders.slice(0,1).map(order => (
-                    <div key={order.id} className={styles.orderCard}>
-                      <div className={styles.orderCardImage}>
-                        <Image src={order.image} alt="Product" fill style={{ objectFit: 'cover' }} />
-                      </div>
-                      <div className={styles.orderCardInfo}>
-                        <h4>{order.id}</h4>
-                        <p>Ordered on {order.date}</p>
-                        <span className={`${styles.statusBadge} ${styles[order.status.toLowerCase()] || ''}`}>{order.status}</span>
-                      </div>
-                      <div className={styles.orderCardAction}>
-                        <Link href="/track" className={styles.viewBtn} style={{ textDecoration: 'none', display: 'inline-block' }}>Track</Link>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
 
             {/* ORDERS TAB */}
             {displayTab === 'orders' && (
