@@ -5,175 +5,39 @@ import Image from "next/image";
 import styles from "./ProductSpecsSection.module.css";
 
 /**
- * Returns comprehensive technical specifications for the product.
- * If product defines explicit specifications, uses them; otherwise generates high-fidelity specs based on product attributes.
+ * Extracts structured technical specifications from backend product data.
+ * Checks product.specifications, product.metadata.specifications, or converts product.specs if available.
+ * Returns empty array if no backend specifications are defined.
  */
-function getNormalizedSpecifications(product) {
+function getSpecificationsFromProduct(product) {
   if (Array.isArray(product?.specifications) && product.specifications.length > 0) {
-    return product.specifications;
+    return product.specifications.filter((s) => s && s.label && s.value);
   }
-
-  const desc = (product?.description || "").toLowerCase();
-  const title = (product?.title || "").toLowerCase();
-  const subcategory = (product?.subcategory || product?.category || "Apparel").toLowerCase();
-
-  // Determine material blend & composition
-  let composition = "100% Japanese-Grade High-Density Cotton Twill";
-  let blendPercent = "100% Cotton (0% Synthetics)";
-  let weaveWeight = "240 GSM Structured Twill Weave";
-  let fit = "Relaxed Tailored Silhouette with Structural Drape";
-  let collar = "Architectural Standing Collar with Clean Contour";
-  let closure = "Bespoke Geometric Matte Metal Buttons";
-  let sleeves = "Long Sleeve with Angled French Beveled Cuffs";
-  let pockets = "2 Concealed Side Seam Pockets";
-  let washCare = "Gentle Cold Machine Wash or Dry Clean. Steam Iron on Low Heat.";
-  let hem = "Standard Straight Hem with Reinforced Blind Stitch";
-  let lining = "Unlined with Clean-Finished French Bound Seams";
-
-  if (title.includes("dress") || subcategory.includes("dress")) {
-    if (title.includes("sheath") || title.includes("princess")) {
-      composition = "Tailored Architectural Wool-Blend Weave";
-      blendPercent = "70% Wool, 25% Viscose, 5% Elastane Stretch";
-      weaveWeight = "280 GSM Structured Compact Weave";
-      fit = "Sculpted Princess-Line Contoured Sheath Fit";
-      collar = "Asymmetric Lapel Shirt Collar";
-      closure = "Twin Custom Geometric Matte Buttons";
-      sleeves = "Sleeveless with Clean Reinforced Armholes";
-      pockets = "Seamless Profile (Clean Silhouette)";
-      washCare = "Specialist Dry Clean Only. Warm Press with Pressing Cloth.";
-      hem = "Knee-Length Straight Hem with Vent";
-      lining = "Full 100% Breathable Silk-Touch Cupro Lining";
-    } else {
-      composition = "High-Density Compact Twill Weave with Contoured Drape";
-      blendPercent = "78% Cotton, 20% Lyocell, 2% Elastane";
-      weaveWeight = "260 GSM Sculpted Compact Twill";
-      fit = "Contoured Tailored Mini Fit with A-Line Hem";
-      collar = "Asymmetrical Overlapped Architectural Collar";
-      closure = "Antique Gunmetal Precision Metal Front Buttons";
-      sleeves = "Sleeveless with Bonded Armholes";
-      pockets = "Zero Exterior Pockets for Razor-Sharp Line";
-      washCare = "Specialist Dry Clean Recommended. Steam Iron on Low Heat.";
-      hem = "Clean A-Line Mini Hem";
-      lining = "Tonal Breathable Cupro Interior Lining";
-    }
-  } else if (title.includes("shirt") || subcategory.includes("shirt")) {
-    composition = "100% Japanese High-Density Textured Cotton";
-    blendPercent = "100% Long-Staple Pure Combed Cotton";
-    weaveWeight = "180 GSM Breathable Textured Poplin Weave";
-    fit = "Relaxed Tailored Fit with Drape";
-    collar = "Structured Mandarin Collar with Overlapping Neckline Placket";
-    closure = "Custom-Cast Geometric Dark Metal Accent Buttons";
-    sleeves = "Long Sleeve with Angled Beveled 2-Button Cuffs";
-    pockets = "Clean Front (Zero Bulky Chest Pockets)";
-    washCare = "Gentle Cold Hand Wash or Machine Wash Delicate. Steam Medium.";
-    hem = "Curved Tailored Hemline for Tucked or Untucked Wear";
-    lining = "Self-Faced Placket with Clean Bound Seams";
-  } else if (title.includes("pant") || subcategory.includes("pant") || title.includes("trouser")) {
-    composition = "Crisp Structured Suiting Twill with Permanent Crease";
-    blendPercent = "65% Fine Wool, 33% Recycled Poly, 2% Spandex";
-    weaveWeight = "310 GSM Heavyweight Architectural Suiting";
-    fit = "Deep Double Front Pleats with Straight-Leg Drape";
-    collar = "Extended Tab Waistband with Concealed Hook & Bar";
-    closure = "Concealed YKK Zip Fly with Inner Anchor Button";
-    sleeves = "N/A (Bottomwear)";
-    pockets = "Deep Side Slant Pockets & Twin Rear Besom Pockets";
-    washCare = "Specialist Dry Clean Only. Professional Steam Press.";
-    hem = "Classic 2-Inch Turnup Cuff with Heavy Drape";
-    lining = "Half-Lined Front to Knee with Anti-Static Bemberg";
-  } else if (title.includes("top") || title.includes("sweetheart")) {
-    composition = "Double-Weave Sculpted Cotton Blend";
-    blendPercent = "92% Combed Cotton, 8% Elastane Support";
-    weaveWeight = "290 GSM Contouring Double Knit Weave";
-    fit = "Form-Sculpting Silhouette with Vertical Contour Seams";
-    collar = "Sculpted Sweetheart Neckline with Scalloped Edge";
-    closure = "Exposed Heavy-Duty Matte Metal Back Zip";
-    sleeves = "Wide Supportive Straps";
-    pockets = "Clean Silhouette (Zero Pockets)";
-    washCare = "Cold Delicate Machine Wash in Mesh Bag. Flat Dry.";
-    hem = "Cropped Clean Hem Designed for High-Rise Pairings";
-    lining = "Self-Lined Double Fabric Bodice";
+  if (Array.isArray(product?.metadata?.specifications) && product.metadata.specifications.length > 0) {
+    return product.metadata.specifications.filter((s) => s && s.label && s.value);
   }
-
-  // Override with any explicit product specs if provided
-  if (product?.specs?.fabric) composition = product.specs.fabric;
-  if (product?.specs?.tailoring) fit = product.specs.tailoring;
-  if (product?.specs?.care) washCare = product.specs.care;
-
-  return [
-    { label: "Fabric", value: composition },
-    { label: "Fit", value: fit },
-    { label: "Fabric 2", value: blendPercent },
-    { label: "Type", value: subcategory ? subcategory.charAt(0).toUpperCase() + subcategory.slice(1) : "Regular" },
-    { label: "Wash Care", value: washCare },
-    { label: "Length", value: hem },
-    { label: "Number of Pockets", value: pockets },
-    { label: "Closure", value: closure },
-    { label: "Collar Architecture", value: collar },
-    { label: "Sleeve Construction", value: sleeves },
-    { label: "Textile Weight & Density", value: weaveWeight },
-    { label: "Interior Finish", value: lining },
-    { label: "Atelier Provenance", value: "Handcrafted in Limited Batches by THROVE Atelier, India" },
-    { label: "Material Composition", value: "Premium Long-Staple Combed Cotton" },
-  ];
+  if (product?.specs && typeof product.specs === "object") {
+    const list = [];
+    if (product.specs.fabric) list.push({ label: "Fabric", value: product.specs.fabric });
+    if (product.specs.tailoring) list.push({ label: "Fit & Tailoring", value: product.specs.tailoring });
+    if (product.specs.care) list.push({ label: "Wash Care", value: product.specs.care });
+    if (list.length > 0) return list;
+  }
+  return [];
 }
 
 /**
- * Returns visual layout blocks for the product.
- * Supports: image_left, image_right, image_top, image_bottom, image_only, text_only.
+ * Extracts visual layout blocks from backend product data.
+ * Returns empty array if no backend visual blocks are defined.
  */
-function getNormalizedVisualBlocks(product) {
+function getVisualBlocksFromProduct(product) {
   if (Array.isArray(product?.visualBlocks) && product.visualBlocks.length > 0) {
-    return product.visualBlocks;
+    return product.visualBlocks.filter((b) => b && (b.title || b.image));
   }
-
-  const images = Array.isArray(product?.images) && product.images.length > 0
-    ? product.images.map((img) => (typeof img === "string" ? img : img.url)).filter(Boolean)
-    : ["/products/navy-tailored-mini-dress/main.jpg?v=3"];
-
-  const img0 = images[0] || "/products/navy-tailored-mini-dress/main.jpg?v=3";
-  const img1 = images[1] || images[0] || "/products/navy-tailored-mini-dress/front.jpg?v=3";
-  const img2 = images[2] || images[1] || images[0];
-
-  return [
-    {
-      id: "vb_1",
-      layout: "image_left",
-      tag: "ARCHITECTURAL SILHOUETTE",
-      title: "Engineered Precision & Structured Drape",
-      description:
-        "Every contour is drafted from architectural principles to provide effortless structure without restricting movement. Hand-aligned seams ensure the drape falls cleanly whether stationary or in fluid stride.",
-      features: [
-        "Continuous structural contouring designed to hold its profile",
-        "Bespoke hardware accents custom-cast for this collection",
-        "Reinforced stress points along the placket and seams",
-      ],
-      image: img1,
-      imageAlt: `${product?.title || "Product"} silhouette tailoring detail`,
-    },
-    {
-      id: "vb_2",
-      layout: "image_right",
-      tag: "MATERIALITY & FINISH",
-      title: "Pure Handfeel with Lasting Shape Retention",
-      description:
-        "Selected for supreme tactile comfort, this specialized weave balances organic breathability with high tensile strength. Resists pilling and retains deep, true color through hundreds of wears.",
-      features: [
-        "Long-staple fibers combed for feather-light softness",
-        "Double-needle clean bound interior seams prevent skin friction",
-        "Breathable weave engineered for year-round temperature balance",
-      ],
-      image: img2,
-      imageAlt: `${product?.title || "Product"} textile finish and hardware detail`,
-    },
-    {
-      id: "vb_3",
-      layout: "image_only",
-      title: "First Launch Edition · S/S 25",
-      image: img0,
-      imageAlt: `${product?.title || "Product"} full editorial lookbook`,
-      caption: `${product?.title || "The Silhouette"} · First Launch Edition Lookbook`,
-    },
-  ];
+  if (Array.isArray(product?.metadata?.visualBlocks) && product.metadata.visualBlocks.length > 0) {
+    return product.metadata.visualBlocks.filter((b) => b && (b.title || b.image));
+  }
+  return [];
 }
 
 export default function ProductSpecsSection({ product }) {
@@ -182,8 +46,16 @@ export default function ProductSpecsSection({ product }) {
   const [isDossierOpen, setIsDossierOpen] = useState(true);
   const [isVisualStudyOpen, setIsVisualStudyOpen] = useState(true);
 
-  const specifications = getNormalizedSpecifications(product);
-  const visualBlocks = getNormalizedVisualBlocks(product);
+  const specifications = getSpecificationsFromProduct(product);
+  const visualBlocks = getVisualBlocksFromProduct(product);
+
+  const hasSpecs = specifications.length > 0;
+  const hasVisual = visualBlocks.length > 0;
+
+  // If no backend data is there, hide this section and keep a clean divider
+  if (!hasSpecs && !hasVisual) {
+    return <div className={styles.hiddenSectionDivider} aria-hidden="true" />;
+  }
 
   return (
     <section
@@ -206,104 +78,101 @@ export default function ProductSpecsSection({ product }) {
         {/* Unified Accordion Sub-Sections */}
         <div className={styles.accordionGroup}>
           {/* Sub-Section 1: Anatomy & Specifications */}
-          <div className={`${styles.accordionItem} ${isDossierOpen ? styles.itemOpen : ""}`}>
-            <button
-              type="button"
-              className={styles.accordionHeaderBtn}
-              onClick={() => setIsDossierOpen((prev) => !prev)}
-              aria-expanded={isDossierOpen}
-              aria-controls="specifications-body"
-            >
-              <div className={styles.accordionHeaderLeft}>
-                <div className={styles.subIndexRow}>
-                  <span className={styles.subIndexBadge}>SUB-SECTION 01</span>
-                  <span className={styles.subIndexLabel}>ANATOMY · SPECIFICATIONS</span>
+          {hasSpecs && (
+            <div className={`${styles.accordionItem} ${isDossierOpen ? styles.itemOpen : ""}`}>
+              <button
+                type="button"
+                className={styles.accordionHeaderBtn}
+                onClick={() => setIsDossierOpen((prev) => !prev)}
+                aria-expanded={isDossierOpen}
+                aria-controls="specifications-body"
+              >
+                <div className={styles.accordionHeaderLeft}>
+                  <span className={styles.subIndexLabel}>ANATOMY</span>
+                  <h3 className={styles.accordionTitle}>Specifications</h3>
+                  <p className={styles.accordionSubtitle}>
+                    Fabrication, Material Composition &amp; Garment Architecture
+                  </p>
                 </div>
-                <h3 className={styles.accordionTitle}>Specifications</h3>
-                <p className={styles.accordionSubtitle}>
-                  Fabrication, Material Composition &amp; Garment Architecture
-                </p>
-              </div>
-              <div className={styles.accordionHeaderRight}>
-                <span
-                  className={`${styles.iconButton} ${isDossierOpen ? styles.iconButtonOpen : ""}`}
-                  aria-hidden="true"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={`${styles.accordionChevron} ${isDossierOpen ? styles.chevronOpen : ""}`}
+                <div className={styles.accordionHeaderRight}>
+                  <span
+                    className={`${styles.iconButton} ${isDossierOpen ? styles.iconButtonOpen : ""}`}
+                    aria-hidden="true"
                   >
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </span>
-              </div>
-            </button>
-
-            {isDossierOpen && (
-              <div id="specifications-body" className={styles.accordionBody}>
-                <div className={styles.specGrid}>
-                  {specifications.map((item, idx) => (
-                    <div key={idx} className={styles.specCell}>
-                      <span className={styles.specLabel}>{item.label}</span>
-                      <span className={styles.specValue}>{item.value}</span>
-                    </div>
-                  ))}
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={`${styles.accordionChevron} ${isDossierOpen ? styles.chevronOpen : ""}`}
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </span>
                 </div>
-              </div>
-            )}
-          </div>
+              </button>
+
+              {isDossierOpen && (
+                <div id="specifications-body" className={styles.accordionBody}>
+                  <div className={styles.specGrid}>
+                    {specifications.map((item, idx) => (
+                      <div key={idx} className={styles.specCell}>
+                        <span className={styles.specLabel}>{item.label}</span>
+                        <span className={styles.specValue}>{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Sub-Section 2: Craftsmanship & Visual Study */}
-          <div className={`${styles.accordionItem} ${isVisualStudyOpen ? styles.itemOpen : ""}`}>
-            <button
-              type="button"
-              className={styles.accordionHeaderBtn}
-              onClick={() => setIsVisualStudyOpen((prev) => !prev)}
-              aria-expanded={isVisualStudyOpen}
-              aria-controls="visual-study-body"
-            >
-              <div className={styles.accordionHeaderLeft}>
-                <div className={styles.subIndexRow}>
-                  <span className={styles.subIndexBadge}>SUB-SECTION 02</span>
-                  <span className={styles.subIndexLabel}>CRAFTSMANSHIP · VISUAL STUDY</span>
+          {hasVisual && (
+            <div className={`${styles.accordionItem} ${isVisualStudyOpen ? styles.itemOpen : ""}`}>
+              <button
+                type="button"
+                className={styles.accordionHeaderBtn}
+                onClick={() => setIsVisualStudyOpen((prev) => !prev)}
+                aria-expanded={isVisualStudyOpen}
+                aria-controls="visual-study-body"
+              >
+                <div className={styles.accordionHeaderLeft}>
+                  <span className={styles.subIndexLabel}>CRAFTSMANSHIP</span>
+                  <h3 className={styles.accordionTitle}>Visual Study &amp; Design in Detail</h3>
+                  <p className={styles.accordionSubtitle}>
+                    An intimate study of textile purity, architectural silhouette, and artisanal hardware.
+                  </p>
                 </div>
-                <h3 className={styles.accordionTitle}>Visual Study &amp; Design in Detail</h3>
-                <p className={styles.accordionSubtitle}>
-                  An intimate study of textile purity, architectural silhouette, and artisanal hardware.
-                </p>
-              </div>
-              <div className={styles.accordionHeaderRight}>
-                <span
-                  className={`${styles.iconButton} ${isVisualStudyOpen ? styles.iconButtonOpen : ""}`}
-                  aria-hidden="true"
-                >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className={`${styles.accordionChevron} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}
+                <div className={styles.accordionHeaderRight}>
+                  <span
+                    className={`${styles.iconButton} ${isVisualStudyOpen ? styles.iconButtonOpen : ""}`}
+                    aria-hidden="true"
                   >
-                    <polyline points="6 9 12 15 18 9" />
-                  </svg>
-                </span>
-              </div>
-            </button>
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className={`${styles.accordionChevron} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                  </span>
+                </div>
+              </button>
 
-            {isVisualStudyOpen && (
-              <div id="visual-study-body" className={styles.accordionBody}>
-                <div className={styles.visualBlocksList}>
+              {isVisualStudyOpen && (
+                <div id="visual-study-body" className={styles.accordionBody}>
+                  <div className={styles.visualBlocksList}>
             {visualBlocks.map((block) => {
               // Layout: image_left (Image 1:1 on Left, Text on Right)
               if (block.layout === "image_left") {
@@ -448,12 +317,13 @@ export default function ProductSpecsSection({ product }) {
                 </article>
               );
             })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   </section>
-);
+  );
 }

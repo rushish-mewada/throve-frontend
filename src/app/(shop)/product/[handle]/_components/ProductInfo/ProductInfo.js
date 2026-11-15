@@ -7,6 +7,14 @@ import AddToCartClient from './AddToCartClient';
 export default function ProductInfo({ product, config }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  const hasSpecsOrBlocks = Boolean(
+    (Array.isArray(product?.specifications) && product.specifications.length > 0) ||
+    (Array.isArray(product?.metadata?.specifications) && product.metadata.specifications.length > 0) ||
+    (Array.isArray(product?.visualBlocks) && product.visualBlocks.length > 0) ||
+    (Array.isArray(product?.metadata?.visualBlocks) && product.metadata.visualBlocks.length > 0) ||
+    (product?.specs && (product.specs.fabric || product.specs.tailoring || product.specs.care))
+  );
+
   return (
     <div className={styles.infoContainer}>
 
@@ -79,18 +87,23 @@ export default function ProductInfo({ product, config }) {
       <div className={styles.descriptionBlock}>
         <span className={styles.descriptionTitle}>Specification &amp; Silhouette:</span>
         <p className={styles.descriptionText}>
-          {product.description}{' '}
-          <button
-            type="button"
-            className={styles.seeMore}
-            onClick={() => {
-              const el = document.getElementById('product-specifications');
-              if (el) el.scrollIntoView({ behavior: 'smooth' });
-            }}
-            aria-label="See More Specifications"
-          >
-            See More....
-          </button>
+          {product.description}
+          {hasSpecsOrBlocks && (
+            <>
+              {' '}
+              <button
+                type="button"
+                className={styles.seeMore}
+                onClick={() => {
+                  const el = document.getElementById('product-specifications');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                aria-label="See More Specifications"
+              >
+                See More....
+              </button>
+            </>
+          )}
         </p>
       </div>
 
