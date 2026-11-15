@@ -6,6 +6,7 @@ import { useStore } from '@/context/StoreContext';
 import styles from './ProductInfo.module.css';
 import SizeChartModal from './SizeChartModal';
 import DeliveryTermsModal from './DeliveryTermsModal';
+import QuickSizeModal from './QuickSizeModal';
 import { initiateCashfreeCheckoutAction } from '@/actions/checkout';
 import { launchCashfreeCheckout } from '@/lib/cashfree';
 
@@ -31,6 +32,8 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSizeChartOpen, setIsSizeChartOpen] = useState(false);
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
+  const [isQuickSizeOpen, setIsQuickSizeOpen] = useState(false);
+  const [quickSizeAction, setQuickSizeAction] = useState('cart'); // 'cart' | 'buy'
 
   const prodImg = (Array.isArray(product?.images) && product.images.length > 0)
     ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)
@@ -58,8 +61,9 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     return () => observer.disconnect();
   }, []);
 
-  const handleAddToCart = () => {
-    if (!selectedSize) {
+  const handleAddToCart = (sizeOverride = null) => {
+    const sizeToUse = sizeOverride || selectedSize;
+    if (!sizeToUse) {
       setSizeError(true);
       if (actionsRef.current) {
         actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -68,7 +72,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     }
     if (isAdding) return;
     setIsAdding(true);
-    const sizeName = selectedSize?.name || selectedSize?.title || 'M';
+    const sizeName = sizeToUse?.name || sizeToUse?.title || 'M';
     const colorName = selectedColor?.name || 'Standard';
     addToCart(product, sizeName, colorName, 1);
     setIsAdding(false);
@@ -77,8 +81,9 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     setTimeout(() => setAddedSuccess(false), 2500);
   };
 
-  const handleCheckoutNow = () => {
-    if (!selectedSize) {
+  const handleCheckoutNow = (sizeOverride = null) => {
+    const sizeToUse = sizeOverride || selectedSize;
+    if (!sizeToUse) {
       setSizeError(true);
       if (actionsRef.current) {
         actionsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -86,10 +91,37 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
       return;
     }
     setIsCheckingOut(true);
-    const sizeName = selectedSize?.name || selectedSize?.title || 'M';
+    const sizeName = sizeToUse?.name || sizeToUse?.title || 'M';
     const colorName = selectedColor?.name || 'Standard';
     addToCart(product, sizeName, colorName, 1);
     router.push('/checkout');
+  };
+
+  const handleStickyAddToCart = () => {
+    if (!selectedSize) {
+      setQuickSizeAction('cart');
+      setIsQuickSizeOpen(true);
+      return;
+    }
+    handleAddToCart();
+  };
+
+  const handleStickyCheckoutNow = () => {
+    if (!selectedSize) {
+      setQuickSizeAction('buy');
+      setIsQuickSizeOpen(true);
+      return;
+    }
+    handleCheckoutNow();
+  };
+
+  const handleQuickSizeConfirm = (action) => {
+    setIsQuickSizeOpen(false);
+    if (action === 'buy') {
+      handleCheckoutNow(selectedSize);
+    } else {
+      handleAddToCart(selectedSize);
+    }
   };
 
   return (
@@ -297,8 +329,18 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
                 {product?.oldPrice && (
                   <span className={styles.stickyOldPrice}>{product.oldPrice}</span>
                 )}
-                <span className={styles.stickySizeBadge}>
+                <span
+                  className={styles.stickySizeBadge}
+                  onClick={() => {
+                    setQuickSizeAction('cart');
+                    setIsQuickSizeOpen(true);
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  title="Click to select or change size"
+                >
                   {selectedSize ? `Size: ${selectedSize.name || selectedSize.title}` : 'Select Size'}
+                  <span style={{ fontSize: '9px', opacity: 0.65, marginLeft: '2px' }}>▾</span>
                 </span>
               </div>
             </div>
@@ -334,7 +376,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
               <button
                 type="button"
                 className={styles.stickyAddBtn}
-                onClick={handleAddToCart}
+                onClick={handleStickyAddToCart}
                 disabled={isAdding}
                 aria-label="Add to Cart"
               >
@@ -357,7 +399,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
               <button
                 type="button"
                 className={styles.stickyBuyBtn}
-                onClick={handleCheckoutNow}
+                onClick={handleStickyCheckoutNow}
                 disabled={isCheckingOut}
                 aria-label="Buy Now"
               >
@@ -377,6 +419,22 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
           </div>
         </div>
       </aside>
+
+      {/* Modals */}
+      <QuickSizeModal
+        isOpen={isQuickSizeOpen}
+        onClose={() => setIsQuickSizeOpen(false)}
+        product={product}
+        selectedSize={selectedSize}
+        onSelectSize={(sz) => {
+          setSelectedSize(sz);
+          setSizeError(false);
+        }}
+        onConfirm={handleQuickSizeConfirm}
+        actionType={quickSizeAction}
+        isSubmitting={quickSizeAction === 'buy' ? isCheckingOut : isAdding}
+        onOpenSizeChart={() => setIsSizeChartOpen(true)}
+      />
 
       {/* Modals */}
       <SizeChartModal

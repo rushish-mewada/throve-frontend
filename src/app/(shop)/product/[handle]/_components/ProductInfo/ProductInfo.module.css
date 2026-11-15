@@ -852,35 +852,35 @@
    ============================================================ */
 .stickyBar {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(255, 255, 255, 0.95);
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  width: min(940px, calc(100vw - 48px));
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 -8px 28px rgba(0, 0, 0, 0.07);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 9999px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.04);
   z-index: 90;
-  padding: 10px 24px calc(10px + env(safe-area-inset-bottom, 0px)) 24px;
-  transform: translateY(120%);
+  padding: 8px 18px 8px 12px;
   opacity: 0;
   pointer-events: none;
   transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
 }
 
 .stickyBarVisible {
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
   opacity: 1;
   pointer-events: auto;
 }
 
 .stickyBarInner {
-  max-width: 1100px;
-  margin: 0 auto;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+  gap: 16px;
 }
 
 .stickyProdInfo {
@@ -896,7 +896,7 @@
   height: 44px;
   flex: 0 0 44px;
   position: relative;
-  border-radius: 6px;
+  border-radius: 9999px;
   overflow: hidden;
   background-color: #f5f5f5;
   border: 1px solid #e7e5e4;
@@ -917,7 +917,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 340px;
+  max-width: 320px;
 }
 
 .stickyMetaRow {
@@ -940,18 +940,30 @@
 }
 
 .stickySizeBadge {
-  color: #71717a;
+  color: #52525b;
   font-size: 0.74rem;
   background: #f4f4f5;
-  padding: 1px 7px;
+  border: 1px solid #e4e4e7;
+  padding: 2px 9px;
   border-radius: 9999px;
   font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.stickySizeBadge:hover {
+  background: #e4e4e7;
+  color: #18181b;
 }
 
 .stickyActionsGroup {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   flex-shrink: 0;
 }
 
@@ -964,7 +976,7 @@
 .stickySizeBtn {
   width: 34px;
   height: 34px;
-  border-radius: 6px;
+  border-radius: 9999px;
   border: 1px solid #e5e5e5;
   background-color: #ffffff;
   color: #111111;
@@ -999,21 +1011,24 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   background-color: #111111;
   color: #ffffff;
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   border: none;
-  border-radius: 8px;
+  border-radius: 9999px;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: all 0.15s ease;
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }
 
 .stickyAddBtn:hover {
   background-color: #27272a;
+  transform: translateY(-1px);
 }
 
 .stickyBuyBtn {
@@ -1021,14 +1036,15 @@
   align-items: center;
   justify-content: center;
   gap: 7px;
-  padding: 10px 18px;
+  padding: 10px 20px;
   background-color: #ffffff;
   color: #111111;
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   border: 1px solid #d4d4d8;
-  border-radius: 8px;
+  border-radius: 9999px;
   cursor: pointer;
   transition: all 0.15s ease;
   white-space: nowrap;
@@ -1037,25 +1053,32 @@
 .stickyBuyBtn:hover {
   border-color: #111111;
   background-color: #fafafa;
+  transform: translateY(-1px);
 }
 
-/* On mobile & tablet view: floats ABOVE the floating bottom navigation bar with safe clearance */
+/* On mobile & tablet view: floats ABOVE the floating bottom navigation bar with matched pill border radius */
 @media (max-width: 1024px) {
   .stickyBar {
     bottom: calc(84px + env(safe-area-inset-bottom, 0px));
-    left: 12px;
-    right: 12px;
-    max-width: 460px;
+    left: 16px;
+    right: 16px;
+    width: auto;
+    max-width: 420px;
     margin: 0 auto;
-    border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.09);
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14), 0 2px 8px rgba(0, 0, 0, 0.05);
-    padding: 8px 12px;
+    border-radius: 9999px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+    padding: 6px 10px 6px 8px;
+    transform: translateY(120%);
     z-index: 92;
   }
 
+  .stickyBarVisible {
+    transform: translateY(0);
+  }
+
   .stickyBarInner {
-    gap: 10px;
+    gap: 8px;
   }
 
   .stickyTitle {
@@ -1067,19 +1090,25 @@
   }
 
   .stickyThumb {
-    width: 36px;
-    height: 36px;
-    flex: 0 0 36px;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 9999px;
+  }
+
+  .stickyProdInfo {
+    gap: 8px;
   }
 
   .stickyMetaRow {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1px;
+    gap: 2px;
   }
 
   .stickyPrice {
-    font-size: 0.82rem;
+    font-size: 0.86rem;
+    line-height: 1.1;
   }
 
   .stickyOldPrice {
@@ -1088,7 +1117,11 @@
 
   .stickySizeBadge {
     font-size: 0.68rem;
-    padding: 1px 5px;
+    padding: 1px 7px;
+  }
+
+  .stickyActionsGroup {
+    gap: 6px;
   }
 
   .stickyButtons {
@@ -1098,7 +1131,245 @@
   .stickyAddBtn, .stickyBuyBtn {
     padding: 8px 12px;
     font-size: 0.78rem;
-    border-radius: 7px;
-    gap: 5px;
+    border-radius: 9999px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 380px) {
+  .stickyBar {
+    left: 10px;
+    right: 10px;
+    padding: 5px 8px 5px 6px;
+  }
+
+  .stickyThumb {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+  }
+
+  .stickyPrice {
+    font-size: 0.8rem;
+  }
+
+  .stickyAddBtn, .stickyBuyBtn {
+    padding: 7px 9px;
+    font-size: 0.74rem;
+  }
+}
+
+/* Quick Size Slide-up Bottom Sheet Modal */
+.quickSizeCard {
+  max-width: 440px;
+  padding: 24px;
+  border-radius: 16px;
+  gap: 18px;
+}
+
+.quickSizeHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.quickSizeProdRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.quickSizeThumb {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e7e5e4;
+  background-color: #fafaf9;
+}
+
+.quickSizeMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.quickSizeTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #111111;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.quickSizePriceRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quickSizePrice {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #111111;
+}
+
+.quickSizeOldPrice {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  color: #a1a1aa;
+  text-decoration: line-through;
+}
+
+.quickSizeStockBadge {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #15803d;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 1px 7px;
+  border-radius: 9999px;
+}
+
+.quickSizeBody {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quickSizePromptRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.quickSizeLabel {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.84rem;
+  color: #52525b;
+}
+
+.quickSizeLabel strong {
+  color: #111111;
+}
+
+.quickSizeGuideBtn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #71717a;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.quickSizeGuideBtn:hover {
+  color: #111111;
+}
+
+.quickSizePillGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+  gap: 10px;
+}
+
+.quickSizePill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 46px;
+  border: 1px solid #e4e4e7;
+  border-radius: 10px;
+  background-color: #ffffff;
+  color: #18181b;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quickSizePill:hover {
+  border-color: #18181b;
+  background-color: #fafafa;
+}
+
+.quickSizePillActive {
+  background-color: #18181b;
+  color: #ffffff;
+  border-color: #18181b;
+}
+
+.quickSizePillCheck {
+  font-size: 0.8rem;
+  color: #86efac;
+}
+
+.quickSizeFooter {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+.quickSizeConfirmBtn {
+  width: 100%;
+  height: 48px;
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+  border-radius: 9999px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.quickSizeConfirmBtn:hover:not(:disabled) {
+  background-color: #27272a;
+  transform: translateY(-1px);
+}
+
+.quickSizeConfirmBtn:disabled {
+  background-color: #e4e4e7;
+  color: #a1a1aa;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.quickSizeReassurance {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.72rem;
+  color: #71717a;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .quickSizeCard {
+    border-radius: 20px 20px 0 0;
+    max-height: 80vh;
+    padding: 16px 20px 28px;
   }
 }
