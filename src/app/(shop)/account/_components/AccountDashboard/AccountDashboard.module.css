@@ -269,13 +269,359 @@
   color: #7e818c;
 }
 
-/* Order Cards (Myntra/Ajio Style) */
+/* Luxury Atelier Order Cards */
 .orderList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
+.luxuryOrderCard {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #e7e5e4;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.luxuryOrderCard:hover {
+  border-color: #d6d3d1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* 1. Header Bar */
+.orderCardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background-color: #fafaf9;
+  border-bottom: 1px solid #f0ede6;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.orderRefCol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orderIdRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.orderTag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #78716c;
+  background-color: #e7e5e4;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.orderNumber {
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1c1917;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.orderDate {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  color: #78716c;
+}
+
+.orderStatusCol {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.statusCapsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.statusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.statusPendingPayment {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+.statusDotAmber {
+  background-color: #d97706;
+  box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+}
+
+.statusDispatched {
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+.statusDotBlue {
+  background-color: #0284c7;
+  box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2);
+}
+
+.statusDelivered {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+.statusDotEmerald {
+  background-color: #059669;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+}
+
+.statusConfirmed {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+.statusDotGreen {
+  background-color: #16a34a;
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+}
+
+.statusProcessing {
+  background-color: #eef2ff;
+  color: #4338ca;
+  border: 1px solid #c7d2fe;
+}
+.statusDotIndigo {
+  background-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+}
+
+.statusCancelled {
+  background-color: #f5f5f4;
+  color: #78716c;
+  border: 1px solid #e7e5e4;
+}
+.statusDotStone {
+  background-color: #78716c;
+}
+
+.orderTotalRow {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.orderTotalVal {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1c1917;
+}
+
+.orderItemCount {
+  font-size: 0.78rem;
+  color: #78716c;
+}
+
+/* 2. Body */
+.orderCardBody {
+  display: flex;
+  padding: 20px;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.orderCardMedia {
+  position: relative;
+  width: 78px;
+  height: 98px;
+  background-color: #f5f5f4;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e7e5e4;
+  flex-shrink: 0;
+}
+
+.orderCardDetails {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orderItemMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orderItemTitle {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #1c1917;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.orderItemSpecs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: #78716c;
+}
+
+.specBadge {
+  background-color: #f5f5f4;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #57534e;
+}
+
+.specDot {
+  color: #d6d3d1;
+}
+
+.moreItemsTag {
+  color: #0284c7;
+  font-weight: 500;
+}
+
+.logisticsNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background-color: #fafaf9;
+  border: 1px solid #f0ede6;
+  border-radius: 8px;
+}
+
+.logisticsIcon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.logisticsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.logisticsStatusText {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #292524;
+  line-height: 1.35;
+}
+
+.logisticsMetaSub {
+  font-size: 0.74rem;
+  color: #78716c;
+}
+
+/* 3. Footer Bar */
+.orderCardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid #f0ede6;
+  background-color: #ffffff;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.conciergeOrderBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #57534e;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.conciergeOrderBtn:hover {
+  color: #1c1917;
+  background-color: #f5f5f4;
+}
+
+.orderActionsGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.secondaryTrackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #292524;
+  background-color: #ffffff;
+  border: 1px solid #d6d3d1;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.secondaryTrackBtn:hover {
+  background-color: #f5f5f4;
+  border-color: #a8a29e;
+}
+
+.primaryDetailsBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #1c1917;
+  border: 1px solid #1c1917;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+.primaryDetailsBtn:hover {
+  background-color: #292524;
+  border-color: #292524;
+}
+
+/* Order Cards (Myntra/Ajio Style - kept for Wishlist) */
 .orderCard {
   display: flex;
   align-items: center;
@@ -833,6 +1179,53 @@
   }
   .overviewCard h3 {
     margin-bottom: 2px;
+  }
+  .luxuryOrderCard {
+    border-radius: 12px;
+  }
+  .orderCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 14px 16px;
+    gap: 10px;
+  }
+  .orderStatusCol {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .orderCardBody {
+    padding: 16px;
+    gap: 14px;
+  }
+  .orderCardMedia {
+    width: 68px;
+    height: 88px;
+  }
+  .orderItemTitle {
+    font-size: 0.92rem;
+  }
+  .orderCardFooter {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .orderActionsGroup {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+  }
+  .secondaryTrackBtn,
+  .primaryDetailsBtn {
+    flex: 1;
+    justify-content: center;
+    padding: 9px 10px;
+    font-size: 0.78rem;
+  }
+  .conciergeOrderBtn {
+    justify-content: center;
   }
   .orderCard {
     flex-direction: row;

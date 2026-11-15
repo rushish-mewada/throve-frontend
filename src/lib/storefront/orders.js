@@ -91,19 +91,58 @@ export async function getCustomerOrders(identifier) {
 
     return {
       customer: raw.customer || null,
-      orders: (raw.orders || []).map((o) => ({
-        id: o.displayId || o.id,
-        date: o.createdAt
-          ? new Date(o.createdAt).toLocaleDateString("en-IN", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-            })
-          : "Recent",
-        total: formatMoney(o.totalPaise || 0, o.currency || "INR"),
-        status: o.status || "Processing",
-        image: "/products/asymmetric-mandarin-shirt/main.png",
-      })),
+      orders: (raw.orders || []).map((o) => {
+        const firstItem = (Array.isArray(o.items) && o.items[0]) || {};
+        const titleLower = String(firstItem.title || "").toLowerCase();
+        let image = "/products/pleated-formal-pants/main.jpg?v=3";
+        if (titleLower.includes("mandarin") || titleLower.includes("shirt")) {
+          image = "/products/asymmetric-mandarin-shirt/main.jpg?v=3";
+        } else if (titleLower.includes("sheath") || titleLower.includes("princess")) {
+          image = "/products/sleeveless-princess-sheath-dress/main.jpg?v=3";
+        } else if (titleLower.includes("flare") || titleLower.includes("waisted")) {
+          image = "/products/high-waisted-flare-pants/main.jpg?v=3";
+        } else if (titleLower.includes("sweetheart") || titleLower.includes("scalloped")) {
+          image = "/products/scalloped-sweetheart-top/main.jpg?v=3";
+        } else if (titleLower.includes("mini") || titleLower.includes("navy")) {
+          image = "/products/navy-tailored-mini-dress/main.jpg?v=3";
+        } else if (titleLower.includes("pleat") || titleLower.includes("formal pants")) {
+          image = "/products/pleated-formal-pants/main.jpg?v=3";
+        }
+
+        const itemsCount = (Array.isArray(o.items) && o.items.length > 0)
+          ? o.items.reduce((acc, it) => acc + (it.quantity || 1), 0)
+          : 1;
+
+        return {
+          id: o.displayId || o.id,
+          publicId: o.id || o.publicId || o.displayId,
+          displayId: o.displayId || o.id,
+          date: o.createdAt
+            ? new Date(o.createdAt).toLocaleDateString("en-IN", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })
+            : "Recent",
+          total: formatMoney(o.totalPaise || 0, o.currency || "INR"),
+          totalPaise: o.totalPaise || 0,
+          status: o.status || "pending",
+          paymentStatus: o.paymentStatus || "pending",
+          fulfillmentStatus: o.fulfillmentStatus || "not_fulfilled",
+          awbNumber: o.awbNumber || null,
+          courierPartner: o.courierPartner || null,
+          itemsCount,
+          items: (o.items || []).map((it) => ({
+            title: it.title || "Tailored Atelier Garment",
+            sku: it.sku || "",
+            quantity: it.quantity || 1,
+            unitPrice: formatMoney(it.unitPricePaise || it.subtotalPaise || 0, o.currency || "INR"),
+          })),
+          firstItemTitle: firstItem.title || "Tailored Atelier Garment",
+          firstItemSku: firstItem.sku || "",
+          image,
+        };
+      }),
     };
   } catch {
     return { customer: null, orders: [] };
