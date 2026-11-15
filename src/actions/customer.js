@@ -98,7 +98,7 @@ export async function completeFirstLoginAction({ phone, name, email }) {
  * @param {string} formData.email
  * @returns {Promise<{ ok: boolean, customer?: Object, error?: string }>}
  */
-export async function updateCustomerProfileAction({ name, email }) {
+export async function updateCustomerProfileAction({ name, email, avatarUrl }) {
   try {
     const cookieStore = await cookies();
     const session = cookieStore.get("throve_customer_session");
@@ -115,6 +115,7 @@ export async function updateCustomerProfileAction({ name, email }) {
       phone: cleanPhone,
       name: String(name || "").trim(),
       email: String(email || "").trim(),
+      ...(avatarUrl !== undefined ? { avatarUrl } : {}),
     });
 
     return result;

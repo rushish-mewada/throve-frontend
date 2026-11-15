@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
@@ -91,8 +91,10 @@ export default function AccountDashboard({
   const [user, setUser] = useState(initialUser);
   const [profileName, setProfileName] = useState(initialUser.name || '');
   const [profileEmail, setProfileEmail] = useState(initialUser.email || '');
+  const [profileAvatar, setProfileAvatar] = useState(initialUser.avatarUrl || '');
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState(null);
+  const fileInputRef = useRef(null);
 
   // Active coupons from backend
   const coupons = Array.isArray(initialCoupons) && initialCoupons.length > 0 ? initialCoupons : [];
@@ -141,6 +143,37 @@ export default function AccountDashboard({
     window.location.href = "/account/login";
   };
 
+  const handleAvatarFileChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setProfileMsg({ type: 'error', text: 'Please select a valid image file (JPG, PNG, WEBP).' });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setProfileMsg({ type: 'error', text: 'Image size should be less than 5MB.' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64 = uploadEvent.target?.result;
+      if (base64 && typeof base64 === 'string') {
+        setProfileAvatar(base64);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveAvatar = () => {
+    setProfileAvatar('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setProfileSaving(true);
@@ -150,6 +183,7 @@ export default function AccountDashboard({
       const res = await updateCustomerProfileAction({
         name: profileName,
         email: profileEmail,
+        avatarUrl: profileAvatar,
       });
 
       if (res?.ok) {
@@ -157,6 +191,7 @@ export default function AccountDashboard({
           ...prev,
           name: profileName,
           email: profileEmail,
+          avatarUrl: profileAvatar,
         }));
         setProfileMsg({ type: 'success', text: 'Profile details saved successfully.' });
         try {
@@ -166,6 +201,7 @@ export default function AccountDashboard({
             ...parsed,
             name: profileName,
             email: profileEmail,
+            avatarUrl: profileAvatar,
           }));
         } catch {}
       } else {
@@ -333,7 +369,13 @@ export default function AccountDashboard({
         <div className={`${styles.mobileMenuContainer} ${activeTab === 'menu' ? styles.showOnMobile : styles.hideOnMobile}`}>
           <div className={styles.throveUserBanner}>
             <div className={styles.throveUserTopRow}>
-              <div className={styles.throveAvatar}>{user.name.charAt(0)}</div>
+              <div className={styles.throveAvatar}>
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  user.name.charAt(0)
+                )}
+              </div>
               <div className={styles.throveUserInfo}>
                 <div className={styles.throveNameRow}>
                   <h1>{user.name}</h1>
@@ -425,7 +467,11 @@ export default function AccountDashboard({
           <div className={styles.userBanner}>
             <div className={styles.userInfo}>
               <div className={styles.avatar}>
-                {user.name.charAt(0)}
+                {user.avatarUrl ? (
+                  <img src={user.avatarUrl} alt={user.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  user.name.charAt(0)
+                )}
               </div>
               <div className={styles.userDetails}>
                 <h1>{user.name}</h1>
@@ -1112,6 +1158,58 @@ export default function AccountDashboard({
                   </div>
                 )}
                 <form onSubmit={handleProfileSubmit} className={styles.profileForm}>
+                  <div className={styles.avatarUploadSection}>
+                    <div className={styles.avatarPreviewContainer}>
+                      {profileAvatar ? (
+                        <img src={profileAvatar} alt="Profile Avatar" className={styles.avatarImage} />
+                      ) : (
+                        <div className={styles.avatarPlaceholder}>
+                          {user.name.charAt(0)}
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        className={styles.avatarUploadBtnBadge}
+                        onClick={() => fileInputRef.current?.click()}
+                        title="Change photo"
+                        aria-label="Upload profile photo"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                          <circle cx="12" cy="13" r="4"></circle>
+                        </svg>
+                      </button>
+                    </div>
+                    <div className={styles.avatarUploadInfo}>
+                      <div className={styles.avatarUploadTitle}>Profile Photo</div>
+                      <div className={styles.avatarUploadHint}>JPG, PNG or WEBP up to 5MB.</div>
+                      <div className={styles.avatarActionBtns}>
+                        <button
+                          type="button"
+                          className={styles.changePhotoBtn}
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          {profileAvatar ? 'Change Photo' : 'Upload Photo'}
+                        </button>
+                        {profileAvatar && (
+                          <button
+                            type="button"
+                            className={styles.removePhotoBtn}
+                            onClick={handleRemoveAvatar}
+                          >
+                            Remove
+                          </button>
+                        )}
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png, image/jpeg, image/jpg, image/webp"
+                        style={{ display: 'none' }}
+                        onChange={handleAvatarFileChange}
+                      />
+                    </div>
+                  </div>
                   <div className={styles.inputGroup}>
                     <label>Full Name</label>
                     <input

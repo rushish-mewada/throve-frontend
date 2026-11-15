@@ -30,7 +30,7 @@ export async function getCustomerProfile(phone) {
  * @param {string} [data.email]
  * @returns {Promise<{ ok: boolean, customer?: Object, error?: string }>}
  */
-export async function updateCustomerProfile({ phone, name, email }) {
+export async function updateCustomerProfile({ phone, name, email, avatarUrl }) {
   if (!phone) {
     return { ok: false, error: "Phone number is required" };
   }
@@ -38,7 +38,12 @@ export async function updateCustomerProfile({ phone, name, email }) {
   try {
     const res = await fetchStorefront("/v1/customers/profile", {
       method: "POST",
-      body: JSON.stringify({ phone, name, email }),
+      body: JSON.stringify({
+        phone,
+        name,
+        email,
+        ...(avatarUrl !== undefined ? { avatarUrl } : {}),
+      }),
       cache: "no-store",
     });
 

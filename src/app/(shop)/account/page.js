@@ -40,6 +40,7 @@ export default async function AccountPage() {
     name: customer.name,
     phone: customer?.phone || (cleanPhone ? `+91 ${cleanPhone}` : "+91 98926 91094"),
     email: customer.email,
+    avatarUrl: customer?.avatarUrl || customer?.avatar_url || "",
     tier: customer?.tier || "THROVE MEMBER",
     points: customer?.points ?? 0,
     basePoints: customer?.basePoints ?? customer?.points ?? 0,
