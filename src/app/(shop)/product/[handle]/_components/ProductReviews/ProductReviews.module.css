@@ -776,14 +776,16 @@
 .verifiedBuyerTag {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   font-family: var(--font-poppins), sans-serif;
   font-size: 0.72rem;
   font-weight: 600;
   color: #15803d;
   background-color: #f0fdf4;
   border: 1px solid #bbf7d0;
-  padding: 2px 8px;
+  padding: 3px 8px;
   border-radius: 4px;
+  width: fit-content;
 }
 
 .fitTag {

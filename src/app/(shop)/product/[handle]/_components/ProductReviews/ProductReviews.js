@@ -430,14 +430,6 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                 {showManualVerify ? 'Close Verification' : 'Verify Purchase to Review'}
               </button>
             )}
-
-            <span className={styles.verifiedBuyerTag}>
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <path d="M9 12l2 2 4-4" />
-              </svg>
-              {isEligibleToReview ? 'Verified Buyer Confirmed' : 'Verified Purchases Only'}
-            </span>
           </div>
         )}
       </div>
@@ -805,6 +797,15 @@ export default function ProductReviews({ productHandle = 'default', productTitle
                 <span>{averageScore}</span>
               </div>
               <div className={styles.scoreDetails}>
+                <div>
+                  <span className={styles.verifiedBuyerTag}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                      <path d="M9 12l2 2 4-4" />
+                    </svg>
+                    {isEligibleToReview ? 'Verified Buyer Confirmed' : 'Verified Purchases Only'}
+                  </span>
+                </div>
                 <div className={styles.stars}>
                   {reviewCount > 0 ? '★★★★★' : '☆☆☆☆☆'}
                 </div>
