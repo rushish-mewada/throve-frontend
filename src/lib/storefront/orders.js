@@ -53,14 +53,26 @@ export async function getOrderById(id) {
         state: addr.state || "",
         pin: addr.pincode || "",
       },
-      items: (raw.items || []).map((item, idx) => ({
-        id: item.id || idx + 1,
-        image: item.image || "/images/hero/slide4.png",
-        title: item.title,
-        variant: item.sku || "Standard",
-        price: formatMoney(item.subtotalPaise || item.unitPricePaise || 0, raw.currency || "INR"),
-        qty: item.quantity || 1,
-      })),
+      items: (raw.items || []).map((item, idx) => {
+        let itImg = item.image || null;
+        if (!itImg) {
+          const tLower = String(item.title || "").toLowerCase();
+          if (tLower.includes("mandarin") || tLower.includes("shirt")) itImg = "/products/asymmetric-mandarin-shirt/main.jpg?v=3";
+          else if (tLower.includes("sheath") || tLower.includes("princess")) itImg = "/products/sleeveless-princess-sheath-dress/main.jpg?v=3";
+          else if (tLower.includes("flare") || tLower.includes("waisted")) itImg = "/products/high-waisted-flare-pants/main.jpg?v=3";
+          else if (tLower.includes("sweetheart") || tLower.includes("scalloped")) itImg = "/products/scalloped-sweetheart-top/main.jpg?v=3";
+          else if (tLower.includes("mini") || tLower.includes("navy")) itImg = "/products/navy-tailored-mini-dress/main.jpg?v=3";
+          else itImg = "/products/pleated-formal-pants/main.jpg?v=3";
+        }
+        return {
+          id: item.id || idx + 1,
+          image: itImg,
+          title: item.title,
+          variant: item.sku || "Standard",
+          price: formatMoney(item.subtotalPaise || item.unitPricePaise || 0, raw.currency || "INR"),
+          qty: item.quantity || 1,
+        };
+      }),
     };
   } catch {
     return null;
@@ -94,19 +106,21 @@ export async function getCustomerOrders(identifier) {
       orders: (raw.orders || []).map((o) => {
         const firstItem = (Array.isArray(o.items) && o.items[0]) || {};
         const titleLower = String(firstItem.title || "").toLowerCase();
-        let image = "/products/pleated-formal-pants/main.jpg?v=3";
-        if (titleLower.includes("mandarin") || titleLower.includes("shirt")) {
-          image = "/products/asymmetric-mandarin-shirt/main.jpg?v=3";
-        } else if (titleLower.includes("sheath") || titleLower.includes("princess")) {
-          image = "/products/sleeveless-princess-sheath-dress/main.jpg?v=3";
-        } else if (titleLower.includes("flare") || titleLower.includes("waisted")) {
-          image = "/products/high-waisted-flare-pants/main.jpg?v=3";
-        } else if (titleLower.includes("sweetheart") || titleLower.includes("scalloped")) {
-          image = "/products/scalloped-sweetheart-top/main.jpg?v=3";
-        } else if (titleLower.includes("mini") || titleLower.includes("navy")) {
-          image = "/products/navy-tailored-mini-dress/main.jpg?v=3";
-        } else if (titleLower.includes("pleat") || titleLower.includes("formal pants")) {
-          image = "/products/pleated-formal-pants/main.jpg?v=3";
+        let image = firstItem.image || null;
+        if (!image) {
+          if (titleLower.includes("mandarin") || titleLower.includes("shirt")) {
+            image = "/products/asymmetric-mandarin-shirt/main.jpg?v=3";
+          } else if (titleLower.includes("sheath") || titleLower.includes("princess")) {
+            image = "/products/sleeveless-princess-sheath-dress/main.jpg?v=3";
+          } else if (titleLower.includes("flare") || titleLower.includes("waisted")) {
+            image = "/products/high-waisted-flare-pants/main.jpg?v=3";
+          } else if (titleLower.includes("sweetheart") || titleLower.includes("scalloped")) {
+            image = "/products/scalloped-sweetheart-top/main.jpg?v=3";
+          } else if (titleLower.includes("mini") || titleLower.includes("navy")) {
+            image = "/products/navy-tailored-mini-dress/main.jpg?v=3";
+          } else {
+            image = "/products/pleated-formal-pants/main.jpg?v=3";
+          }
         }
 
         const itemsCount = (Array.isArray(o.items) && o.items.length > 0)

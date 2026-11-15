@@ -432,69 +432,71 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
 
                           {/* 2. Body: Garment Media, Title, Specs, Logistics Note */}
                           <div className={styles.orderCardBody}>
-                            <div className={styles.orderCardMedia}>
-                              <Image
-                                src={order.image}
-                                alt={order.firstItemTitle || 'Product'}
-                                fill
-                                sizes="84px"
-                                style={{ objectFit: 'cover' }}
-                              />
-                            </div>
-
-                            <div className={styles.orderCardDetails}>
-                              <div className={styles.orderItemMeta}>
-                                <h4 className={styles.orderItemTitle}>{order.firstItemTitle}</h4>
-                                <div className={styles.orderItemSpecs}>
-                                  {order.firstItemSku && (
-                                    <span className={styles.specBadge}>SKU: {order.firstItemSku}</span>
-                                  )}
-                                  <span className={styles.specDot}>•</span>
-                                  <span>Qty: {order.items?.[0]?.quantity || 1}</span>
-                                  {isMultiple && (
-                                    <>
-                                      <span className={styles.specDot}>•</span>
-                                      <span className={styles.moreItemsTag}>+{order.itemsCount - 1} more items</span>
-                                    </>
-                                  )}
-                                </div>
+                            <div className={styles.orderItemRow}>
+                              <div className={styles.orderCardMedia}>
+                                <Image
+                                  src={order.image}
+                                  alt={order.firstItemTitle || 'Product'}
+                                  fill
+                                  sizes="84px"
+                                  style={{ objectFit: 'cover' }}
+                                />
                               </div>
 
-                              {/* Logistics / Fulfillment Note */}
-                              <div className={styles.logisticsNotice}>
-                                <div className={styles.logisticsIcon}>
-                                  {statusConfig.isPendingPayment ? (
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.2">
-                                      <circle cx="12" cy="12" r="10" />
-                                      <line x1="12" y1="8" x2="12" y2="12" />
-                                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                                    </svg>
-                                  ) : statusConfig.isDispatched ? (
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2.2">
-                                      <rect x="1" y="3" width="15" height="13" />
-                                      <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-                                      <circle cx="5.5" cy="18.5" r="2.5" />
-                                      <circle cx="18.5" cy="18.5" r="2.5" />
-                                    </svg>
-                                  ) : statusConfig.isDelivered ? (
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2">
-                                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                                      <polyline points="22 4 12 14.01 9 11.01" />
-                                    </svg>
-                                  ) : (
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.2">
-                                      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                    </svg>
-                                  )}
+                              <div className={styles.orderCardDetails}>
+                                <div className={styles.orderItemMeta}>
+                                  <h4 className={styles.orderItemTitle}>{order.firstItemTitle}</h4>
+                                  <div className={styles.orderItemSpecs}>
+                                    {order.firstItemSku && (
+                                      <span className={styles.specBadge}>SKU: {order.firstItemSku}</span>
+                                    )}
+                                    <span className={styles.specDot}>•</span>
+                                    <span>Qty: {order.items?.[0]?.quantity || 1}</span>
+                                    {isMultiple && (
+                                      <>
+                                        <span className={styles.specDot}>•</span>
+                                        <span className={styles.moreItemsTag}>+{order.itemsCount - 1} more items</span>
+                                      </>
+                                    )}
+                                  </div>
                                 </div>
-                                <div className={styles.logisticsContent}>
-                                  <span className={styles.logisticsStatusText}>{statusConfig.desc}</span>
-                                  {order.courierPartner && (
-                                    <span className={styles.logisticsMetaSub}>
-                                      {order.courierPartner} {order.awbNumber ? `· AWB: ${order.awbNumber}` : ''}
-                                    </span>
-                                  )}
-                                </div>
+                              </div>
+                            </div>
+
+                            {/* Logistics / Fulfillment Note */}
+                            <div className={styles.logisticsNotice}>
+                              <div className={styles.logisticsIcon}>
+                                {statusConfig.isPendingPayment ? (
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                  </svg>
+                                ) : statusConfig.isDispatched ? (
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#0284c7" strokeWidth="2.2">
+                                    <rect x="1" y="3" width="15" height="13" />
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+                                    <circle cx="5.5" cy="18.5" r="2.5" />
+                                    <circle cx="18.5" cy="18.5" r="2.5" />
+                                  </svg>
+                                ) : statusConfig.isDelivered ? (
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2.2">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                                    <polyline points="22 4 12 14.01 9 11.01" />
+                                  </svg>
+                                ) : (
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.2">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                  </svg>
+                                )}
+                              </div>
+                              <div className={styles.logisticsContent}>
+                                <span className={styles.logisticsStatusText}>{statusConfig.desc}</span>
+                                {order.courierPartner && (
+                                  <span className={styles.logisticsMetaSub}>
+                                    {order.courierPartner} {order.awbNumber ? `· AWB: ${order.awbNumber}` : ''}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>

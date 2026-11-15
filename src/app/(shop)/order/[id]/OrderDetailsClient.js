@@ -54,19 +54,48 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
     items: [],
   };
 
+  const rawStatus = (activeOrder.status || "").toLowerCase();
+  const isPendingPayment = rawStatus.includes("pending_payment") || (activeOrder.paymentStatus || "").toLowerCase() === "pending" || rawStatus === "awaiting";
+  let currentStep = 1;
+  if (rawStatus === "delivered") {
+    currentStep = 4;
+  } else if (rawStatus === "shipped" || rawStatus === "dispatched" || activeOrder.fulfillmentStatus === "fulfilled") {
+    currentStep = 3;
+  } else if (rawStatus === "processing" || rawStatus === "confirmed" || rawStatus === "pending_dispatch") {
+    currentStep = 2;
+  } else {
+    currentStep = 1;
+  }
+
+  const trackingSteps = [
+    { step: 1, title: "Order Placed", desc: activeOrder.date || "Order recorded" },
+    { step: 2, title: "Processing & Tailoring", desc: currentStep >= 2 ? "Garment crafted at atelier" : "Preparing your items" },
+    { step: 3, title: "Dispatched", desc: activeOrder.courierPartner ? `${activeOrder.courierPartner}${activeOrder.awbNumber ? ` · AWB: ${activeOrder.awbNumber}` : ""}` : (currentStep >= 3 ? "In transit with courier" : "Waiting for courier pickup") },
+    { step: 4, title: "Delivered", desc: currentStep === 4 ? "Delivered to recipient" : "Estimated in 3-5 business days" },
+  ];
+
   return (
     <main className={styles.orderLayout}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <div className={styles.successIcon}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
+          <div className={`${styles.successIcon} ${isPendingPayment ? styles.pendingIcon : ''}`}>
+            {isPendingPayment ? (
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            ) : (
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            )}
           </div>
-          <h1>Order Confirmed</h1>
+          <h1>{isPendingPayment ? "Order Placed · Payment Pending" : "Order Confirmed"}</h1>
           <p>
-            Thank you for your purchase! Your order <strong>{activeOrder.id || orderId}</strong> has been received.
+            {isPendingPayment
+              ? <>Awaiting payment confirmation for order <strong>{activeOrder.id || orderId}</strong> before atelier tailoring begins.</>
+              : <>Thank you for your purchase! Your order <strong>{activeOrder.id || orderId}</strong> has been received.</>}
           </p>
           {activeOrder.email && (
             <p className={styles.emailHint}>We&apos;ve sent a confirmation email to {activeOrder.email}</p>
@@ -109,34 +138,18 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
             <div className={styles.section}>
               <h2>Tracking Information</h2>
               <div className={styles.trackingBox}>
-                <div className={styles.trackingStep + " " + styles.active}>
-                  <div className={styles.dot}></div>
-                  <div className={styles.stepInfo}>
-                    <h4>Order Placed</h4>
-                    <p>{activeOrder.date}</p>
-                  </div>
-                </div>
-                <div className={styles.trackingStep}>
-                  <div className={styles.dot}></div>
-                  <div className={styles.stepInfo}>
-                    <h4>Processing</h4>
-                    <p>Preparing your items</p>
-                  </div>
-                </div>
-                <div className={styles.trackingStep}>
-                  <div className={styles.dot}></div>
-                  <div className={styles.stepInfo}>
-                    <h4>Shipped</h4>
-                    <p>Waiting for courier pickup</p>
-                  </div>
-                </div>
-                <div className={styles.trackingStep}>
-                  <div className={styles.dot}></div>
-                  <div className={styles.stepInfo}>
-                    <h4>Delivered</h4>
-                    <p>Estimated in 3-5 business days</p>
-                  </div>
-                </div>
+                {trackingSteps.map((step) => {
+                  const isActive = step.step <= currentStep;
+                  return (
+                    <div key={step.step} className={`${styles.trackingStep} ${isActive ? styles.active : ""}`}>
+                      <div className={styles.dot}></div>
+                      <div className={styles.stepInfo}>
+                        <h4>{step.title}</h4>
+                        <p>{step.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

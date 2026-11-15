@@ -447,9 +447,16 @@
 /* 2. Body */
 .orderCardBody {
   display: flex;
+  flex-direction: column;
   padding: 20px;
-  gap: 20px;
-  align-items: flex-start;
+  gap: 16px;
+}
+
+.orderItemRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
 }
 
 .orderCardMedia {
@@ -468,7 +475,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .orderItemMeta {
@@ -514,34 +521,41 @@
 
 .logisticsNotice {
   display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 14px;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
   background-color: #fafaf9;
   border: 1px solid #f0ede6;
   border-radius: 8px;
+  width: 100%;
 }
 
 .logisticsIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  margin-top: 1px;
+  width: 16px;
+  height: 16px;
 }
 
 .logisticsContent {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  min-width: 0;
 }
 
 .logisticsStatusText {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 500;
   color: #292524;
-  line-height: 1.35;
+  line-height: 1.4;
 }
 
 .logisticsMetaSub {
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   color: #78716c;
 }
 
@@ -1199,12 +1213,26 @@
     padding: 16px;
     gap: 14px;
   }
+  .orderItemRow {
+    gap: 14px;
+  }
   .orderCardMedia {
     width: 68px;
     height: 88px;
   }
   .orderItemTitle {
     font-size: 0.92rem;
+  }
+  .logisticsNotice {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+  .logisticsStatusText {
+    font-size: 0.78rem;
+  }
+  .logisticsMetaSub {
+    font-size: 0.72rem;
   }
   .orderCardFooter {
     flex-direction: column;
@@ -1221,11 +1249,12 @@
   .primaryDetailsBtn {
     flex: 1;
     justify-content: center;
-    padding: 9px 10px;
+    padding: 10px 10px;
     font-size: 0.78rem;
   }
   .conciergeOrderBtn {
     justify-content: center;
+    width: 100%;
   }
   .orderCard {
     flex-direction: row;

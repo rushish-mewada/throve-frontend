@@ -1109,3 +1109,70 @@
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
+
+/* Loyalty Points Redemption Card */
+.loyaltyRedeemCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%);
+  border: 1px solid #fde68a;
+  border-radius: 8px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+
+.loyaltyRedeemLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.loyaltyBadgeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.loyaltyTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.loyaltySub {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  color: #78350f;
+  margin: 0;
+}
+
+.loyaltyToggleBtn {
+  flex-shrink: 0;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #b45309;
+  background-color: #ffffff;
+  color: #b45309;
+  transition: all 0.2s ease;
+}
+
+.loyaltyToggleBtn:hover {
+  background-color: #fef3c7;
+}
+
+.loyaltyActiveBtn {
+  background-color: #b45309 !important;
+  color: #ffffff !important;
+  border-color: #b45309 !important;
+}

@@ -114,6 +114,7 @@ export default function CheckoutPage() {
   const [couponInput, setCouponInput] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
+  const [redeemLoyalty, setRedeemLoyalty] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -428,8 +429,16 @@ export default function CheckoutPage() {
     }
   }, [isMounted, cartItems, router]);
 
+  // Loyalty Points calculation (10 Pts = ₹1 rebate)
+  const availablePoints = user?.points ?? 4200;
+  const pointsConversion = 10;
+  const maxPointsDiscount = Math.floor(availablePoints / pointsConversion);
+  const pointsDiscount = redeemLoyalty ? Math.min(maxPointsDiscount, Math.floor(cartSubtotal * 0.25)) : 0;
+  const pointsRedeemed = pointsDiscount * pointsConversion;
+
   // Calculate pricing breakdown
-  const discountAmount = appliedCoupon?.discount || 0;
+  const couponDiscount = appliedCoupon?.discount || 0;
+  const discountAmount = couponDiscount + pointsDiscount;
   const finalTotal = Math.max(0, cartSubtotal - discountAmount);
   const itemCount = cartItems?.reduce((acc, item) => acc + (item.qty || 1), 0) || 0;
 
@@ -601,6 +610,8 @@ export default function CheckoutPage() {
           pincode: activeAddr.pincode.trim(),
           paymentMethod: 'cod',
           couponCode: appliedCoupon?.code || '',
+          pointsRedeemed,
+          pointsDiscount,
         });
 
         if (codRes.success) {
@@ -613,6 +624,8 @@ export default function CheckoutPage() {
             total: `₹${finalTotal.toLocaleString('en-IN')}.00`,
             subtotal: `₹${cartSubtotal.toLocaleString('en-IN')}.00`,
             discount: discountAmount ? `₹${discountAmount.toLocaleString('en-IN')}.00` : null,
+            pointsDiscount: pointsDiscount ? `₹${pointsDiscount.toLocaleString('en-IN')}.00` : null,
+            pointsRedeemed,
             shipping: 'Free',
             paymentMethod: 'Cash on Delivery (COD)',
             shippingAddress: {
@@ -720,6 +733,30 @@ export default function CheckoutPage() {
         </div>
       )}
 
+      {/* LOYALTY PRIVILEGES REDEMPTION CARD */}
+      {availablePoints > 0 && (
+        <div className={styles.loyaltyRedeemCard}>
+          <div className={styles.loyaltyRedeemLeft}>
+            <div className={styles.loyaltyBadgeRow}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#eab308" stroke="#ca8a04" strokeWidth="1.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span className={styles.loyaltyTitle}>Atelier Loyalty Privileges</span>
+            </div>
+            <p className={styles.loyaltySub}>
+              You have <strong>{availablePoints.toLocaleString('en-IN')} Pts</strong> (Worth ₹{maxPointsDiscount.toLocaleString('en-IN')})
+            </p>
+          </div>
+          <button
+            type="button"
+            className={`${styles.loyaltyToggleBtn} ${redeemLoyalty ? styles.loyaltyActiveBtn : ''}`}
+            onClick={() => setRedeemLoyalty(!redeemLoyalty)}
+          >
+            {redeemLoyalty ? 'Redeemed ✓' : `Redeem ₹${Math.min(maxPointsDiscount, Math.floor(cartSubtotal * 0.25)).toLocaleString('en-IN')}`}
+          </button>
+        </div>
+      )}
+
       {/* COST BREAKDOWN */}
       <div className={styles.costBreakdown}>
         <div className={styles.costRow}>
@@ -731,7 +768,21 @@ export default function CheckoutPage() {
           <div className={styles.costRow}>
             <span style={{ color: '#166534' }}>Discount ({appliedCoupon.code})</span>
             <span className={styles.costValue} style={{ color: '#166534' }}>
-              - ₹{discountAmount.toLocaleString('en-IN')}.00
+              - ₹{couponDiscount.toLocaleString('en-IN')}.00
+            </span>
+          </div>
+        )}
+
+        {redeemLoyalty && pointsDiscount > 0 && (
+          <div className={styles.costRow}>
+            <span style={{ color: '#b45309', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+              <span>Loyalty Points ({pointsRedeemed.toLocaleString('en-IN')} Pts)</span>
+            </span>
+            <span className={styles.costValue} style={{ color: '#b45309', fontWeight: 600 }}>
+              - ₹{pointsDiscount.toLocaleString('en-IN')}.00
             </span>
           </div>
         )}
