@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import AccountDashboard from './_components/AccountDashboard/AccountDashboard';
 import { getCustomerOrders } from '@/lib/storefront/orders';
+import { getCustomerAddresses } from '@/lib/storefront/customer';
+import { getStorefrontCoupons } from '@/lib/storefront/coupons';
 
 export default async function AccountPage() {
   const cookieStore = await cookies();
@@ -19,10 +21,12 @@ export default async function AccountPage() {
   }
   const cleanPhone = rawPhone.replace(/[^0-9]/g, "").slice(-10);
 
-  // Fetch real customer orders and details from backend
-  const { customer, orders: liveOrders } = cleanPhone
-    ? await getCustomerOrders(cleanPhone)
-    : { customer: null, orders: [] };
+  // Fetch real customer orders, addresses, and active coupons from backend
+  const [{ customer, orders: liveOrders }, addressRows, coupons] = await Promise.all([
+    cleanPhone ? getCustomerOrders(cleanPhone) : { customer: null, orders: [] },
+    cleanPhone ? getCustomerAddresses(cleanPhone) : [],
+    getStorefrontCoupons(),
+  ]);
 
   const hasValidName = Boolean(customer?.name && customer.name !== "Client" && customer.name !== "Valued Client");
   const hasValidEmail = Boolean(customer?.email && customer.email.includes("@"));
@@ -44,23 +48,44 @@ export default async function AccountPage() {
   };
 
   const lastOrder = liveOrders?.[0];
-  const addresses = lastOrder?.shippingAddress?.address ? [
-    {
-      id: 1,
-      type: "Primary",
-      name: lastOrder.shippingAddress.name || user.name,
-      address: lastOrder.shippingAddress.address,
-      city: lastOrder.shippingAddress.city || "Mumbai",
-      state: lastOrder.shippingAddress.state || "Maharashtra",
-      pin: lastOrder.shippingAddress.pin || "",
-    },
-  ] : [];
+  const addresses = addressRows.length > 0
+    ? addressRows.map((addr) => ({
+        id: addr.publicId || addr.id,
+        type: addr.label || "Home",
+        name: [addr.firstName, addr.lastName].filter(Boolean).join(" ") || user.name,
+        phone: (addr.phone || "").replace(/[^0-9]/g, "").slice(-10),
+        email: user.email,
+        address: [addr.address1, addr.address2, addr.landmark].filter(Boolean).join(", "),
+        address1: addr.address1,
+        city: addr.city || "Mumbai",
+        state: addr.state || "Maharashtra",
+        pin: addr.pincode,
+        pincode: addr.pincode,
+      }))
+    : lastOrder?.shippingAddress?.address
+    ? [
+        {
+          id: 1,
+          type: "Primary",
+          name: lastOrder.shippingAddress.name || user.name,
+          phone: (lastOrder.shippingAddress.phone || "").replace(/[^0-9]/g, "").slice(-10),
+          email: user.email,
+          address: lastOrder.shippingAddress.address,
+          address1: lastOrder.shippingAddress.address,
+          city: lastOrder.shippingAddress.city || "Mumbai",
+          state: lastOrder.shippingAddress.state || "Maharashtra",
+          pin: lastOrder.shippingAddress.pin || "",
+          pincode: lastOrder.shippingAddress.pin || "",
+        },
+      ]
+    : [];
 
   return (
     <AccountDashboard 
       user={user} 
       orders={liveOrders} 
       addresses={addresses} 
+      coupons={coupons}
     />
   );
 }

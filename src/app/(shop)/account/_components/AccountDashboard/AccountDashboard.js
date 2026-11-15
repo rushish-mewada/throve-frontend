@@ -5,7 +5,11 @@ import Image from 'next/image';
 import { useStore } from '@/context/StoreContext';
 import styles from './AccountDashboard.module.css';
 import Modal from '@/components/ui/Modal/Modal';
-import { updateCustomerProfileAction } from '@/actions/customer';
+import {
+  updateCustomerProfileAction,
+  saveCustomerAddressAction,
+  deleteCustomerAddressAction,
+} from '@/actions/customer';
 
 function getStatusConfig(status, paymentStatus, styles) {
   const norm = String(status || '').toLowerCase().replace(/[\s-]/g, '_');
@@ -63,7 +67,12 @@ function getStatusConfig(status, paymentStatus, styles) {
   };
 }
 
-export default function AccountDashboard({ user: initialUser, orders, addresses: initialAddresses }) {
+export default function AccountDashboard({
+  user: initialUser,
+  orders,
+  addresses: initialAddresses,
+  coupons: initialCoupons,
+}) {
   const [activeTab, setActiveTab] = useState('menu');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { logoutUser, wishlistItems = [], removeFromWishlist, addToCart } = useStore();
@@ -75,7 +84,10 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
   const [profileSaving, setProfileSaving] = useState(false);
   const [profileMsg, setProfileMsg] = useState(null);
 
-  // Saved addresses state (hydrated from localStorage or initial props)
+  // Active coupons from backend
+  const coupons = Array.isArray(initialCoupons) && initialCoupons.length > 0 ? initialCoupons : [];
+
+  // Saved addresses state (hydrated from backend props or localStorage fallback)
   const [addresses, setAddresses] = useState(initialAddresses || []);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [isAddingAddress, setIsAddingAddress] = useState(false);
@@ -94,6 +106,13 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
   const [copiedCoupon, setCopiedCoupon] = useState(null);
 
   useEffect(() => {
+    if (initialAddresses && initialAddresses.length > 0) {
+      setAddresses(initialAddresses);
+      try {
+        localStorage.setItem('throve_user_addresses', JSON.stringify(initialAddresses));
+      } catch {}
+      return;
+    }
     try {
       const stored = localStorage.getItem('throve_user_addresses');
       if (stored) {
@@ -105,7 +124,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
     } catch {
       // Ignore parse errors
     }
-  }, []);
+  }, [initialAddresses]);
 
   const handleLogout = () => {
     logoutUser();
@@ -149,7 +168,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
     }
   };
 
-  const handleSaveAddress = (e) => {
+  const handleSaveAddress = async (e) => {
     e.preventDefault();
     if (!addressForm.name || !addressForm.address || !addressForm.pin) {
       return;
@@ -164,10 +183,29 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
       pincode: addressForm.pin,
     };
 
+    let serverAssignedId = editingAddressId;
+    try {
+      const res = await saveCustomerAddressAction({
+        id: editingAddressId,
+        label: addressForm.type || 'Home',
+        name: addressForm.name,
+        phone: cleanPhone,
+        address1: addressForm.address,
+        city: addressForm.city || 'Mumbai',
+        state: addressForm.state || 'Maharashtra',
+        pincode: addressForm.pin,
+      });
+      if (res?.data?.publicId || res?.data?.id) {
+        serverAssignedId = res.data.publicId || res.data.id;
+      }
+    } catch {
+      // Graceful fallback to optimistic local persistence
+    }
+
     let nextAddresses = [];
     if (editingAddressId) {
       nextAddresses = addresses.map((addr) =>
-        addr.id === editingAddressId ? { ...normalized, id: editingAddressId } : addr
+        addr.id === editingAddressId ? { ...normalized, id: serverAssignedId || editingAddressId } : addr
       );
     } else {
       if (addresses.length >= 5) {
@@ -177,7 +215,7 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
         ...addresses,
         {
           ...normalized,
-          id: Date.now(),
+          id: serverAssignedId || Date.now(),
         },
       ];
     }
@@ -216,12 +254,18 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
     });
   };
 
-  const handleDeleteAddress = (id) => {
+  const handleDeleteAddress = async (id) => {
     const nextAddresses = addresses.filter((a) => a.id !== id);
     setAddresses(nextAddresses);
     try {
       localStorage.setItem('throve_user_addresses', JSON.stringify(nextAddresses));
     } catch {}
+
+    try {
+      await deleteCustomerAddressAction(id);
+    } catch {
+      // Ignore network errors on delete
+    }
   };
 
   const handleCopyCoupon = (code) => {
@@ -606,40 +650,36 @@ export default function AccountDashboard({ user: initialUser, orders, addresses:
               <div className={styles.tabContent}>
                 <h2 className={styles.tabTitle}>My Coupons</h2>
                 <div className={styles.couponList}>
-                  <div className={styles.couponCard}>
-                    <div className={styles.couponLeft}>
-                      <span className={styles.discountAmt}>FLAT 15% OFF</span>
-                      <p>Valid on all streetwear jackets & tailoring. Min spend ₹2000.</p>
+                  {(coupons.length > 0 ? coupons : [
+                    {
+                      code: 'THROVE15',
+                      title: 'FLAT 15% OFF',
+                      description: 'Valid on all streetwear jackets & tailoring. Min spend ₹2000.',
+                    },
+                    {
+                      code: 'FREEDEL',
+                      title: 'FREE SHIPPING',
+                      description: 'Complimentary Express Air delivery across all Indian pin codes.',
+                    },
+                  ]).map((coupon) => (
+                    <div key={coupon.code} className={styles.couponCard}>
+                      <div className={styles.couponLeft}>
+                        <span className={styles.discountAmt}>{coupon.title}</span>
+                        <p>{coupon.description}</p>
+                      </div>
+                      <div className={styles.couponRight}>
+                        <button
+                          type="button"
+                          className={styles.couponCode}
+                          onClick={() => handleCopyCoupon(coupon.code)}
+                          style={{ cursor: 'pointer', border: 'none' }}
+                          title="Click to copy code"
+                        >
+                          {copiedCoupon === coupon.code ? 'COPIED!' : coupon.code}
+                        </button>
+                      </div>
                     </div>
-                    <div className={styles.couponRight}>
-                      <button
-                        type="button"
-                        className={styles.couponCode}
-                        onClick={() => handleCopyCoupon('THROVE15')}
-                        style={{ cursor: 'pointer', border: 'none' }}
-                        title="Click to copy code"
-                      >
-                        {copiedCoupon === 'THROVE15' ? 'COPIED!' : 'THROVE15'}
-                      </button>
-                    </div>
-                  </div>
-                  <div className={styles.couponCard}>
-                    <div className={styles.couponLeft}>
-                      <span className={styles.discountAmt}>FREE SHIPPING</span>
-                      <p>Complimentary Express Air delivery across all Indian pin codes.</p>
-                    </div>
-                    <div className={styles.couponRight}>
-                      <button
-                        type="button"
-                        className={styles.couponCode}
-                        onClick={() => handleCopyCoupon('FREEDEL')}
-                        style={{ cursor: 'pointer', border: 'none' }}
-                        title="Click to copy code"
-                      >
-                        {copiedCoupon === 'FREEDEL' ? 'COPIED!' : 'FREEDEL'}
-                      </button>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             )}
