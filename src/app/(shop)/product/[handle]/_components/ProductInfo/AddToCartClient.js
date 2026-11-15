@@ -141,11 +141,11 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     ? prodImg.trim()
     : '/products/navy-tailored-mini-dress/main.jpg?v=3';
 
-  // IntersectionObserver detects when primary CTA buttons scroll out of viewport on desktop,
-  // or keeps the floating bottom bar active on mobile for immediate 1-tap purchasing.
+  // IntersectionObserver detects when primary CTA buttons scroll out of viewport on desktop/tablet,
+  // or keeps the floating bottom bar active on mobile phones for immediate 1-tap purchasing.
   useEffect(() => {
     const updateVisibility = () => {
-      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      const isMobile = typeof window !== 'undefined' && window.innerWidth < 740;
       if (isMobile) {
         setShowStickyBar(true);
       } else {
@@ -164,7 +164,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+        if (typeof window !== 'undefined' && window.innerWidth < 740) {
           setShowStickyBar(true);
         } else {
           const isAbove = entry.boundingClientRect.bottom < 0;
