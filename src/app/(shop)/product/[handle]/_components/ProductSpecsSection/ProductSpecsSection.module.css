@@ -14,7 +14,7 @@
    Section Header
    ------------------------------------------------------------ */
 .header {
-  margin-bottom: 36px;
+  margin-bottom: 24px;
   text-align: left;
 }
 
@@ -53,7 +53,7 @@
   display: flex;
   flex-direction: column;
   border-top: 1px solid #e5e5e5;
-  margin-top: 24px;
+  margin-top: 0;
 }
 
 .accordionItem {
@@ -69,7 +69,7 @@
   text-align: left;
   background: transparent;
   border: none;
-  padding: 22px 0;
+  padding: 24px 0;
   cursor: pointer;
   gap: 20px;
   transition: all 0.15s ease;
@@ -77,12 +77,6 @@
 
 .accordionHeaderBtn:hover .accordionTitle {
   color: #000000;
-}
-
-.accordionHeaderBtn:hover .accordionToggleText {
-  color: #111111;
-  border-color: #9ca3af;
-  background-color: #f8fafc;
 }
 
 .accordionHeaderLeft {
@@ -112,30 +106,41 @@
 .accordionHeaderRight {
   display: flex;
   align-items: center;
-  gap: 8px;
   flex-shrink: 0;
 }
 
-.accordionToggleText {
+.iconButton {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 14px;
-  border-radius: 9999px;
-  border: 1px solid #e5e7eb;
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.74rem;
-  font-weight: 500;
-  color: #64748b;
-  background-color: transparent;
-  transition: all 0.15s ease;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 1.5px solid #111111;
+  color: #111111;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.accordionHeaderBtn:hover .iconButton {
+  background-color: #111111;
+  border-color: #111111;
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.iconButtonOpen {
+  background-color: #111111;
+  border-color: #111111;
+  color: #ffffff;
 }
 
 .accordionChevron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: currentColor;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 

@@ -128,6 +128,7 @@ export default async function ProductPage({ params }) {
       <ProductGrid
         title="Related Products"
         products={relatedProducts}
+        withoutTopBorder
         seeAllLink={`/collections/${product.category.toLowerCase() === 'men' ? 'men' : 'women'}`}
       />
       

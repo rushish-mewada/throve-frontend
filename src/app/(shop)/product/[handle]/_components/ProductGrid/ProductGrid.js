@@ -4,11 +4,11 @@ import Link from 'next/link';
 import ProductCard from '@/components/ui/ProductCard/ProductCard';
 import styles from './ProductGrid.module.css';
 
-export default function ProductGrid({ title, products, seeAllLink }) {
+export default function ProductGrid({ title, products, seeAllLink, withoutTopBorder = false }) {
   if (!Array.isArray(products) || products.length === 0) return null;
 
   return (
-    <section className={styles.section}>
+    <section className={`${styles.section} ${withoutTopBorder ? styles.noTopBorder : ''}`}>
       <div className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
         {seeAllLink && (
