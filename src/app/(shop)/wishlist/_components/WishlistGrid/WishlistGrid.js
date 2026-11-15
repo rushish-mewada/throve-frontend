@@ -7,7 +7,7 @@ import { useStore } from '@/context/StoreContext';
 import styles from './WishlistGrid.module.css';
 
 export default function WishlistGrid() {
-  const { wishlistItems: items, removeFromWishlist, addToCart, setIsCartDrawerOpen } = useStore();
+  const { wishlistItems: items, removeFromWishlist, addToCart, setIsCartDrawerOpen, openQuickSize } = useStore();
   const [addedToast, setAddedToast] = useState(null);
 
   const handleRemove = (id) => {
@@ -15,13 +15,17 @@ export default function WishlistGrid() {
   };
 
   const handleMoveToBag = (item) => {
-    addToCart(item, item.size || 'M', 'Standard', 1);
-    removeFromWishlist(item.id);
-    setAddedToast(`Added ${item.title} to bag`);
-    setIsCartDrawerOpen(true);
-    setTimeout(() => {
-      setAddedToast(null);
-    }, 3000);
+    if (item.size) {
+      addToCart(item, item.size, 'Standard', 1);
+      removeFromWishlist(item.id);
+      setAddedToast(`Added ${item.title} to bag`);
+      setIsCartDrawerOpen(true);
+      setTimeout(() => {
+        setAddedToast(null);
+      }, 3000);
+    } else {
+      openQuickSize(item);
+    }
   };
 
   if (items.length === 0) {

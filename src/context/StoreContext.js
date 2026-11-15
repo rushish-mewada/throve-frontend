@@ -205,6 +205,20 @@ export function StoreProvider({ children }) {
     } catch {}
   };
 
+  const [quickSizeProduct, setQuickSizeProduct] = useState(null);
+  const [isQuickSizeOpen, setIsQuickSizeOpen] = useState(false);
+
+  const openQuickSize = (product) => {
+    if (!product) return;
+    setQuickSizeProduct(product);
+    setIsQuickSizeOpen(true);
+  };
+
+  const closeQuickSize = () => {
+    setIsQuickSizeOpen(false);
+    setQuickSizeProduct(null);
+  };
+
   const cartCount = cartItems.reduce((acc, item) => acc + item.qty, 0);
   const cartSubtotal = cartItems.reduce((acc, item) => acc + item.priceNum * item.qty, 0);
   const wishlistCount = wishlistItems.length;
@@ -229,6 +243,10 @@ export function StoreProvider({ children }) {
         isInWishlist,
         toggleWishlist,
         removeFromWishlist,
+        quickSizeProduct,
+        isQuickSizeOpen,
+        openQuickSize,
+        closeQuickSize,
         user,
         isLoggedIn: !!user,
         loginUser,

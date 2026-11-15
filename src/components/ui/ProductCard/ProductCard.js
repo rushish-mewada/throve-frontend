@@ -16,7 +16,7 @@ import styles from "./ProductCard.module.css";
  * @param {string} [props.sizes]
  */
 export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw, 25vw" }) {
-  const { isInWishlist, toggleWishlist, addToCart } = useStore();
+  const { isInWishlist, toggleWishlist, openQuickSize } = useStore();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
@@ -185,11 +185,12 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
           <button
             type="button"
             className={styles.actionBtn}
-            aria-label="Add to cart"
+            aria-label="Select size and add to cart"
+            title="Select size and add to bag"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              addToCart(product, "M", "Standard", 1);
+              openQuickSize(product);
             }}
           >
             <svg

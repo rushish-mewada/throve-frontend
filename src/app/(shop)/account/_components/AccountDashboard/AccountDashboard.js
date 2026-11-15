@@ -85,7 +85,7 @@ export default function AccountDashboard({
 }) {
   const [activeTab, setActiveTab] = useState('menu');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const { logoutUser, wishlistItems = [], removeFromWishlist, addToCart } = useStore();
+  const { logoutUser, wishlistItems = [], removeFromWishlist, addToCart, openQuickSize } = useStore();
 
   // User profile state
   const [user, setUser] = useState(initialUser);
@@ -907,7 +907,7 @@ export default function AccountDashboard({
                           <button
                             type="button"
                             className={styles.viewBtn}
-                            onClick={() => addToCart(item, 'M', 'Standard', 1, true)}
+                            onClick={() => openQuickSize(item)}
                           >
                             Add to Bag
                           </button>
