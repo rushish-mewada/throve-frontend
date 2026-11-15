@@ -149,10 +149,13 @@
 }
 
 @keyframes pulseDot {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.15);
     opacity: 0.85;
@@ -271,7 +274,8 @@
 
 .sizeActive {
   border: 2px solid #111111;
-  background-color: #f5f5f5; /* Slight indication, though image uses bold outline */
+  background-color: #f5f5f5;
+  /* Slight indication, though image uses bold outline */
   font-weight: 700;
 }
 
@@ -297,9 +301,19 @@
 }
 
 @keyframes shakeSize {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  75% { transform: translateX(4px); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
 }
 
 .vtonTriggerSection {
@@ -384,8 +398,13 @@
 }
 
 @keyframes radialSpin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spinner {
@@ -444,8 +463,13 @@
 }
 
 @keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modalHandle {
@@ -468,8 +492,15 @@
 }
 
 @keyframes modalSlideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .modalHeader {
@@ -724,6 +755,7 @@
   .title {
     font-size: 1.8rem;
   }
+
   .actions {
     flex-direction: column;
   }
@@ -733,26 +765,33 @@
   .title {
     font-size: 1.5rem;
   }
+
   .newPrice {
     font-size: 1.3rem;
   }
+
   .priceRow {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 14px;
   }
+
   .stockIndicator {
     font-size: 0.75rem;
   }
+
   .sizeBtn {
     width: 40px;
     height: 40px;
     font-size: 0.85rem;
   }
+
   .actions {
     gap: 12px;
   }
-  .addToCartBtn, .checkoutNowBtn {
+
+  .addToCartBtn,
+  .checkoutNowBtn {
     padding: 14px;
     font-size: 1rem;
   }
@@ -780,6 +819,7 @@
     from {
       transform: translateY(100%);
     }
+
     to {
       transform: translateY(0);
     }
@@ -1074,15 +1114,15 @@
 @media (max-width: 1024px) {
   .stickyBar {
     bottom: calc(84px + env(safe-area-inset-bottom, 0px));
-    left: 16px;
-    right: 16px;
+    left: 12px;
+    right: 12px;
     width: auto;
     max-width: 420px;
     margin: 0 auto;
     border-radius: 9999px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
-    padding: 6px 10px 6px 8px;
+    padding: 5px 8px 5px 6px;
     transform: translateY(120%);
     z-index: 92;
   }
@@ -1103,15 +1143,16 @@
     display: none;
   }
 
-  .stickyThumb {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
-    border-radius: 9999px;
+  .stickyProdInfo {
+    gap: 6px;
+    flex: 0 0 auto;
   }
 
-  .stickyProdInfo {
-    gap: 8px;
+  .stickyThumb {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    border-radius: 9999px;
   }
 
   .stickyMetaRow {
@@ -1122,7 +1163,7 @@
   }
 
   .stickyPrice {
-    font-size: 0.92rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #111111;
     line-height: 1.1;
@@ -1132,47 +1173,120 @@
     display: block;
     color: #a1a1aa;
     text-decoration: line-through;
-    font-size: 0.72rem;
+    font-size: 0.68rem;
     font-weight: 400;
     line-height: 1.1;
   }
 
   .stickyActionsGroup {
     gap: 6px;
+    flex: 0 0 auto;
   }
 
   .stickyButtons {
     gap: 6px;
   }
 
-  .stickyAddBtn, .stickyBuyBtn {
-    padding: 8px 12px;
-    font-size: 0.78rem;
+  .stickyAddBtn,
+  .stickyBuyBtn {
+    padding: 7px 11px;
+    font-size: 0.74rem;
     border-radius: 9999px;
     gap: 4px;
   }
+
+  .stickyAddBtn svg,
+  .stickyBuyBtn svg {
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+  }
 }
 
-@media (max-width: 380px) {
+/* For compact mobile screens and standard folded phones (<= 360px) */
+@media (max-width: 360px) {
   .stickyBar {
-    left: 10px;
-    right: 10px;
-    padding: 5px 8px 5px 6px;
+    left: 8px;
+    right: 8px;
+    padding: 4px 6px 4px 5px;
+  }
+
+  .stickyBarInner {
+    gap: 5px;
+  }
+
+  .stickyProdInfo {
+    gap: 5px;
   }
 
   .stickyThumb {
-    width: 34px;
-    height: 34px;
-    flex: 0 0 34px;
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
   }
 
   .stickyPrice {
-    font-size: 0.8rem;
+    font-size: 0.74rem;
   }
 
-  .stickyAddBtn, .stickyBuyBtn {
-    padding: 7px 9px;
-    font-size: 0.74rem;
+  .stickyOldPrice {
+    font-size: 0.62rem;
+  }
+
+  .stickyButtons {
+    gap: 4px;
+  }
+
+  .stickyAddBtn,
+  .stickyBuyBtn {
+    padding: 6px 8px;
+    font-size: 0.68rem;
+    gap: 3px;
+  }
+
+  .stickyAddBtn svg,
+  .stickyBuyBtn svg {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+/* For ultra-narrow folded screens (e.g. Galaxy Z Fold cover screen <= 300px) */
+@media (max-width: 300px) {
+  .stickyBar {
+    left: 4px;
+    right: 4px;
+    padding: 3px 5px 3px 4px;
+  }
+
+  .stickyThumb {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+  }
+
+  .stickyPrice {
+    font-size: 0.7rem;
+  }
+
+  .stickyOldPrice {
+    font-size: 0.58rem;
+  }
+
+  .stickyButtons {
+    gap: 3px;
+  }
+
+  .stickyAddBtn,
+  .stickyBuyBtn {
+    padding: 5px 6px;
+    font-size: 0.62rem;
+    gap: 2px;
+  }
+
+  .stickyAddBtn svg,
+  .stickyBuyBtn svg {
+    display: none;
   }
 }
 

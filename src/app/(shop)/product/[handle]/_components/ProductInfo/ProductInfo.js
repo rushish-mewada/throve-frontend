@@ -9,11 +9,11 @@ export default function ProductInfo({ product, config }) {
 
   return (
     <div className={styles.infoContainer}>
-      
+
       {/* Title & Collection */}
       <p className={styles.collectionName}>{product.collection || 'Collection'}</p>
       <h1 className={styles.title}>{product.title}</h1>
-      
+
       {/* Price & Capsules */}
       <div className={styles.priceRow}>
         <div className={styles.priceGroup}>
@@ -72,9 +72,9 @@ export default function ProductInfo({ product, config }) {
           )}
         </div>
       </div>
-      
+
       <hr className={styles.divider} />
-      
+
       {/* Description */}
       <div className={styles.descriptionBlock}>
         <span className={styles.descriptionTitle}>Specification & Silhouette:</span>
