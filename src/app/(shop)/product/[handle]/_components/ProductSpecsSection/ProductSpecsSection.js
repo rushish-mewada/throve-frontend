@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import styles from "./ProductSpecsSection.module.css";
 
@@ -99,18 +100,20 @@ function getNormalizedSpecifications(product) {
   if (product?.specs?.care) washCare = product.specs.care;
 
   return [
-    { label: "Fabric Composition", value: composition },
-    { label: "Material Blend %", value: blendPercent },
-    { label: "Weave & Weight", value: weaveWeight },
-    { label: "Fit & Silhouette", value: fit },
-    { label: "Collar & Neckline", value: collar },
-    { label: "Closure & Hardware", value: closure },
-    { label: "Sleeve & Cuffs", value: sleeves },
-    { label: "Pocket Architecture", value: pockets },
-    { label: "Wash & Material Care", value: washCare },
-    { label: "Dimensions & Hemline", value: hem },
-    { label: "Lining & Interior Finish", value: lining },
-    { label: "Country of Origin", value: "Artisan Handcrafted in India" },
+    { label: "Fabric", value: composition },
+    { label: "Fit", value: fit },
+    { label: "Fabric 2", value: blendPercent },
+    { label: "Type", value: subcategory ? subcategory.charAt(0).toUpperCase() + subcategory.slice(1) : "Regular" },
+    { label: "Wash Care", value: washCare },
+    { label: "Length", value: hem },
+    { label: "Number of Pockets", value: pockets },
+    { label: "Closure", value: closure },
+    { label: "Collar Architecture", value: collar },
+    { label: "Sleeve Construction", value: sleeves },
+    { label: "Textile Weight & Density", value: weaveWeight },
+    { label: "Interior Finish", value: lining },
+    { label: "Atelier Provenance", value: "Handcrafted in Limited Batches by THROVE Atelier, India" },
+    { label: "Material Composition", value: "Premium Long-Staple Combed Cotton" },
   ];
 }
 
@@ -176,6 +179,9 @@ function getNormalizedVisualBlocks(product) {
 export default function ProductSpecsSection({ product }) {
   if (!product) return null;
 
+  const [isDossierOpen, setIsDossierOpen] = useState(true);
+  const [isVisualStudyOpen, setIsVisualStudyOpen] = useState(true);
+
   const specifications = getNormalizedSpecifications(product);
   const visualBlocks = getNormalizedVisualBlocks(product);
 
@@ -187,186 +193,222 @@ export default function ProductSpecsSection({ product }) {
     >
       {/* Section Header */}
       <div className={styles.header}>
-        <span className={styles.tagline}>TECHNICAL ARCHITECTURE & MATERIALITY</span>
+        <span className={styles.tagline}>ATELIER DOSSIER · MATERIALITY & SARTORIAL FORM</span>
         <h2 id="specs-heading" className={styles.title}>
           Anatomy & Craftsmanship
         </h2>
         <p className={styles.subtitle}>
-          Materials, Dimensions & Tailoring
+          Material Composition, Architectural Drape & Tailoring
         </p>
       </div>
 
-      {/* Sub-Section 1: The Specifications Table */}
-      <div className={styles.tableContainer}>
+      {/* Sub-Section 1: The Specifications Table (Closable on all devices, matching Image 2 reference) */}
+      <div className={styles.tableSection}>
         <div className={styles.tableHeaderBar}>
-          <span className={styles.tableHeaderTitle}>Technical Specification Breakdown</span>
-          <span className={styles.tableHeaderBadge}>
-            {specifications.length} Verified Attributes
-          </span>
+          <h3 className={styles.tableTitle}>Specifications</h3>
+          <button
+            type="button"
+            className={styles.toggleBtn}
+            onClick={() => setIsDossierOpen((prev) => !prev)}
+            aria-expanded={isDossierOpen}
+            aria-controls="specifications-grid"
+            title={isDossierOpen ? "Collapse Specifications" : "Expand Specifications"}
+          >
+            <span>{isDossierOpen ? "Close" : "Expand"}</span>
+            <span className={`${styles.chevronIcon} ${isDossierOpen ? styles.chevronOpen : ""}`}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </span>
+          </button>
         </div>
-        <div className={styles.specGrid}>
-          {specifications.map((item, idx) => (
-            <div key={idx} className={styles.specCell}>
-              <span className={styles.specLabel}>{item.label}</span>
-              <span className={styles.specValue}>{item.value}</span>
-            </div>
-          ))}
-        </div>
+
+        {isDossierOpen && (
+          <div id="specifications-grid" className={styles.specGrid}>
+            {specifications.map((item, idx) => (
+              <div key={idx} className={styles.specCell}>
+                <span className={styles.specLabel}>{item.label}</span>
+                <span className={styles.specValue}>{item.value}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Sub-Section 2: Visual Format Blocks */}
-      <div className={styles.visualContainer}>
-        <div className={styles.visualHeader}>
-          <h3 className={styles.visualSectionTitle}>Design in Detail</h3>
-          <p className={styles.visualSectionSub}>
-            An intimate study of textile purity, tailoring, and artisanal hardware.
-          </p>
+      {/* Sub-Section 2: The Visual Study / Lookbook Engine (Closable on all devices) */}
+      <div className={styles.visualSection}>
+        <div className={styles.visualHeaderBar}>
+          <div className={styles.visualHeaderLeft}>
+            <h3 className={styles.visualSectionTitle}>Visual Study &amp; Design in Detail</h3>
+            <p className={styles.visualSectionSub}>
+              An intimate study of textile purity, architectural silhouette, and artisanal hardware.
+            </p>
+          </div>
+          <button
+            type="button"
+            className={styles.toggleBtn}
+            onClick={() => setIsVisualStudyOpen((prev) => !prev)}
+            aria-expanded={isVisualStudyOpen}
+            aria-controls="visual-study-blocks"
+            title={isVisualStudyOpen ? "Collapse Visual Study" : "Expand Visual Study"}
+          >
+            <span>{isVisualStudyOpen ? "Close" : "Expand"}</span>
+            <span className={`${styles.chevronIcon} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </span>
+          </button>
         </div>
 
-        {visualBlocks.map((block) => {
-          // Layout: image_left (Image 1:1 on Left, Text on Right)
-          if (block.layout === "image_left") {
-            return (
-              <article key={block.id || block.title} className={styles.layoutSplit}>
-                <div className={styles.ratio1x1}>
-                  <Image
-                    src={block.image}
-                    alt={block.imageAlt || block.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 500px"
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-                <div className={styles.contentCol}>
-                  {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
-                  <h4 className={styles.blockTitle}>{block.title}</h4>
-                  <p className={styles.blockDesc}>{block.description}</p>
-                  {Array.isArray(block.features) && block.features.length > 0 && (
-                    <ul className={styles.featureList}>
-                      {block.features.map((feat, fIdx) => (
-                        <li key={fIdx} className={styles.featureItem}>
-                          <span className={styles.featureCheck}>✓</span>
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </article>
-            );
-          }
-
-          // Layout: image_right (Text on Left, Image 1:1 on Right)
-          if (block.layout === "image_right") {
-            return (
-              <article
-                key={block.id || block.title}
-                className={`${styles.layoutSplit} ${styles.layoutSplitRight}`}
-              >
-                <div className={styles.contentCol}>
-                  {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
-                  <h4 className={styles.blockTitle}>{block.title}</h4>
-                  <p className={styles.blockDesc}>{block.description}</p>
-                  {Array.isArray(block.features) && block.features.length > 0 && (
-                    <ul className={styles.featureList}>
-                      {block.features.map((feat, fIdx) => (
-                        <li key={fIdx} className={styles.featureItem}>
-                          <span className={styles.featureCheck}>✓</span>
-                          <span>{feat}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-                <div className={styles.ratio1x1}>
-                  <Image
-                    src={block.image}
-                    alt={block.imageAlt || block.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 500px"
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-              </article>
-            );
-          }
-
-          // Layout: image_top (Wide 2:1 Image on Top, Text Below)
-          if (block.layout === "image_top") {
-            return (
-              <article key={block.id || block.title} className={styles.layoutStacked}>
-                <div className={styles.ratio2x1}>
-                  <Image
-                    src={block.image}
-                    alt={block.imageAlt || block.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 1000px"
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-                <div className={styles.contentCol}>
-                  {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
-                  <h4 className={styles.blockTitle}>{block.title}</h4>
-                  <p className={styles.blockDesc}>{block.description}</p>
-                </div>
-              </article>
-            );
-          }
-
-          // Layout: image_bottom (Text on Top, Wide 2:1 Image Below)
-          if (block.layout === "image_bottom") {
-            return (
-              <article key={block.id || block.title} className={styles.layoutStacked}>
-                <div className={styles.contentCol}>
-                  {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
-                  <h4 className={styles.blockTitle}>{block.title}</h4>
-                  <p className={styles.blockDesc}>{block.description}</p>
-                </div>
-                <div className={styles.ratio2x1}>
-                  <Image
-                    src={block.image}
-                    alt={block.imageAlt || block.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 1000px"
-                    style={{ objectFit: "cover" }}
-                  />
-                </div>
-              </article>
-            );
-          }
-
-          // Layout: image_only (Strict 16:9 Widescreen Image with Overlay Caption)
-          if (block.layout === "image_only") {
-            return (
-              <article key={block.id || block.title} className={styles.layoutImageOnly}>
-                <div className={styles.ratio16x9}>
-                  <Image
-                    src={block.image}
-                    alt={block.imageAlt || block.title || "Editorial view"}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 1100px"
-                    style={{ objectFit: "cover" }}
-                  />
-                  {block.caption && (
-                    <div className={styles.imageOnlyCaption}>
-                      <strong>{block.caption}</strong>
-                      <span>Aspect Ratio 16:9 Cinematic</span>
+        {isVisualStudyOpen && (
+          <div id="visual-study-blocks" className={styles.visualBlocksList}>
+            {visualBlocks.map((block) => {
+              // Layout: image_left (Image 1:1 on Left, Text on Right)
+              if (block.layout === "image_left") {
+                return (
+                  <article key={block.id || block.title} className={styles.layoutSplit}>
+                    <div className={styles.ratio1x1}>
+                      <Image
+                        src={block.image}
+                        alt={block.imageAlt || block.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 500px"
+                        style={{ objectFit: "cover" }}
+                      />
                     </div>
-                  )}
-                </div>
-              </article>
-            );
-          }
+                    <div className={styles.contentCol}>
+                      {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
+                      <h4 className={styles.blockTitle}>{block.title}</h4>
+                      <p className={styles.blockDesc}>{block.description}</p>
+                      {Array.isArray(block.features) && block.features.length > 0 && (
+                        <ul className={styles.featureList}>
+                          {block.features.map((feat, fIdx) => (
+                            <li key={fIdx} className={styles.featureItem}>
+                              <span className={styles.featureCheck}>✓</span>
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </article>
+                );
+              }
 
-          // Layout: text_only (Editorial Typography Block)
-          return (
-            <article key={block.id || block.title} className={styles.layoutTextOnly}>
-              {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
-              <h4 className={styles.blockTitle}>{block.title}</h4>
-              <p className={styles.blockDesc}>{block.description}</p>
-            </article>
-          );
-        })}
+              // Layout: image_right (Text on Left, Image 1:1 on Right)
+              if (block.layout === "image_right") {
+                return (
+                  <article
+                    key={block.id || block.title}
+                    className={`${styles.layoutSplit} ${styles.layoutSplitRight}`}
+                  >
+                    <div className={styles.contentCol}>
+                      {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
+                      <h4 className={styles.blockTitle}>{block.title}</h4>
+                      <p className={styles.blockDesc}>{block.description}</p>
+                      {Array.isArray(block.features) && block.features.length > 0 && (
+                        <ul className={styles.featureList}>
+                          {block.features.map((feat, fIdx) => (
+                            <li key={fIdx} className={styles.featureItem}>
+                              <span className={styles.featureCheck}>✓</span>
+                              <span>{feat}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <div className={styles.ratio1x1}>
+                      <Image
+                        src={block.image}
+                        alt={block.imageAlt || block.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 500px"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                  </article>
+                );
+              }
+
+              // Layout: image_top (Wide 2:1 Image on Top, Text Below)
+              if (block.layout === "image_top") {
+                return (
+                  <article key={block.id || block.title} className={styles.layoutStacked}>
+                    <div className={styles.ratio2x1}>
+                      <Image
+                        src={block.image}
+                        alt={block.imageAlt || block.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 1000px"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                    <div className={styles.contentCol}>
+                      {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
+                      <h4 className={styles.blockTitle}>{block.title}</h4>
+                      <p className={styles.blockDesc}>{block.description}</p>
+                    </div>
+                  </article>
+                );
+              }
+
+              // Layout: image_bottom (Text on Top, Wide 2:1 Image Below)
+              if (block.layout === "image_bottom") {
+                return (
+                  <article key={block.id || block.title} className={styles.layoutStacked}>
+                    <div className={styles.contentCol}>
+                      {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
+                      <h4 className={styles.blockTitle}>{block.title}</h4>
+                      <p className={styles.blockDesc}>{block.description}</p>
+                    </div>
+                    <div className={styles.ratio2x1}>
+                      <Image
+                        src={block.image}
+                        alt={block.imageAlt || block.title}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 1000px"
+                        style={{ objectFit: "cover" }}
+                      />
+                    </div>
+                  </article>
+                );
+              }
+
+              // Layout: image_only (Strict 16:9 Widescreen Image with Overlay Caption)
+              if (block.layout === "image_only") {
+                return (
+                  <article key={block.id || block.title} className={styles.layoutImageOnly}>
+                    <div className={styles.ratio16x9}>
+                      <Image
+                        src={block.image}
+                        alt={block.imageAlt || block.title || "Editorial view"}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 1100px"
+                        style={{ objectFit: "cover" }}
+                      />
+                      {block.caption && (
+                        <div className={styles.imageOnlyCaption}>
+                          <strong>{block.caption}</strong>
+                          <span>Aspect Ratio 16:9 Cinematic</span>
+                        </div>
+                      )}
+                    </div>
+                  </article>
+                );
+              }
+
+              // Layout: text_only (Editorial Typography Block)
+              return (
+                <article key={block.id || block.title} className={styles.layoutTextOnly}>
+                  {block.tag && <span className={styles.blockTag}>{block.tag}</span>}
+                  <h4 className={styles.blockTitle}>{block.title}</h4>
+                  <p className={styles.blockDesc}>{block.description}</p>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );

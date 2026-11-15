@@ -77,21 +77,21 @@ export default function ProductInfo({ product, config }) {
 
       {/* Short Description */}
       <div className={styles.descriptionBlock}>
-        <span className={styles.descriptionTitle}>Overview</span>
+        <span className={styles.descriptionTitle}>Specification &amp; Silhouette:</span>
         <p className={styles.descriptionText}>
-          {product.description}
+          {product.description}{' '}
+          <button
+            type="button"
+            className={styles.seeMore}
+            onClick={() => {
+              const el = document.getElementById('product-specifications');
+              if (el) el.scrollIntoView({ behavior: 'smooth' });
+            }}
+            aria-label="See More Specifications"
+          >
+            See More....
+          </button>
         </p>
-        <button
-          type="button"
-          className={styles.specsAnchorLink}
-          onClick={() => {
-            const el = document.getElementById('product-specifications');
-            if (el) el.scrollIntoView({ behavior: 'smooth' });
-          }}
-          aria-label="View Anatomy and Craftsmanship Specifications"
-        >
-          View Anatomy & Full Specifications ↓
-        </button>
       </div>
 
       {/* Client Component for interactivity (Color, Size, Buttons, VTON, Size Guide, Delivery T&C) */}

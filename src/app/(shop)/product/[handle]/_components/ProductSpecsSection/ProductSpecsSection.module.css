@@ -48,117 +48,147 @@
 
 /* ------------------------------------------------------------
    Sub-Section 1: The Specifications Table
+   Clean 2-column minimalist layout matching exact reference design
    ------------------------------------------------------------ */
-.tableContainer {
+.tableSection {
   margin-bottom: 56px;
-  background: #ffffff;
-  border: 1px solid #e7e5e4;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .tableHeaderBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 24px;
-  background-color: #fafaf9;
-  border-bottom: 1px solid #e7e5e4;
+  margin-bottom: 24px;
 }
 
-.tableHeaderTitle {
+.tableTitle {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: #1c1917;
-  letter-spacing: 0.02em;
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: -0.01em;
+  margin: 0;
 }
 
-.tableHeaderBadge {
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: #52525b;
-  background: #f4f4f5;
-  border: 1px solid #e4e4e7;
-  padding: 3px 10px;
+.toggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  padding: 5px 14px;
   border-radius: 9999px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toggleBtn:hover {
+  color: #0f172a;
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.chevronIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
 }
 
 .specGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 56px;
+  row-gap: 22px;
 }
 
 .specCell {
   display: flex;
   flex-direction: column;
-  gap: 5px;
-  padding: 16px 24px;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.15s ease;
-}
-
-/* Add vertical divider between 2 columns on desktop */
-.specCell:nth-child(odd) {
-  border-right: 1px solid #f0f0f0;
-}
-
-/* Remove bottom border on the last two items */
-.specCell:nth-last-child(-n+2):nth-child(2n+1),
-.specCell:nth-last-child(-n+2):nth-child(2n) {
-  border-bottom: none;
-}
-
-.specCell:hover {
-  background-color: #fafaf9;
+  gap: 6px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .specLabel {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #71717a;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #64748b;
   line-height: 1.2;
 }
 
 .specValue {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.92rem;
-  font-weight: 500;
-  color: #111111;
-  line-height: 1.45;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: #1e293b;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+@media (max-width: 640px) {
+  .specGrid {
+    grid-template-columns: 1fr;
+    row-gap: 16px;
+    column-gap: 0;
+  }
+  
+  .specValue {
+    font-size: 1.05rem;
+  }
 }
 
 /* ------------------------------------------------------------
    Sub-Section 2: Visual Story & Format Engine
    ------------------------------------------------------------ */
-.visualContainer {
+.visualSection {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 24px;
 }
 
-.visualHeader {
-  margin-bottom: 4px;
+.visualHeaderBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.visualHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .visualSectionTitle {
   font-family: var(--font-abhaya), serif;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 500;
   color: #111111;
-  margin: 0 0 4px 0;
+  margin: 0;
 }
 
 .visualSectionSub {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   color: #71717a;
   margin: 0;
+}
+
+.visualBlocksList {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  margin-top: 8px;
 }
 
 /* Layout 1 & 2: Split 50/50 (image_left & image_right) */
