@@ -207,6 +207,37 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
               {payError}
             </div>
           )}
+
+          {(isFailedPayment || isPendingPayment) && (
+            <div className={styles.headerActionRow}>
+              <button
+                type="button"
+                className={styles.headerRetryBtn}
+                onClick={handlePayNow}
+                disabled={isPaying}
+              >
+                {isPaying ? (
+                  "Preparing Secure Payment..."
+                ) : isFailedPayment ? (
+                  <>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M1 4v6h6"></path>
+                      <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                    </svg>
+                    <span>Retry Payment ({activeOrder.total})</span>
+                  </>
+                ) : (
+                  <>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>Complete Payment ({activeOrder.total})</span>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
 
         <div className={styles.content}>
@@ -256,7 +287,7 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
                   <div>
                     <h4 className={styles.failedNoticeTitle}>Payment Session Expired</h4>
                     <p className={styles.failedNoticeDesc}>
-                      Your online payment session was not completed within the allowed time limit. Your garment reservation is temporarily held. Please click Retry Payment to complete your purchase and start crafting your order.
+                      Payment session expired. Click Retry Payment to complete your order.
                     </p>
                     <button
                       type="button"

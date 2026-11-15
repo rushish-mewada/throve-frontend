@@ -68,6 +68,41 @@
   font-size: 0.95rem !important;
 }
 
+.headerActionRow {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.headerRetryBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 13px 32px;
+  background-color: #111111;
+  color: #ffffff;
+  border: 1px solid #111111;
+  border-radius: 8px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+.headerRetryBtn:hover {
+  background-color: #27272a;
+  border-color: #27272a;
+}
+
+.headerRetryBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .content {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
@@ -392,6 +427,15 @@
   .header p {
     font-size: 0.88rem;
     line-height: 1.45;
+  }
+  .headerActionRow {
+    margin-top: 16px;
+    width: 100%;
+  }
+  .headerRetryBtn {
+    width: 100%;
+    padding: 13px 18px;
+    font-size: 0.92rem;
   }
   .successIcon {
     width: 54px;
