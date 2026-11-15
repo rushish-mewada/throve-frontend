@@ -19,7 +19,7 @@ export async function getOrderById(id) {
     const raw = res?.data;
     if (!raw) return null;
 
-    const addr = raw.shipping_address || {};
+    const addr = raw.shippingAddress || raw.shipping_address || {};
     const formattedDate = raw.createdAt || raw.created_at
       ? new Date(raw.createdAt || raw.created_at).toLocaleDateString("en-IN", {
           year: "numeric",
@@ -33,7 +33,7 @@ export async function getOrderById(id) {
         });
 
     return {
-      id: raw.display_id || raw.public_id || raw.publicId || id,
+      id: raw.displayId || raw.display_id || raw.public_id || raw.publicId || id,
       publicId: raw.public_id || raw.publicId,
       date: formattedDate,
       email: addr.email || "",
@@ -42,16 +42,17 @@ export async function getOrderById(id) {
       shipping: (raw.shippingTotalPaise || raw.shipping_paise || 0) > 0
         ? formatMoney(raw.shippingTotalPaise || raw.shipping_paise, raw.currency || "INR")
         : "Free",
-      paymentMethod: raw.payment_method || "Cash on Delivery (COD)",
+      paymentMethod: raw.paymentMethod || raw.payment_method || "Online Payment",
+      paymentStatus: raw.paymentStatus || raw.payment_status || "pending",
       status: raw.status || "pending_dispatch",
       awbNumber: raw.awbNumber || raw.awb || null,
-      courierPartner: raw.courierPartner || raw.courier || "Delhivery Express",
+      courierPartner: raw.courierPartner || raw.courier || null,
       shippingAddress: {
-        name: `${addr.firstName || ""} ${addr.lastName || ""}`.trim() || "Customer",
-        address: [addr.address1, addr.address2].filter(Boolean).join(", ") || "India",
+        name: addr.name || `${addr.firstName || ""} ${addr.lastName || ""}`.trim() || "Customer",
+        address: addr.address || [addr.address1, addr.address2].filter(Boolean).join(", ") || "India",
         city: addr.city || "",
         state: addr.state || "",
-        pin: addr.pincode || "",
+        pin: addr.pin || addr.pincode || "",
       },
       items: (raw.items || []).map((item, idx) => {
         let itImg = item.image || null;

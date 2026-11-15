@@ -1279,6 +1279,13 @@
   .orderCardAction {
     display: none; /* Hide chevron on mobile to save horizontal space */
   }
+  .wishlistCardActions {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+    margin-top: 10px;
+  }
   .viewBtn {
     width: 100%;
   }
@@ -1302,10 +1309,19 @@
     gap: 16px;
   }
   .cardActions {
-    flex-direction: column;
-    gap: 12px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-top: 12px;
   }
   .addressGrid {
     grid-template-columns: 1fr;
   }
+}
+
+.wishlistCardActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }

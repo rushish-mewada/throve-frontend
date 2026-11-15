@@ -92,7 +92,21 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
               </svg>
             )}
           </div>
-          <h1>{isPendingPayment ? "Order Placed · Payment Pending" : "Order Confirmed"}</h1>
+          <h1>Order #{activeOrder.id || orderId}</h1>
+          <div>
+            <div
+              className={`${styles.statusCapsule} ${
+                isPendingPayment ? styles.statusCapsulePending : styles.statusCapsuleConfirmed
+              }`}
+            >
+              <span
+                className={`${styles.statusDot} ${
+                  isPendingPayment ? styles.statusDotAmber : styles.statusDotGreen
+                }`}
+              />
+              <span>{isPendingPayment ? "Payment Pending" : "Order Confirmed · Paid"}</span>
+            </div>
+          </div>
           <p>
             {isPendingPayment
               ? <>Awaiting payment confirmation for order <strong>{activeOrder.id || orderId}</strong> before atelier tailoring begins.</>
@@ -136,23 +150,44 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
               </div>
             </div>
 
-            <div className={styles.section}>
-              <h2>Tracking Information</h2>
-              <div className={styles.trackingBox}>
-                {trackingSteps.map((step) => {
-                  const isActive = step.step <= currentStep;
-                  return (
-                    <div key={step.step} className={`${styles.trackingStep} ${isActive ? styles.active : ""}`}>
-                      <div className={styles.dot}></div>
-                      <div className={styles.stepInfo}>
-                        <h4>{step.title}</h4>
-                        <p>{step.desc}</p>
-                      </div>
-                    </div>
-                  );
-                })}
+            {isPendingPayment ? (
+              <div className={styles.section}>
+                <h2>Atelier Tailoring & Fulfillment</h2>
+                <div className={styles.pendingNoticeBox}>
+                  <div className={styles.pendingNoticeIcon}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className={styles.pendingNoticeTitle}>Payment Confirmation Pending</h4>
+                    <p className={styles.pendingNoticeDesc}>
+                      Artisan tailoring and courier dispatch will begin immediately upon payment confirmation. Once verified, live logistics milestones and courier tracking will activate right here.
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={styles.section}>
+                <h2>Tracking Information</h2>
+                <div className={styles.trackingBox}>
+                  {trackingSteps.map((step) => {
+                    const isActive = step.step <= currentStep;
+                    return (
+                      <div key={step.step} className={`${styles.trackingStep} ${isActive ? styles.active : ""}`}>
+                        <div className={styles.dot}></div>
+                        <div className={styles.stepInfo}>
+                          <h4>{step.title}</h4>
+                          <p>{step.desc}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className={styles.rightCol}>
@@ -192,8 +227,23 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
             </div>
 
             <div className={styles.infoCard}>
-              <h2>Payment Method</h2>
-              <p>{activeOrder.paymentMethod}</p>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                <h2 style={{ margin: 0, paddingBottom: 0, borderBottom: "none" }}>Payment Method</h2>
+                <span
+                  className={`${styles.statusCapsule} ${
+                    isPendingPayment ? styles.statusCapsulePending : styles.statusCapsuleConfirmed
+                  }`}
+                  style={{ margin: 0, fontSize: "0.75rem", padding: "3px 10px" }}
+                >
+                  <span
+                    className={`${styles.statusDot} ${
+                      isPendingPayment ? styles.statusDotAmber : styles.statusDotGreen
+                    }`}
+                  />
+                  <span>{isPendingPayment ? "Payment Pending" : "Paid"}</span>
+                </span>
+              </div>
+              <p style={{ marginTop: "8px" }}>{activeOrder.paymentMethod}</p>
             </div>
 
             <div className={styles.actions}>
