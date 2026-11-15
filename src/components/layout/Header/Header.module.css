@@ -146,6 +146,9 @@
 
 /* Mobile & Tablet responsiveness */
 @media (max-width: 1024px) {
+  .header {
+    z-index: 95;
+  }
   .nav {
     display: none; /* Hide nav on mobile & tablet */
   }
