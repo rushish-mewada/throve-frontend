@@ -1696,6 +1696,7 @@
 .avatarUploadHint {
   font-size: 0.8rem;
   color: #78716c;
+  font-family: var(--font-poppins), sans-serif;
 }
 
 .avatarActionBtns {
@@ -1709,12 +1710,14 @@
   background: none;
   border: 1px solid #111111;
   border-radius: 6px;
-  padding: 5px 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  padding: 6px 14px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: #111111;
   cursor: pointer;
   transition: all 0.2s ease;
+  line-height: 1.4;
 }
 
 .changePhotoBtn:hover {
@@ -1726,12 +1729,14 @@
   background: none;
   border: 1px solid #ef4444;
   border-radius: 6px;
-  padding: 5px 12px;
-  font-size: 0.8rem;
-  font-weight: 500;
+  padding: 6px 14px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
   color: #ef4444;
   cursor: pointer;
   transition: all 0.2s ease;
+  line-height: 1.4;
 }
 
 .removePhotoBtn:hover {
