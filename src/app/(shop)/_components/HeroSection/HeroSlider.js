@@ -183,11 +183,11 @@ export default function HeroSlider({ products = [] }) {
         return (pHandle && pHandle === hs.handle) || (pTitle && pTitle === hsTitle);
       });
 
-      if (!liveProd) return { ...hs, rating: null };
+      if (!liveProd) return { ...hs, rating: "0" };
 
       const hasRating = liveProd.rating !== null && liveProd.rating !== undefined && !isNaN(Number(liveProd.rating));
       const ratingNum = hasRating ? Number(liveProd.rating) : 0;
-      const ratingStr = ratingNum > 0 ? ratingNum.toFixed(1) : null;
+      const ratingStr = ratingNum > 0 ? ratingNum.toFixed(1) : "0";
 
       const colorDots = Array.isArray(liveProd.colorHexes) && liveProd.colorHexes.length > 0
         ? liveProd.colorHexes
@@ -407,12 +407,10 @@ export default function HeroSlider({ products = [] }) {
 
                     <div className={styles.cardMeta}>
                       <span className={styles.cardColor}>Color: {hs.color}</span>
-                      {hs.rating && hs.rating !== "0" && Number(hs.rating) > 0 && (
-                        <span className={styles.cardRating}>
-                          <span className={styles.ratingStar} aria-hidden="true">★</span>
-                          <span>{hs.rating}</span>
-                        </span>
-                      )}
+                      <span className={hs.rating && hs.rating !== "0" ? styles.cardRating : styles.cardRatingMuted} title={hs.rating && hs.rating !== "0" ? `Rating: ${hs.rating}` : "No reviews yet"}>
+                        <span className={hs.rating && hs.rating !== "0" ? styles.ratingStar : styles.ratingStarMuted} aria-hidden="true">★</span>
+                        <span>{hs.rating && hs.rating !== "0" ? hs.rating : "0"}</span>
+                      </span>
                     </div>
 
                     <div className={styles.cardPriceRow}>

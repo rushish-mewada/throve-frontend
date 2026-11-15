@@ -311,17 +311,25 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
           {product.title}
         </Link>
 
-        {/* Rating row positioned below title text, spaced equally between title and price */}
+        {/* Rating & Stock status row positioned below title text, spaced equally between title and price */}
         <div className={styles.ratingRow}>
-          {hasRating ? (
-            <span className={styles.productRating}>
-              ★ {ratingDisplay}
-            </span>
-          ) : (
-            <span className={styles.noReviews}>
-              No reviews yet
-            </span>
-          )}
+          <div className={styles.ratingCapsuleGroup}>
+            {product.inStock !== false && (
+              <span className={styles.stockCapsuleMini} aria-label="Status: In Stock">
+                <span className={styles.stockDotMini} aria-hidden="true" />
+                <span>In Stock</span>
+              </span>
+            )}
+            {hasRating ? (
+              <span className={styles.productRating}>
+                ★ {ratingDisplay}
+              </span>
+            ) : (
+              <span className={styles.noReviews}>
+                No reviews yet
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Bottom Row: Price & Swatches (Pinned horizontally across all cards) */}

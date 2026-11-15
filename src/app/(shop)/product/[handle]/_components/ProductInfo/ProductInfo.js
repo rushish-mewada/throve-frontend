@@ -22,13 +22,24 @@ export default function ProductInfo({ product, config }) {
         </div>
 
         <div className={styles.metaGroup}>
-          {product.inStock !== false && (
+          {product.inStock !== false ? (
             <div className={styles.stockCapsule} aria-label="Status: In Stock">
               <span className={styles.stockDot} aria-hidden="true" />
               <span>In Stock</span>
             </div>
+          ) : (
+            <div className={`${styles.stockCapsule} ${styles.outOfStockCapsule}`} aria-label="Status: Out of Stock">
+              <span>Out of Stock</span>
+            </div>
           )}
-          {product.rating && (
+
+          {product.sold && product.sold !== "0" && product.sold !== 0 && (
+            <div className={styles.soldCapsule}>
+              <span>{product.sold} Sold</span>
+            </div>
+          )}
+
+          {product.rating && Number(product.rating) > 0 ? (
             <button
               type="button"
               className={styles.reviewsCapsule}
@@ -42,8 +53,21 @@ export default function ProductInfo({ product, config }) {
               <span className={styles.starIcon}>★</span>
               <span>{product.rating}</span>
               <span className={styles.reviewsCountText}>
-                ({product.reviewsCount ?? (product.rating ? 1 : 0)})
+                ({product.reviewsCount ?? 1})
               </span>
+            </button>
+          ) : (
+            <button
+              type="button"
+              className={`${styles.reviewsCapsule} ${styles.noReviewsCapsule}`}
+              onClick={() => {
+                const el = document.getElementById('reviews');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              title="Be the first to write a review"
+              aria-label="No reviews yet"
+            >
+              <span>No reviews yet</span>
             </button>
           )}
         </div>
