@@ -26,19 +26,25 @@ export default function WishlistGrid() {
 
   if (items.length === 0) {
     return (
-      <div className={styles.emptyState}>
-        <div className={styles.emptyIcon}>
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-          </svg>
+      <div className={styles.emptyStateContainer}>
+        <div className={styles.emptyCard}>
+          <div className={styles.emptyIconCircle}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+          </div>
+          <h2 className={styles.emptyTitle}>No Saved Pieces Yet</h2>
+          <p className={styles.emptyText}>
+            Explore our inaugural S/S 25 collection and curate your personal selection of architectural silhouettes.
+          </p>
+          <Link href="/collections" className={styles.exploreBtn}>
+            <span>Explore Collections</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </Link>
         </div>
-        <h2 className={styles.emptyTitle}>Your Wishlist is Empty</h2>
-        <p className={styles.emptyText}>
-          Explore our seasonal drops and save your favorite streetwear silhouettes.
-        </p>
-        <Link href="/collections" className={styles.exploreBtn}>
-          Explore Collections
-        </Link>
       </div>
     );
   }

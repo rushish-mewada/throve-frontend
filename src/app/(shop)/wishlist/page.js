@@ -2,8 +2,8 @@ import WishlistGrid from './_components/WishlistGrid/WishlistGrid';
 import styles from './page.module.css';
 
 export const metadata = {
-  title: 'Wishlist | Throve Luxury Streetwear',
-  description: 'View and manage your saved Throve pieces. Exclusive Indian luxury streetwear.',
+  title: 'Wishlist | Throve Luxury Tailoring',
+  description: 'View and manage your saved Throve pieces. Exclusive Indian luxury couture and architectural tailoring.',
 };
 
 export default function WishlistPage() {
