@@ -1576,10 +1576,59 @@
   animation: fadeIn 0.2s ease;
 }
 
-.pincodeForm {
+.pincodeForm,
+.pincodeBoxForm {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.digitBoxesGroup {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.digitBox {
+  width: 36px;
+  height: 40px;
+  text-align: center;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111111;
+  background-color: #ffffff;
+  border: 1.5px solid #d6d3d1;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.15s ease;
+  caret-color: #111111;
+  padding: 0;
+}
+
+.digitBox:focus {
+  border-color: #111111;
+  box-shadow: 0 0 0 2px rgba(17, 17, 17, 0.12);
+}
+
+.digitBoxFilled {
+  border-color: #1c1917;
+  background-color: #fafaf9;
+}
+
+@media (max-width: 480px) {
+  .digitBoxesGroup {
+    gap: 4px;
+  }
+
+  .digitBox {
+    width: 31px;
+    height: 38px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+  }
 }
 
 .pincodeInput {

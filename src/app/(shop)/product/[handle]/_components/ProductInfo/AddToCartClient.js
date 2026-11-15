@@ -36,15 +36,86 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
   const [isQuickSizeOpen, setIsQuickSizeOpen] = useState(false);
   const [quickSizeAction, setQuickSizeAction] = useState('cart'); // 'cart' | 'buy'
   const [isPincodeOpen, setIsPincodeOpen] = useState(false);
-  const [pincode, setPincode] = useState('');
+  const [pinDigits, setPinDigits] = useState(['', '', '', '', '', '']);
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [pincodeResult, setPincodeResult] = useState(null);
+  const pinInputRefs = useRef([]);
 
-  const handleCheckPincode = async (e) => {
+  const handleDigitChange = (index, value) => {
+    const clean = value.replace(/\D/g, '');
+    if (!clean) {
+      const next = [...pinDigits];
+      next[index] = '';
+      setPinDigits(next);
+      return;
+    }
+
+    if (clean.length > 1) {
+      const chars = clean.slice(0, 6).split('');
+      const next = [...pinDigits];
+      chars.forEach((c, i) => {
+        if (index + i < 6) {
+          next[index + i] = c;
+        }
+      });
+      setPinDigits(next);
+      const nextIdx = Math.min(index + chars.length, 5);
+      pinInputRefs.current[nextIdx]?.focus();
+      if (next.every((d) => d !== '')) {
+        handleCheckPincode(null, next.join(''));
+      }
+      return;
+    }
+
+    const next = [...pinDigits];
+    next[index] = clean;
+    setPinDigits(next);
+
+    if (index < 5) {
+      pinInputRefs.current[index + 1]?.focus();
+    } else {
+      if (next.every((d) => d !== '')) {
+        handleCheckPincode(null, next.join(''));
+      }
+    }
+  };
+
+  const handleDigitKeyDown = (index, e) => {
+    if (e.key === 'Backspace') {
+      if (!pinDigits[index] && index > 0) {
+        const next = [...pinDigits];
+        next[index - 1] = '';
+        setPinDigits(next);
+        pinInputRefs.current[index - 1]?.focus();
+      }
+    } else if (e.key === 'ArrowLeft' && index > 0) {
+      pinInputRefs.current[index - 1]?.focus();
+    } else if (e.key === 'ArrowRight' && index < 5) {
+      pinInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+  const handleDigitPaste = (e) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pasted) return;
+    const next = [...pinDigits];
+    for (let i = 0; i < 6; i++) {
+      next[i] = pasted[i] || '';
+    }
+    setPinDigits(next);
+    const targetIdx = Math.min(pasted.length, 5);
+    pinInputRefs.current[targetIdx]?.focus();
+    if (pasted.length === 6) {
+      handleCheckPincode(null, pasted);
+    }
+  };
+
+  const handleCheckPincode = async (e = null, customPin = null) => {
     e?.preventDefault?.();
-    const cleanPin = pincode.trim().replace(/\D/g, '');
+    const cleanPin = (customPin || pinDigits.join('')).trim().replace(/\D/g, '');
     if (cleanPin.length !== 6) {
-      setPincodeResult({ ok: false, error: 'Please enter a valid 6-digit Indian pincode.' });
+      setPincodeResult({ ok: false, error: 'Please enter a 6-digit pincode.' });
       return;
     }
     setPincodeLoading(true);
@@ -52,7 +123,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     try {
       const res = await checkPincodeAction(cleanPin);
       if (res.ok) {
-        setPincodeResult(res);
+        setPincodeResult({ ...res, pincode: cleanPin });
       } else {
         setPincodeResult({ ok: false, error: res.error || 'Unable to verify pincode.' });
       }
@@ -323,20 +394,27 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
 
         {isPincodeOpen && (
           <div className={styles.pincodeDropdown}>
-            <form onSubmit={handleCheckPincode} className={styles.pincodeForm}>
-              <input
-                type="text"
-                inputMode="numeric"
-                maxLength={6}
-                placeholder="Enter 6-digit Pincode"
-                value={pincode}
-                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className={styles.pincodeInput}
-                aria-label="Delivery Pincode"
-              />
+            <form onSubmit={(e) => handleCheckPincode(e)} className={styles.pincodeBoxForm}>
+              <div className={styles.digitBoxesGroup} onPaste={handleDigitPaste}>
+                {pinDigits.map((d, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => (pinInputRefs.current[idx] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength={1}
+                    value={d}
+                    onChange={(e) => handleDigitChange(idx, e.target.value)}
+                    onKeyDown={(e) => handleDigitKeyDown(idx, e)}
+                    className={`${styles.digitBox} ${d ? styles.digitBoxFilled : ''}`}
+                    aria-label={`Pincode digit ${idx + 1}`}
+                  />
+                ))}
+              </div>
               <button
                 type="submit"
-                disabled={pincodeLoading || pincode.length !== 6}
+                disabled={pincodeLoading || pinDigits.some((d) => !d)}
                 className={styles.pincodeBtn}
               >
                 {pincodeLoading ? 'Checking...' : 'Check'}
@@ -357,43 +435,6 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
             )}
           </div>
         )}
-      </div>
-
-      {/* Luxury Delivery & Service Guarantee */}
-      <div
-        style={{
-          padding: '10px 14px',
-          borderRadius: '8px',
-          backgroundColor: '#fafaf9',
-          border: '1px solid #e7e5e4',
-          fontSize: '11.5px',
-          color: '#44403c',
-          lineHeight: 1.45,
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'flex-start',
-          marginTop: '2px',
-        }}
-      >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-          <rect x="1" y="3" width="15" height="13" />
-          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-          <circle cx="5.5" cy="18.5" r="2.5" />
-          <circle cx="18.5" cy="18.5" r="2.5" />
-        </svg>
-        <div>
-          <strong style={{ color: '#1c1917', display: 'block', marginBottom: '2px' }}>
-            Complimentary Express Delivery & 7-Day Returns
-          </strong>
-          <span>
-            {product?.inStock !== false ? 'Handcrafted luxury piece in ready stock.' : 'Limited allocation bespoke order.'}{' '}
-            Secured instant order processing with{' '}
-            {config?.commerce?.activePaymentGateway
-              ? (config.commerce.activePaymentGateway.charAt(0).toUpperCase() + config.commerce.activePaymentGateway.slice(1))
-              : '1-Click Checkout'}
-            {config?.commerce?.codEnabled !== false ? ' & COD available across India.' : ' with secure prepaid delivery.'}
-          </span>
-        </div>
       </div>
 
       {/* Separate Delivery T&C Link */}
