@@ -125,7 +125,7 @@ export default function ProductGallery({ images, product }) {
                 fill 
                 priority={idx === 0}
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: 'cover', objectPosition: 'top center' }}
                 draggable={false}
               />
             </div>
@@ -191,24 +191,26 @@ export default function ProductGallery({ images, product }) {
         </div>
       </div>
 
-      {/* Thumbnails */}
-      <div className={styles.thumbnailStrip}>
-        {images.map((img, idx) => (
-          <div 
-            key={idx} 
-            className={`${styles.thumbnail} ${activeImage === idx ? styles.thumbnailActive : ''}`}
-            onClick={() => setActiveImage(idx)}
-          >
-            <Image 
-              src={img} 
-              alt={`Thumbnail ${idx + 1}`} 
-              fill 
-              sizes="150px"
-              style={{ objectFit: 'cover' }}
-            />
-          </div>
-        ))}
-      </div>
+      {/* Thumbnails (compact strip rendered only when multiple images exist) */}
+      {images && images.length > 1 && (
+        <div className={styles.thumbnailStrip}>
+          {images.map((img, idx) => (
+            <div 
+              key={idx} 
+              className={`${styles.thumbnail} ${activeImage === idx ? styles.thumbnailActive : ''}`}
+              onClick={() => setActiveImage(idx)}
+            >
+              <Image 
+                src={img} 
+                alt={`Thumbnail ${idx + 1}`} 
+                fill 
+                sizes="80px"
+                style={{ objectFit: 'cover', objectPosition: 'top center' }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
 
       {isVtonEnabled && (
         <DecartLucyVtonModal 
