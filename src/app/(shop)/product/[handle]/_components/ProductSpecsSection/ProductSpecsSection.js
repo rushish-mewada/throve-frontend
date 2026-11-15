@@ -43,8 +43,8 @@ function getVisualBlocksFromProduct(product) {
 export default function ProductSpecsSection({ product }) {
   if (!product) return null;
 
-  const [isDossierOpen, setIsDossierOpen] = useState(true);
-  const [isVisualStudyOpen, setIsVisualStudyOpen] = useState(true);
+  const [isDossierOpen, setIsDossierOpen] = useState(false);
+  const [isVisualStudyOpen, setIsVisualStudyOpen] = useState(false);
 
   const specifications = getSpecificationsFromProduct(product);
   const visualBlocks = getVisualBlocksFromProduct(product);
