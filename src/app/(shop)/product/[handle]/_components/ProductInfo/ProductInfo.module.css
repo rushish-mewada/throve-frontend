@@ -831,17 +831,9 @@
     font-size: 0.82rem;
   }
 
+  /* Option 2: Hide in-page buttons on mobile phones; docked bottom bar is the sole action dock */
   .actions {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
-    margin-top: 4px;
-  }
-
-  .addToCartBtn,
-  .checkoutNowBtn {
-    padding: 12px 14px;
-    font-size: 0.9rem;
+    display: none;
   }
 
   /* Mobile Bottom Sheet Transformation for Delivery Terms & Size Guide */
