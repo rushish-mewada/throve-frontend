@@ -313,9 +313,13 @@ export default function ProductCard({ product, sizes = "(max-width: 768px) 50vw,
 
         {/* Rating row positioned below title text, spaced equally between title and price */}
         <div className={styles.ratingRow}>
-          {hasRating && (
+          {hasRating ? (
             <span className={styles.productRating}>
               ★ {ratingDisplay}
+            </span>
+          ) : (
+            <span className={styles.noReviews}>
+              No reviews yet
             </span>
           )}
         </div>

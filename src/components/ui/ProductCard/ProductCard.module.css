@@ -194,6 +194,16 @@
   line-height: 1;
 }
 
+.noReviews {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.74rem;
+  font-weight: 400;
+  color: #a1a1aa;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+
 /* Bottom Row pinned to base of card across all grid columns */
 .infoBottom {
   display: flex;
@@ -284,6 +294,10 @@
 
   .productRating {
     font-size: 0.74rem;
+  }
+
+  .noReviews {
+    font-size: 0.68rem;
   }
 
   .infoBottom {
