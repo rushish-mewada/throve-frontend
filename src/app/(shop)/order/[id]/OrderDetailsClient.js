@@ -11,9 +11,10 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
   const { clearCart } = useStore();
 
   useEffect(() => {
-    // Clear the cart on successful order confirmation page arrival
+    // Clear the cart once on successful order confirmation page arrival
     clearCart();
-  }, [clearCart]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -24,7 +25,7 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && (!serverOrder || parsed.id === orderId || parsed.publicId === orderId)) {
-            setOrder(parsed);
+            setOrder((prev) => (prev ? prev : parsed));
           }
         }
       } catch {

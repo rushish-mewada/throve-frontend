@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const INITIAL_CART = [];
 const INITIAL_WISHLIST = [];
@@ -119,11 +119,11 @@ export function StoreProvider({ children }) {
     }
   };
 
-  const removeFromCart = (cartItemId) => {
+  const removeFromCart = useCallback((cartItemId) => {
     setCartItems((prev) => prev.filter((item) => item.id !== cartItemId));
-  };
+  }, []);
 
-  const updateCartQty = (cartItemId, delta) => {
+  const updateCartQty = useCallback((cartItemId, delta) => {
     setCartItems((prev) =>
       prev.map((item) => {
         if (item.id === cartItemId) {
@@ -133,11 +133,11 @@ export function StoreProvider({ children }) {
         return item;
       })
     );
-  };
+  }, []);
 
-  const clearCart = () => {
-    setCartItems([]);
-  };
+  const clearCart = useCallback(() => {
+    setCartItems((prev) => (prev.length === 0 ? prev : []));
+  }, []);
 
   // Wishlist operations
   const isInWishlist = (idOrHandle) => {
