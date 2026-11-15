@@ -86,11 +86,48 @@
   border-color: #111111;
 }
 
+.mobilePaginationDots {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .mainImageContainer {
-    aspect-ratio: 4 / 4.6;
-    max-height: 65vh;
-    border-radius: 6px;
+    aspect-ratio: 1 / 1;
+    max-height: min(340px, 40vh);
+    border-radius: 8px;
+  }
+  .thumbnailStrip {
+    display: none;
+  }
+  .mobilePaginationDots {
+    display: flex;
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 6px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    padding: 4px 8px;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+  .mobileDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.45);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mobileDotActive {
+    width: 16px;
+    border-radius: 9999px;
+    background: #ffffff;
   }
   .actionIcons {
     top: 8px;
@@ -100,11 +137,5 @@
   .iconBtn {
     width: 32px;
     height: 32px;
-  }
-  .thumbnailStrip {
-    gap: 8px;
-  }
-  .thumbnail {
-    border-radius: 2px;
   }
 }

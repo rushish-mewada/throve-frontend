@@ -71,18 +71,20 @@
 
 @media (max-width: 1024px) {
   .topSection {
-    grid-template-columns: 1fr;
-    gap: 40px;
+    grid-template-columns: 46% 1fr;
+    gap: 24px;
+    margin-bottom: 40px;
   }
 }
 
 @media (max-width: 768px) {
   .pdpLayout {
-    padding: 16px;
+    padding: 12px 16px 28px;
   }
   .topSection {
-    gap: 32px;
-    margin-bottom: 40px;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-bottom: 28px;
   }
   .breadcrumbs {
     margin-bottom: 14px;

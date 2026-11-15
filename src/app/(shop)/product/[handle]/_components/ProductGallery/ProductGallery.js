@@ -132,6 +132,21 @@ export default function ProductGallery({ images, product }) {
           ))}
         </div>
 
+        {/* Mobile Swipe Pagination Dots */}
+        {images && images.length > 1 && (
+          <div className={styles.mobilePaginationDots} aria-label="Image gallery pagination">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                type="button"
+                className={`${styles.mobileDot} ${activeImage === idx ? styles.mobileDotActive : ''}`}
+                onClick={() => setActiveImage(idx)}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        )}
+
         {/* Floating Icons */}
         <div className={styles.actionIcons}>
           <button

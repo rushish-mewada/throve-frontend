@@ -141,15 +141,35 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     ? prodImg.trim()
     : '/products/navy-tailored-mini-dress/main.jpg?v=3';
 
-  // IntersectionObserver detects when primary CTA buttons scroll out of viewport
+  // IntersectionObserver detects when primary CTA buttons scroll out of viewport on desktop,
+  // or keeps the floating bottom bar active on mobile for immediate 1-tap purchasing.
   useEffect(() => {
+    const updateVisibility = () => {
+      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
+      if (isMobile) {
+        setShowStickyBar(true);
+      } else {
+        const target = actionsRef.current;
+        if (target) {
+          const isAbove = target.getBoundingClientRect().bottom < 0;
+          setShowStickyBar(isAbove);
+        }
+      }
+    };
+
+    updateVisibility();
+
     const target = actionsRef.current;
     if (!target) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const isAbove = entry.boundingClientRect.bottom < 0;
-        setShowStickyBar(!entry.isIntersecting && isAbove);
+        if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+          setShowStickyBar(true);
+        } else {
+          const isAbove = entry.boundingClientRect.bottom < 0;
+          setShowStickyBar(!entry.isIntersecting && isAbove);
+        }
       },
       {
         threshold: 0,
@@ -157,7 +177,12 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
     );
 
     observer.observe(target);
-    return () => observer.disconnect();
+    window.addEventListener('resize', updateVisibility);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('resize', updateVisibility);
+    };
   }, []);
 
   const handleAddToCart = (sizeOverride = null) => {
