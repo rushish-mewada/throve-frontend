@@ -412,13 +412,16 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
                   />
                 ))}
               </div>
-              <button
-                type="submit"
-                disabled={pincodeLoading || pinDigits.some((d) => !d)}
-                className={styles.pincodeBtn}
-              >
-                {pincodeLoading ? 'Checking...' : 'Check'}
-              </button>
+              <div className={styles.pincodeRightActions}>
+                {pincodeLoading && <span className={styles.spinnerDark} aria-label="Verifying availability..." />}
+                <button
+                  type="button"
+                  className={styles.pincodeInlineTermsBtn}
+                  onClick={() => setIsDeliveryOpen(true)}
+                >
+                  Delivery T&amp;C
+                </button>
+              </div>
             </form>
 
             {pincodeResult && (
@@ -435,17 +438,6 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
             )}
           </div>
         )}
-      </div>
-
-      {/* Separate Delivery T&C Link */}
-      <div>
-        <button
-          type="button"
-          className={styles.deliveryLink}
-          onClick={() => setIsDeliveryOpen(true)}
-        >
-          Delivery T&amp;C
-        </button>
       </div>
 
       {/* Floating Sticky Bottom Bar when main CTAs are scrolled out of view */}

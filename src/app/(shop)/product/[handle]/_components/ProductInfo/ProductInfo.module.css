@@ -1618,6 +1618,32 @@
   background-color: #fafaf9;
 }
 
+.pincodeRightActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.pincodeInlineTermsBtn {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #78716c;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.pincodeInlineTermsBtn:hover {
+  color: #111111;
+}
+
 @media (max-width: 480px) {
   .digitBoxesGroup {
     gap: 4px;
