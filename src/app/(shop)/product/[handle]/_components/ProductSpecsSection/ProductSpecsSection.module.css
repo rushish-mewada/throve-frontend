@@ -47,55 +47,95 @@
 }
 
 /* ------------------------------------------------------------
-   Sub-Section 1: The Specifications Table
-   Clean 2-column minimalist layout matching exact reference design
+   Unified Accordion Stack for Anatomy & Craftsmanship
    ------------------------------------------------------------ */
-.tableSection {
-  margin-bottom: 56px;
+.accordionGroup {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #e5e5e5;
+  margin-top: 24px;
 }
 
-.tableHeaderBar {
+.accordionItem {
+  border-bottom: 1px solid #e5e5e5;
+  transition: background-color 0.15s ease;
+}
+
+.accordionHeaderBtn {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 22px 0;
+  cursor: pointer;
+  gap: 20px;
+  transition: all 0.15s ease;
 }
 
-.tableTitle {
+.accordionHeaderBtn:hover .accordionTitle {
+  color: #000000;
+}
+
+.accordionHeaderBtn:hover .accordionToggleText {
+  color: #111111;
+  border-color: #9ca3af;
+  background-color: #f8fafc;
+}
+
+.accordionHeaderLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.accordionTitle {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 1.45rem;
-  font-weight: 700;
-  color: #111827;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111111;
   letter-spacing: -0.01em;
   margin: 0;
+  transition: color 0.15s ease;
 }
 
-.toggleBtn {
+.accordionSubtitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.84rem;
+  color: #6b7280;
+  margin: 0;
+  font-weight: 400;
+}
+
+.accordionHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.accordionToggleText {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: transparent;
-  border: 1px solid #e5e7eb;
   padding: 5px 14px;
   border-radius: 9999px;
+  border: 1px solid #e5e7eb;
   font-family: var(--font-poppins), sans-serif;
   font-size: 0.74rem;
   font-weight: 500;
   color: #64748b;
-  cursor: pointer;
+  background-color: transparent;
   transition: all 0.15s ease;
 }
 
-.toggleBtn:hover {
-  color: #0f172a;
-  border-color: #94a3b8;
-  background-color: #f8fafc;
-}
-
-.chevronIcon {
+.accordionChevron {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  color: #64748b;
   transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -103,11 +143,32 @@
   transform: rotate(180deg);
 }
 
+.accordionBody {
+  padding: 10px 0 36px 0;
+  animation: accordionFadeIn 0.25s ease-out;
+}
+
+@keyframes accordionFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------
+   Sub-Section 1: The Specifications Table
+   Clean 2-column minimalist layout matching exact reference design
+   ------------------------------------------------------------ */
 .specGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   column-gap: 56px;
   row-gap: 22px;
+  padding-top: 8px;
 }
 
 .specCell {
@@ -150,45 +211,11 @@
 /* ------------------------------------------------------------
    Sub-Section 2: Visual Story & Format Engine
    ------------------------------------------------------------ */
-.visualSection {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.visualHeaderBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.visualHeaderLeft {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.visualSectionTitle {
-  font-family: var(--font-abhaya), serif;
-  font-size: 1.6rem;
-  font-weight: 500;
-  color: #111111;
-  margin: 0;
-}
-
-.visualSectionSub {
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.84rem;
-  color: #71717a;
-  margin: 0;
-}
-
 .visualBlocksList {
   display: flex;
   flex-direction: column;
   gap: 36px;
-  margin-top: 8px;
+  padding-top: 12px;
 }
 
 /* Layout 1 & 2: Split 50/50 (image_left & image_right) */

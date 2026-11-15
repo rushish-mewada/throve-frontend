@@ -202,67 +202,75 @@ export default function ProductSpecsSection({ product }) {
         </p>
       </div>
 
-      {/* Sub-Section 1: The Specifications Table (Closable on all devices, matching Image 2 reference) */}
-      <div className={styles.tableSection}>
-        <div className={styles.tableHeaderBar}>
-          <h3 className={styles.tableTitle}>Specifications</h3>
+      {/* Unified Accordion Engine for Anatomy & Craftsmanship */}
+      <div className={styles.accordionGroup}>
+        {/* Accordion Item 1: Specifications */}
+        <div className={`${styles.accordionItem} ${isDossierOpen ? styles.itemOpen : ""}`}>
           <button
             type="button"
-            className={styles.toggleBtn}
+            className={styles.accordionHeaderBtn}
             onClick={() => setIsDossierOpen((prev) => !prev)}
             aria-expanded={isDossierOpen}
-            aria-controls="specifications-grid"
-            title={isDossierOpen ? "Collapse Specifications" : "Expand Specifications"}
+            aria-controls="specifications-body"
           >
-            <span>{isDossierOpen ? "Close" : "Expand"}</span>
-            <span className={`${styles.chevronIcon} ${isDossierOpen ? styles.chevronOpen : ""}`}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </span>
+            <div className={styles.accordionHeaderLeft}>
+              <h3 className={styles.accordionTitle}>Specifications</h3>
+              <p className={styles.accordionSubtitle}>
+                Fabrication, Material Composition &amp; Garment Architecture
+              </p>
+            </div>
+            <div className={styles.accordionHeaderRight}>
+              <span className={styles.accordionToggleText}>{isDossierOpen ? "Collapse" : "Expand"}</span>
+              <span className={`${styles.accordionChevron} ${isDossierOpen ? styles.chevronOpen : ""}`}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </div>
           </button>
+
+          {isDossierOpen && (
+            <div id="specifications-body" className={styles.accordionBody}>
+              <div className={styles.specGrid}>
+                {specifications.map((item, idx) => (
+                  <div key={idx} className={styles.specCell}>
+                    <span className={styles.specLabel}>{item.label}</span>
+                    <span className={styles.specValue}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {isDossierOpen && (
-          <div id="specifications-grid" className={styles.specGrid}>
-            {specifications.map((item, idx) => (
-              <div key={idx} className={styles.specCell}>
-                <span className={styles.specLabel}>{item.label}</span>
-                <span className={styles.specValue}>{item.value}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Sub-Section 2: The Visual Study / Lookbook Engine (Closable on all devices) */}
-      <div className={styles.visualSection}>
-        <div className={styles.visualHeaderBar}>
-          <div className={styles.visualHeaderLeft}>
-            <h3 className={styles.visualSectionTitle}>Visual Study &amp; Design in Detail</h3>
-            <p className={styles.visualSectionSub}>
-              An intimate study of textile purity, architectural silhouette, and artisanal hardware.
-            </p>
-          </div>
+        {/* Accordion Item 2: Visual Study & Design in Detail */}
+        <div className={`${styles.accordionItem} ${isVisualStudyOpen ? styles.itemOpen : ""}`}>
           <button
             type="button"
-            className={styles.toggleBtn}
+            className={styles.accordionHeaderBtn}
             onClick={() => setIsVisualStudyOpen((prev) => !prev)}
             aria-expanded={isVisualStudyOpen}
-            aria-controls="visual-study-blocks"
-            title={isVisualStudyOpen ? "Collapse Visual Study" : "Expand Visual Study"}
+            aria-controls="visual-study-body"
           >
-            <span>{isVisualStudyOpen ? "Close" : "Expand"}</span>
-            <span className={`${styles.chevronIcon} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="6 9 12 15 18 9" />
-              </svg>
-            </span>
+            <div className={styles.accordionHeaderLeft}>
+              <h3 className={styles.accordionTitle}>Visual Study &amp; Design in Detail</h3>
+              <p className={styles.accordionSubtitle}>
+                An intimate study of textile purity, architectural silhouette, and artisanal hardware.
+              </p>
+            </div>
+            <div className={styles.accordionHeaderRight}>
+              <span className={styles.accordionToggleText}>{isVisualStudyOpen ? "Collapse" : "Expand"}</span>
+              <span className={`${styles.accordionChevron} ${isVisualStudyOpen ? styles.chevronOpen : ""}`}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+            </div>
           </button>
-        </div>
 
-        {isVisualStudyOpen && (
-          <div id="visual-study-blocks" className={styles.visualBlocksList}>
+          {isVisualStudyOpen && (
+            <div id="visual-study-body" className={styles.accordionBody}>
+              <div className={styles.visualBlocksList}>
             {visualBlocks.map((block) => {
               // Layout: image_left (Image 1:1 on Left, Text on Right)
               if (block.layout === "image_left") {
@@ -407,8 +415,10 @@ export default function ProductSpecsSection({ product }) {
                 </article>
               );
             })}
-          </div>
-        )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
