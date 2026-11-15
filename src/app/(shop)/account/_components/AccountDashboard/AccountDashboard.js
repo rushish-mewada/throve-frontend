@@ -292,10 +292,34 @@ export default function AccountDashboard({
   // On desktop, default to 'orders' when menu state
   const displayTab = activeTab === 'menu' ? 'orders' : activeTab;
 
+  const pointsTrail = (user.pointsTrail && user.pointsTrail.length > 0)
+    ? user.pointsTrail
+    : (orders || []).map((o) => {
+        const spent = parseInt(String(o.total || '0').replace(/[^0-9]/g, ''), 10) || 0;
+        const pts = Math.floor(spent * 0.05);
+        return {
+          id: `earn-${o.id}`,
+          type: 'order_earn',
+          typeLabel: 'Order Accrual',
+          delta: pts,
+          title: `Order Purchase (${o.id})`,
+          detail: `Earned 5% points rebate on ${o.total} garment tailoring`,
+          date: o.date,
+          actor: 'Commerce Engine (Auto)',
+        };
+      });
+
   const navItems = [
     { id: 'orders', label: 'Orders & Returns', icon: <><path d="M21 8V21H3V8"></path><path d="M1 3h22v5H1z"></path></> },
-    { id: 'wishlist', label: 'Wishlist', icon: <><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></> },
+    {
+      id: 'points',
+      label: 'Points History',
+      icon: (
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+      ),
+    },
     { id: 'coupons', label: 'My Coupons', icon: <><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></> },
+    { id: 'wishlist', label: 'Wishlist', icon: <><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></> },
     { id: 'addresses', label: 'Saved Addresses', icon: <><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></> },
     { id: 'profile', label: 'Profile Details', icon: <><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></> },
     { id: 'support', label: 'Help & Support', icon: <><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></> },
@@ -333,7 +357,12 @@ export default function AccountDashboard({
             </div>
 
             {/* Loyalty & Privilege Progress Card */}
-            <div className={styles.throveLoyaltyCard}>
+            <div
+              className={styles.throveLoyaltyCard}
+              onClick={() => setActiveTab('points')}
+              style={{ cursor: 'pointer' }}
+              title="View Points History"
+            >
               <div className={styles.throveTierHeader}>
                 <span className={styles.throveTierBadge}>{user.tier}</span>
                 <span className={styles.throvePointsBadge}>
@@ -403,7 +432,12 @@ export default function AccountDashboard({
                 <p>{user.phone} • {user.email}</p>
               </div>
             </div>
-            <div className={styles.userTier}>
+            <div
+              className={styles.userTier}
+              onClick={() => setActiveTab('points')}
+              style={{ cursor: 'pointer' }}
+              title="View Points History"
+            >
               <div className={styles.tierHeader}>
                 <span className={styles.tierBadge}>{user.tier}</span>
                 <span className={styles.points}>{user.pointsFormatted || `${(user.points || 0).toLocaleString('en-IN')} Pts`}</span>
@@ -631,6 +665,162 @@ export default function AccountDashboard({
                         </article>
                       );
                     })
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* POINTS HISTORY TAB */}
+            {displayTab === 'points' && (
+              <div className={styles.tabContent}>
+                <div className={styles.tabHeader}>
+                  <h2 className={styles.tabTitle}>Points &amp; Privileges History</h2>
+                  <span className={styles.countBadge}>
+                    {user.pointsFormatted || `${(user.points || 0).toLocaleString('en-IN')} Pts`}
+                  </span>
+                </div>
+
+                {/* 1. Overview KPI Cards */}
+                <div className={styles.pointsOverviewGrid}>
+                  <div className={styles.pointsOverviewCard}>
+                    <div className={styles.pointsOverviewCardTitle}>Available Balance</div>
+                    <div className={styles.pointsOverviewCardValue}>
+                      {user.pointsFormatted || `${(user.points || 0).toLocaleString('en-IN')} Pts`}
+                    </div>
+                    <div className={styles.pointsOverviewCardSub}>
+                      Worth ₹{(user.points || 0).toLocaleString('en-IN')} at checkout (1 Pt = ₹1)
+                    </div>
+                  </div>
+
+                  <div className={styles.pointsOverviewCard}>
+                    <div className={styles.pointsOverviewCardTitle}>Current Tier</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
+                      <span className={styles.tierBadge}>{user.tier}</span>
+                    </div>
+                    <div className={styles.progressBar} style={{ margin: '8px 0 4px 0' }}>
+                      <div
+                        className={styles.progressFill}
+                        style={{ width: `${Math.min(100, Math.max(0, user.progressPercent || 0))}%` }}
+                      />
+                    </div>
+                    <div className={styles.pointsOverviewCardSub}>
+                      {user.tierHint || 'Privilege tier active'}
+                    </div>
+                  </div>
+
+                  <div className={styles.pointsOverviewCard}>
+                    <div className={styles.pointsOverviewCardTitle}>Points Composition</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                        <span style={{ color: '#78716c' }}>Base Earned:</span>
+                        <strong style={{ color: '#1c1917' }}>
+                          {(user.basePoints ?? user.points ?? 0).toLocaleString('en-IN')} Pts
+                        </strong>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                        <span style={{ color: '#78716c' }}>Atelier Bonus:</span>
+                        <strong style={{ color: '#059669' }}>
+                          +{(user.bonusPoints ?? 0).toLocaleString('en-IN')} Pts
+                        </strong>
+                      </div>
+                    </div>
+                    <div className={styles.pointsOverviewCardSub}>
+                      500 Pts awarded per ₹10,000 spend
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Privilege Rule Banner */}
+                <div className={styles.pointsRuleBanner}>
+                  <div className={styles.pointsRuleIcon}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </div>
+                  <div className={styles.pointsRuleText}>
+                    <h4>Privilege Accrual &amp; Redemption</h4>
+                    <p>
+                      Privilege points are automatically credited upon order confirmation. Every 1 Point is worth ₹1.00 and can be applied during checkout on all luxury tailoring and streetwear.
+                    </p>
+                  </div>
+                </div>
+
+                {/* 3. Chronological Activity Trail */}
+                <div className={styles.pointsTrailSection}>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#1c1917', margin: '0 0 12px 0' }}>
+                    Activity &amp; Accrual Trail
+                  </h3>
+
+                  {pointsTrail.length === 0 ? (
+                    <div className={styles.emptyState}>
+                      <div className={styles.emptyIcon}>
+                        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#d6d3d1" strokeWidth="1.5">
+                          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                        </svg>
+                      </div>
+                      <h3>No points activity yet</h3>
+                      <p>Points earned from garment purchases and atelier privileges will appear here.</p>
+                      <Link href="/collections" className={styles.primaryBtn} style={{ textDecoration: 'none', marginTop: '12px' }}>
+                        Explore Collection
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className={styles.pointsTrailList}>
+                      {pointsTrail.map((tx) => {
+                        const isDeduction = Number(tx.delta) < 0;
+                        const formattedTxDate = tx.date
+                          ? new Date(tx.date).toLocaleDateString('en-IN', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
+                          : 'Recorded';
+
+                        return (
+                          <div key={tx.id} className={styles.pointsTrailItem}>
+                            <div className={styles.pointsTrailLeft}>
+                              <div
+                                className={`${styles.pointsTrailIcon} ${
+                                  isDeduction ? styles.pointsTrailIconDeduct : ''
+                                }`}
+                              >
+                                {isDeduction ? (
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                  </svg>
+                                ) : (
+                                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                  </svg>
+                                )}
+                              </div>
+                              <div className={styles.pointsTrailDetails}>
+                                <span className={styles.pointsTrailTitle}>{tx.title}</span>
+                                <span className={styles.pointsTrailMeta}>
+                                  {formattedTxDate} · {tx.detail || tx.typeLabel}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className={styles.pointsTrailRight}>
+                              <span
+                                className={`${styles.pointsDeltaBadge} ${
+                                  isDeduction ? styles.pointsDeltaBadgeNegative : ''
+                                }`}
+                              >
+                                {isDeduction ? `${tx.delta} Pts` : `+${tx.delta} Pts`}
+                              </span>
+                              <span className={styles.pointsTrailType}>
+                                {tx.typeLabel || (isDeduction ? 'Redeemed' : 'Earned')}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
               </div>

@@ -1415,3 +1415,179 @@
   gap: 8px;
   align-items: center;
 }
+
+/* =========================================================================
+   POINTS & PRIVILEGE HISTORY TAB
+   ========================================================================= */
+
+.pointsOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pointsOverviewCard {
+  background-color: #fafafa;
+  border: 1px solid #e7e5e4;
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.pointsOverviewCardTitle {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #78716c;
+  margin-bottom: 8px;
+}
+
+.pointsOverviewCardValue {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #1c1917;
+  letter-spacing: -0.02em;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.pointsOverviewCardSub {
+  font-size: 0.78rem;
+  color: #78716c;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.pointsRuleBanner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 20px;
+  background-color: #fffdf5;
+  border: 1px solid #fef08a;
+  border-radius: 10px;
+  margin-bottom: 28px;
+}
+
+.pointsRuleIcon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #fef9c3;
+  color: #b45309;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pointsRuleText h4 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #713f12;
+  margin: 0 0 2px 0;
+}
+
+.pointsRuleText p {
+  font-size: 0.8rem;
+  color: #854d0e;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.pointsTrailSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pointsTrailList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pointsTrailItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background-color: #ffffff;
+  border: 1px solid #e7e5e4;
+  border-radius: 8px;
+  transition: border-color 0.15s ease;
+}
+
+.pointsTrailItem:hover {
+  border-color: #d6d3d1;
+}
+
+.pointsTrailLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pointsTrailIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #ecfdf5;
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pointsTrailIconDeduct {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
+
+.pointsTrailDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pointsTrailTitle {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #1c1917;
+}
+
+.pointsTrailMeta {
+  font-size: 0.78rem;
+  color: #78716c;
+}
+
+.pointsTrailRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.pointsDeltaBadge {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #059669;
+  font-family: var(--font-poppins), sans-serif;
+}
+
+.pointsDeltaBadgeNegative {
+  color: #dc2626;
+}
+
+.pointsTrailType {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #a8a29e;
+}
