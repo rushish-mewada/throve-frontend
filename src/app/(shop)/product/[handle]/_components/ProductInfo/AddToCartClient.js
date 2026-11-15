@@ -91,9 +91,12 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
       return;
     }
     setIsCheckingOut(true);
+    setIsCartDrawerOpen(false);
     const sizeName = sizeToUse?.name || sizeToUse?.title || 'M';
     const colorName = selectedColor?.name || 'Standard';
-    addToCart(product, sizeName, colorName, 1);
+    // Strictly do not open cart sidebar drawer on Buy Now (5th param openDrawer = false)
+    addToCart(product, sizeName, colorName, 1, false);
+    setIsCartDrawerOpen(false);
     router.push('/checkout');
   };
 
