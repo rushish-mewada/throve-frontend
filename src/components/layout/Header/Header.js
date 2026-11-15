@@ -368,11 +368,17 @@ export default function Header() {
                   </Link>
                 </div>
               ) : (
-                cartItems.map((item) => (
-                  <div key={item.id} className={styles.cartItem}>
-                    <div className={styles.cartItemImage}>
-                      <Image src={item.image} alt={item.title || item.name} fill sizes="90px" style={{ objectFit: 'cover' }} />
-                    </div>
+                cartItems.map((item) => {
+                  const safeItemImg = (typeof item?.image === 'string' && item.image.trim().length > 0)
+                    ? item.image.trim()
+                    : (item?.image?.url || (Array.isArray(item?.images) && (typeof item.images[0] === 'string' ? item.images[0] : item.images[0]?.url)) || '/products/navy-tailored-mini-dress/main.jpg?v=3');
+                  return (
+                    <div key={item.id} className={styles.cartItem}>
+                      <div className={styles.cartItemImage}>
+                        {safeItemImg ? (
+                          <Image src={safeItemImg} alt={item.title || item.name || 'Product'} fill sizes="90px" style={{ objectFit: 'cover' }} />
+                        ) : null}
+                      </div>
                     <div className={styles.cartItemDetails}>
                       <div className={styles.cartItemTop}>
                         <span className={styles.cartItemName}>{item.title || item.name}</span>
@@ -398,7 +404,8 @@ export default function Header() {
                       </div>
                     </div>
                   </div>
-                ))
+                );
+              })
               )}
             </div>
 

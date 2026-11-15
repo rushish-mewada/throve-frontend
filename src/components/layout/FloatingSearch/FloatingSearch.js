@@ -246,15 +246,25 @@ export default function FloatingSearch({ isOpen, onClose }) {
                     onClick={handleClose}
                     className={styles.resultItem}
                   >
-                    <div className={styles.itemImage}>
-                      <Image
-                        src={product.images[0]}
-                        alt={product.title}
-                        fill
-                        sizes="60px"
-                        style={{ objectFit: "cover" }}
-                      />
-                    </div>
+                    {(() => {
+                      const searchImg = (Array.isArray(product.images) && product.images.length > 0)
+                        ? (typeof product.images[0] === 'string' ? product.images[0] : product.images[0]?.url)
+                        : (typeof product.image === 'string' ? product.image : product.image?.url);
+                      const safeSearchImg = (typeof searchImg === 'string' && searchImg.trim().length > 0)
+                        ? searchImg.trim()
+                        : '/products/navy-tailored-mini-dress/main.jpg?v=3';
+                      return (
+                        <div className={styles.itemImage}>
+                          <Image
+                            src={safeSearchImg}
+                            alt={product.title}
+                            fill
+                            sizes="60px"
+                            style={{ objectFit: "cover" }}
+                          />
+                        </div>
+                      );
+                    })()}
                     <div className={styles.itemDetails}>
                       <span className={styles.itemTitle}>{product.title}</span>
                       <span className={styles.itemSubtitle}>

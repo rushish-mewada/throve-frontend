@@ -62,6 +62,26 @@ const COLLECTION_IMAGE_MAP = {
   trousers: '/products/pleated-formal-pants/main.jpg?v=3',
 };
 
+function resolveSafeImage(col, handleLower, fallbackCol) {
+  const candidates = [
+    typeof col?.image === 'string' ? col.image : col?.image?.url,
+    typeof col?.thumbnail === 'string' ? col.thumbnail : col?.thumbnail?.url,
+    COLLECTION_IMAGE_MAP[handleLower],
+    typeof fallbackCol?.image === 'string' ? fallbackCol.image : fallbackCol?.image?.url,
+    handleLower === 'men'
+      ? '/products/asymmetric-mandarin-shirt/main.jpg?v=3'
+      : '/products/navy-tailored-mini-dress/main.jpg?v=3',
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === 'string' && candidate.trim().length > 0) {
+      return candidate.trim();
+    }
+  }
+
+  return '/products/navy-tailored-mini-dress/main.jpg?v=3';
+}
+
 export default async function CollectionsPage() {
   let displayCollections = COLLECTIONS;
   try {
@@ -70,13 +90,7 @@ export default async function CollectionsPage() {
       displayCollections = liveList.map((col) => {
         const handleLower = String(col.handle || '').toLowerCase();
         const fallbackCol = COLLECTIONS.find((c) => c.handle.toLowerCase() === handleLower);
-        const resolvedImage = col.image
-          || col.thumbnail
-          || COLLECTION_IMAGE_MAP[handleLower]
-          || fallbackCol?.image
-          || (handleLower === 'men'
-              ? '/products/asymmetric-mandarin-shirt/main.jpg?v=3'
-              : '/products/navy-tailored-mini-dress/main.jpg?v=3');
+        const resolvedImage = resolveSafeImage(col, handleLower, fallbackCol);
 
         return {
           handle: col.handle,
@@ -110,13 +124,15 @@ export default async function CollectionsPage() {
               className={styles.card}
             >
               <div className={styles.imageWrapper}>
-                <Image
-                  src={col.image}
-                  alt={col.title}
-                  fill
-                  className={styles.image}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
+                {col.image && typeof col.image === 'string' && col.image.trim().length > 0 && (
+                  <Image
+                    src={col.image}
+                    alt={col.title || 'Collection'}
+                    fill
+                    className={styles.image}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                )}
                 <div className={styles.overlay} />
                 <span className={styles.badge}>{col.itemCount}</span>
               </div>
