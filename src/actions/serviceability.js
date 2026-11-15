@@ -12,7 +12,7 @@ export async function checkPincodeAction(pincode) {
   try {
     const cleanPin = String(pincode || "").trim().replace(/\D/g, "");
     if (cleanPin.length !== 6) {
-      return { ok: false, error: "Please enter a valid 6-digit Indian pincode." };
+      return { ok: false, error: "Enter valid 6-digit pincode" };
     }
 
     const res = await checkPincodeServiceability(cleanPin);
@@ -20,25 +20,23 @@ export async function checkPincodeAction(pincode) {
 
     if (data?.serviceable) {
       const rec = data.recommended || {};
-      const carrier = rec.displayName || rec.courier || rec.provider || "Shiprocket / Blue Dart Air";
-      const etaDays = rec.etaDays ? `${rec.etaDays}-${rec.etaDays + 2} business days` : "2-4 business days";
-      const codStatus = rec.supportsCod !== false ? "Cash on Delivery Available" : "Prepaid Only";
+      const etaDays = rec.etaDays ? `${rec.etaDays}–${rec.etaDays + 2} days` : "2–4 days";
+      const codAvailable = rec.supportsCod !== false;
 
       return {
         ok: true,
         serviceable: true,
         pincode: cleanPin,
-        carrier,
-        deliveryEst: etaDays,
-        codStatus,
-        message: `Express Delivery available to ${cleanPin} in ${etaDays}.`,
+        deliveryDays: etaDays,
+        codAvailable,
+        message: `Available · Delivery in ${etaDays}`,
       };
     } else {
       return {
         ok: true,
         serviceable: false,
         pincode: cleanPin,
-        message: `Delivery currently unavailable to pincode ${cleanPin}.`,
+        message: `Unavailable for ${cleanPin}`,
       };
     }
   } catch (error) {

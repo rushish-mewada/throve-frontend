@@ -35,6 +35,7 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
   const [isDeliveryOpen, setIsDeliveryOpen] = useState(false);
   const [isQuickSizeOpen, setIsQuickSizeOpen] = useState(false);
   const [quickSizeAction, setQuickSizeAction] = useState('cart'); // 'cart' | 'buy'
+  const [isPincodeOpen, setIsPincodeOpen] = useState(false);
   const [pincode, setPincode] = useState('');
   const [pincodeLoading, setPincodeLoading] = useState(false);
   const [pincodeResult, setPincodeResult] = useState(null);
@@ -285,58 +286,73 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
         </button>
       </div>
 
-      {/* Pincode Serviceability Checker */}
-      <div className={styles.pincodeBox}>
-        <div className={styles.pincodeHeader}>
-          <span className={styles.pincodeTitle}>
+      {/* Click-to-open Pincode Serviceability Section */}
+      <div className={styles.pincodeSection}>
+        <button
+          type="button"
+          className={styles.pincodeToggleBtn}
+          onClick={() => setIsPincodeOpen(!isPincodeOpen)}
+          aria-expanded={isPincodeOpen}
+        >
+          <div className={styles.pincodeToggleLeft}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
               <circle cx="12" cy="10" r="3" />
             </svg>
-            <span>Delivery &amp; Serviceability</span>
-          </span>
-          <button
-            type="button"
-            className={styles.deliveryLink}
-            onClick={() => setIsDeliveryOpen(true)}
-            style={{ margin: 0 }}
+            <span>
+              {pincodeResult?.serviceable
+                ? `Delivery in ${pincodeResult.deliveryDays} (${pincodeResult.pincode})`
+                : 'Check Delivery Availability'}
+            </span>
+          </div>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            style={{
+              transform: isPincodeOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s ease',
+            }}
           >
-            Delivery T&amp;C
-          </button>
-        </div>
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
 
-        <form onSubmit={handleCheckPincode} className={styles.pincodeForm}>
-          <input
-            type="text"
-            inputMode="numeric"
-            maxLength={6}
-            placeholder="Enter 6-digit Pincode"
-            value={pincode}
-            onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-            className={styles.pincodeInput}
-            aria-label="Delivery Pincode"
-          />
-          <button
-            type="submit"
-            disabled={pincodeLoading || pincode.length !== 6}
-            className={styles.pincodeBtn}
-          >
-            {pincodeLoading ? 'Checking...' : 'Check'}
-          </button>
-        </form>
+        {isPincodeOpen && (
+          <div className={styles.pincodeDropdown}>
+            <form onSubmit={handleCheckPincode} className={styles.pincodeForm}>
+              <input
+                type="text"
+                inputMode="numeric"
+                maxLength={6}
+                placeholder="Enter 6-digit Pincode"
+                value={pincode}
+                onChange={(e) => setPincode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                className={styles.pincodeInput}
+                aria-label="Delivery Pincode"
+              />
+              <button
+                type="submit"
+                disabled={pincodeLoading || pincode.length !== 6}
+                className={styles.pincodeBtn}
+              >
+                {pincodeLoading ? 'Checking...' : 'Check'}
+              </button>
+            </form>
 
-        {pincodeResult && (
-          <div>
-            {pincodeResult.serviceable ? (
-              <div className={styles.pincodeResultSuccess}>
-                <div style={{ fontWeight: 600 }}>✓ {pincodeResult.message}</div>
-                <div style={{ color: '#166534', fontSize: '0.74rem' }}>
-                  • {pincodeResult.codStatus} · Dispatched via {pincodeResult.carrier}
-                </div>
-              </div>
-            ) : (
-              <div className={styles.pincodeResultError}>
-                ✕ {pincodeResult.error || pincodeResult.message}
+            {pincodeResult && (
+              <div className={pincodeResult.serviceable ? styles.pincodeShortSuccess : styles.pincodeShortError}>
+                {pincodeResult.serviceable ? (
+                  <>
+                    <span>✓ Available · Delivery in {pincodeResult.deliveryDays}</span>
+                    {pincodeResult.codAvailable && <span className={styles.pincodeCodPill}>COD Available</span>}
+                  </>
+                ) : (
+                  <span>✕ {pincodeResult.message || pincodeResult.error}</span>
+                )}
               </div>
             )}
           </div>
@@ -378,6 +394,17 @@ export default function AddToCartClient({ variants = [], colors = [], product, c
             {config?.commerce?.codEnabled !== false ? ' & COD available across India.' : ' with secure prepaid delivery.'}
           </span>
         </div>
+      </div>
+
+      {/* Separate Delivery T&C Link */}
+      <div>
+        <button
+          type="button"
+          className={styles.deliveryLink}
+          onClick={() => setIsDeliveryOpen(true)}
+        >
+          Delivery T&amp;C
+        </button>
       </div>
 
       {/* Floating Sticky Bottom Bar when main CTAs are scrolled out of view */}
