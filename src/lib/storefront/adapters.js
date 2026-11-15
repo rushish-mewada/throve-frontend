@@ -156,6 +156,8 @@ export function toProductProps(raw) {
     reviewsCount,
     sold: soldCount,
     specs,
+    specifications: raw.metadata?.specifications || raw.specifications || undefined,
+    visualBlocks: raw.metadata?.visualBlocks || raw.visualBlocks || undefined,
     comingSoon: false,
     preOrder: false,
     inStock: Boolean(raw.inStock),

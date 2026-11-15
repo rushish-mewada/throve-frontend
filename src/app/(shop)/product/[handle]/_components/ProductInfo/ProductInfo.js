@@ -75,52 +75,23 @@ export default function ProductInfo({ product, config }) {
 
       <hr className={styles.divider} />
 
-      {/* Description */}
+      {/* Short Description */}
       <div className={styles.descriptionBlock}>
-        <span className={styles.descriptionTitle}>Specification & Silhouette:</span>
+        <span className={styles.descriptionTitle}>Overview</span>
         <p className={styles.descriptionText}>
           {product.description}
-          {' '}
-          <button
-            type="button"
-            className={styles.seeMore}
-            onClick={() => setIsExpanded(!isExpanded)}
-            style={{ background: 'none', border: 'none', padding: 0, font: 'inherit' }}
-          >
-            {isExpanded ? 'Show Less' : 'See More....'}
-          </button>
         </p>
-
-        {isExpanded && (
-          <div
-            style={{
-              marginTop: '12px',
-              padding: '14px',
-              backgroundColor: '#fafaf9',
-              borderRadius: '6px',
-              border: '1px solid #e7e5e4',
-              fontSize: '13px',
-              color: '#44403c',
-              lineHeight: 1.6,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-            }}
-          >
-            <div>
-              <strong style={{ color: '#1c1917' }}>Fabric & Drape:</strong>{' '}
-              {product.specs?.fabric || 'Curated high-grade weave with soft-touch luxury drape.'}
-            </div>
-            <div>
-              <strong style={{ color: '#1c1917' }}>Tailoring:</strong>{' '}
-              {product.specs?.tailoring || 'Precision contouring seams and bespoke reinforced finish.'}
-            </div>
-            <div>
-              <strong style={{ color: '#1c1917' }}>Garment Care:</strong>{' '}
-              {product.specs?.care || 'Specialist dry clean recommended or gentle cold hand wash. Steam iron on low heat.'}
-            </div>
-          </div>
-        )}
+        <button
+          type="button"
+          className={styles.specsAnchorLink}
+          onClick={() => {
+            const el = document.getElementById('product-specifications');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+          aria-label="View Anatomy and Craftsmanship Specifications"
+        >
+          View Anatomy & Full Specifications ↓
+        </button>
       </div>
 
       {/* Client Component for interactivity (Color, Size, Buttons, VTON, Size Guide, Delivery T&C) */}

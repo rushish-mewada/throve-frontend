@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import ProductGallery from './_components/ProductGallery/ProductGallery';
 import ProductInfo from './_components/ProductInfo/ProductInfo';
+import ProductSpecsSection from './_components/ProductSpecsSection/ProductSpecsSection';
 import ProductGrid from './_components/ProductGrid/ProductGrid';
 import ProductReviews from './_components/ProductReviews/ProductReviews';
 import { getProductByHandle, LAUNCH_PRODUCTS } from '@/lib/catalog';
@@ -120,6 +121,9 @@ export default async function ProductPage({ params }) {
           <ProductInfo product={product} config={config} />
         </div>
       </div>
+      
+      {/* Product Anatomy, Technical Specifications & Visual Format Blocks */}
+      <ProductSpecsSection product={product} />
       
       <ProductGrid
         title="Related Products"
