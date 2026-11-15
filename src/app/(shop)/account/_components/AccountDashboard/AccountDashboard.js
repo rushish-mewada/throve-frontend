@@ -743,9 +743,9 @@ export default function AccountDashboard({
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
                       <span className={styles.tierBadge}>{user.tier}</span>
                     </div>
-                    <div className={styles.progressBar} style={{ margin: '8px 0 4px 0' }}>
+                    <div className={styles.pointsProgressBar}>
                       <div
-                        className={styles.progressFill}
+                        className={styles.pointsProgressFill}
                         style={{ width: `${Math.min(100, Math.max(0, user.progressPercent || 0))}%` }}
                       />
                     </div>
@@ -769,9 +769,6 @@ export default function AccountDashboard({
                           +{(user.bonusPoints ?? 0).toLocaleString('en-IN')} Pts
                         </strong>
                       </div>
-                    </div>
-                    <div className={styles.pointsOverviewCardSub}>
-                      500 Pts awarded per ₹10,000 spend
                     </div>
                   </div>
                 </div>
