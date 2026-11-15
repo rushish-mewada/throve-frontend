@@ -975,6 +975,7 @@
 }
 
 .stickySizeBadge {
+  display: none;
   color: #52525b;
   font-size: 0.74rem;
   background: #f4f4f5;
@@ -983,7 +984,6 @@
   border-radius: 9999px;
   font-weight: 500;
   cursor: pointer;
-  display: inline-flex;
   align-items: center;
   gap: 4px;
   transition: all 0.15s ease;
@@ -1151,6 +1151,7 @@
   }
 
   .stickySizeBadge {
+    display: inline-flex;
     font-size: 0.68rem;
     padding: 1px 7px;
   }
