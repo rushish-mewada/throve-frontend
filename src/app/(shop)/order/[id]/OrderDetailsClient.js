@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useStore } from "@/context/StoreContext";
+import { launchCashfreeCheckout } from "@/lib/cashfree";
+import { createOrderPaymentSessionAction } from "@/actions/checkout";
 import styles from "./page.module.css";
 
 export default function OrderDetailsClient({ serverOrder, orderId }) {
   const [order, setOrder] = useState(serverOrder);
+  const [isPaying, setIsPaying] = useState(false);
+  const [payError, setPayError] = useState(null);
   const { clearCart } = useStore();
 
   useEffect(() => {
@@ -56,7 +60,54 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
   };
 
   const rawStatus = (activeOrder.status || "").toLowerCase();
-  const isPendingPayment = rawStatus.includes("pending_payment") || (activeOrder.paymentStatus || "").toLowerCase() === "pending" || rawStatus === "awaiting";
+  const rawPaymentStatus = (activeOrder.paymentStatus || "").toLowerCase();
+  const isFailedPayment = rawPaymentStatus === "failed" || rawStatus === "payment_failed" || rawStatus === "failed";
+  const isPendingPayment = !isFailedPayment && (rawStatus.includes("pending_payment") || rawPaymentStatus === "pending" || rawStatus === "awaiting");
+
+  const handlePayNow = useCallback(async () => {
+    setIsPaying(true);
+    setPayError(null);
+    try {
+      const res = await createOrderPaymentSessionAction({
+        orderId: activeOrder.publicId || activeOrder.id || orderId,
+        displayId: activeOrder.id || orderId,
+      });
+
+      if (!res.success) {
+        setPayError(res.error || "Unable to initialize payment session. Please try again.");
+        setIsPaying(false);
+        return;
+      }
+
+      if (res.paymentSessionId) {
+        await launchCashfreeCheckout({
+          paymentSessionId: res.paymentSessionId,
+          environment: res.environment || "production",
+        });
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      } else if (res.checkoutUrl) {
+        window.location.href = res.checkoutUrl;
+      } else {
+        setPayError("No checkout session URL received.");
+        setIsPaying(false);
+      }
+    } catch (err) {
+      console.error("[Pay Now Error]:", err);
+      setPayError(err.message || "Failed to start payment. Please check your connection.");
+      setIsPaying(false);
+    }
+  }, [activeOrder, orderId]);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("action") === "pay" && (isPendingPayment || isFailedPayment)) {
+        handlePayNow();
+      }
+    }
+  }, [isPendingPayment, isFailedPayment, handlePayNow]);
   let currentStep = 1;
   if (rawStatus === "delivered") {
     currentStep = 4;
@@ -79,8 +130,18 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
     <main className={styles.orderLayout}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <div className={`${styles.successIcon} ${isPendingPayment ? styles.pendingIcon : ''}`}>
-            {isPendingPayment ? (
+          <div
+            className={`${styles.successIcon} ${
+              isFailedPayment ? styles.failedIcon : isPendingPayment ? styles.pendingIcon : ""
+            }`}
+          >
+            {isFailedPayment ? (
+              <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            ) : isPendingPayment ? (
               <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
@@ -96,24 +157,55 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
           <div>
             <div
               className={`${styles.statusCapsule} ${
-                isPendingPayment ? styles.statusCapsulePending : styles.statusCapsuleConfirmed
+                isFailedPayment
+                  ? styles.statusCapsuleFailed
+                  : isPendingPayment
+                  ? styles.statusCapsulePending
+                  : styles.statusCapsuleConfirmed
               }`}
             >
               <span
                 className={`${styles.statusDot} ${
-                  isPendingPayment ? styles.statusDotAmber : styles.statusDotGreen
+                  isFailedPayment
+                    ? styles.statusDotRose
+                    : isPendingPayment
+                    ? styles.statusDotAmber
+                    : styles.statusDotGreen
                 }`}
               />
-              <span>{isPendingPayment ? "Payment Pending" : "Order Confirmed · Paid"}</span>
+              <span>
+                {isFailedPayment
+                  ? "Payment Failed"
+                  : isPendingPayment
+                  ? "Payment Pending"
+                  : "Order Confirmed · Paid"}
+              </span>
             </div>
           </div>
           <p>
-            {isPendingPayment
-              ? <>Awaiting payment confirmation for order <strong>{activeOrder.id || orderId}</strong> before atelier tailoring begins.</>
-              : <>Thank you for your purchase! Your order <strong>{activeOrder.id || orderId}</strong> has been received.</>}
+            {isFailedPayment ? (
+              <>
+                Payment session expired or could not be verified for order{" "}
+                <strong>{activeOrder.id || orderId}</strong>. Please complete payment to confirm atelier tailoring.
+              </>
+            ) : isPendingPayment ? (
+              <>
+                Awaiting payment confirmation for order <strong>{activeOrder.id || orderId}</strong> before atelier tailoring begins.
+              </>
+            ) : (
+              <>
+                Thank you for your purchase! Your order <strong>{activeOrder.id || orderId}</strong> has been received.
+              </>
+            )}
           </p>
           {activeOrder.email && (
             <p className={styles.emailHint}>We&apos;ve sent a confirmation email to {activeOrder.email}</p>
+          )}
+
+          {payError && (
+            <div style={{ marginTop: "12px", padding: "10px 16px", backgroundColor: "#fef2f2", color: "#991b1b", border: "1px solid #fecaca", borderRadius: "8px", fontSize: "0.85rem" }}>
+              {payError}
+            </div>
           )}
         </div>
 
@@ -150,7 +242,34 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
               </div>
             </div>
 
-            {isPendingPayment ? (
+            {isFailedPayment ? (
+              <div className={styles.section}>
+                <h2>Atelier Tailoring & Fulfillment</h2>
+                <div className={styles.failedNoticeBox}>
+                  <div className={styles.failedNoticeIcon}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="8" x2="12" y2="12" />
+                      <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className={styles.failedNoticeTitle}>Payment Session Expired</h4>
+                    <p className={styles.failedNoticeDesc}>
+                      Your online payment session was not completed within the allowed time limit. Your garment reservation is temporarily held. Please click Retry Payment to complete your purchase and start crafting your order.
+                    </p>
+                    <button
+                      type="button"
+                      className={styles.payNowNoticeBtn}
+                      onClick={handlePayNow}
+                      disabled={isPaying}
+                    >
+                      {isPaying ? "Preparing Secure Payment..." : `Retry Payment (${activeOrder.total})`}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : isPendingPayment ? (
               <div className={styles.section}>
                 <h2>Atelier Tailoring & Fulfillment</h2>
                 <div className={styles.pendingNoticeBox}>
@@ -166,6 +285,14 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
                     <p className={styles.pendingNoticeDesc}>
                       Artisan tailoring and courier dispatch will begin immediately upon payment confirmation. Once verified, live logistics milestones and courier tracking will activate right here.
                     </p>
+                    <button
+                      type="button"
+                      className={styles.payNowNoticeBtn}
+                      onClick={handlePayNow}
+                      disabled={isPaying}
+                    >
+                      {isPaying ? "Preparing Secure Payment..." : `Complete Payment Now (${activeOrder.total})`}
+                    </button>
                   </div>
                 </div>
               </div>
@@ -231,28 +358,70 @@ export default function OrderDetailsClient({ serverOrder, orderId }) {
                 <h2 style={{ margin: 0, paddingBottom: 0, borderBottom: "none" }}>Payment Method</h2>
                 <span
                   className={`${styles.statusCapsule} ${
-                    isPendingPayment ? styles.statusCapsulePending : styles.statusCapsuleConfirmed
+                    isFailedPayment
+                      ? styles.statusCapsuleFailed
+                      : isPendingPayment
+                      ? styles.statusCapsulePending
+                      : styles.statusCapsuleConfirmed
                   }`}
                   style={{ margin: 0, fontSize: "0.75rem", padding: "3px 10px" }}
                 >
                   <span
                     className={`${styles.statusDot} ${
-                      isPendingPayment ? styles.statusDotAmber : styles.statusDotGreen
+                      isFailedPayment
+                        ? styles.statusDotRose
+                        : isPendingPayment
+                        ? styles.statusDotAmber
+                        : styles.statusDotGreen
                     }`}
                   />
-                  <span>{isPendingPayment ? "Payment Pending" : "Paid"}</span>
+                  <span>
+                    {isFailedPayment ? "Payment Failed" : isPendingPayment ? "Payment Pending" : "Paid"}
+                  </span>
                 </span>
               </div>
               <p style={{ marginTop: "8px" }}>{activeOrder.paymentMethod}</p>
             </div>
 
             <div className={styles.actions}>
-              <Link href="/track" className={styles.outlineBtn}>
-                Track Shipment
-              </Link>
-              <Link href="/" className={styles.primaryBtn}>
-                Continue Shopping
-              </Link>
+              {isFailedPayment ? (
+                <>
+                  <button
+                    type="button"
+                    className={styles.primaryBtn}
+                    onClick={handlePayNow}
+                    disabled={isPaying}
+                  >
+                    {isPaying ? "Opening Payment..." : "Retry Payment"}
+                  </button>
+                  <Link href="/" className={styles.outlineBtn}>
+                    Continue Shopping
+                  </Link>
+                </>
+              ) : isPendingPayment ? (
+                <>
+                  <button
+                    type="button"
+                    className={styles.primaryBtn}
+                    onClick={handlePayNow}
+                    disabled={isPaying}
+                  >
+                    {isPaying ? "Opening Payment..." : "Complete Payment Now"}
+                  </button>
+                  <Link href="/" className={styles.outlineBtn}>
+                    Continue Shopping
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href={`/track?id=${encodeURIComponent(activeOrder.id || orderId)}`} className={styles.outlineBtn}>
+                    Track Shipment
+                  </Link>
+                  <Link href="/" className={styles.primaryBtn}>
+                    Continue Shopping
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

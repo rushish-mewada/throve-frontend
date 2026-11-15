@@ -15,6 +15,16 @@ function getStatusConfig(status, paymentStatus, styles) {
   const norm = String(status || '').toLowerCase().replace(/[\s-]/g, '_');
   const payNorm = String(paymentStatus || '').toLowerCase();
 
+  if (norm === 'payment_failed' || payNorm === 'failed' || (norm === 'failed' && payNorm !== 'captured')) {
+    return {
+      label: 'Payment Failed',
+      className: styles.statusFailed,
+      dotClass: styles.statusDotRose,
+      desc: 'Payment session expired. Click Retry Payment to complete your order.',
+      isFailedPayment: true,
+    };
+  }
+
   if (norm === 'pending_payment' || payNorm === 'pending' || norm === 'payment_pending') {
     return {
       label: 'Payment Pending',
@@ -532,7 +542,13 @@ export default function AccountDashboard({
                             {/* Logistics / Fulfillment Note */}
                             <div className={styles.logisticsNotice}>
                               <div className={styles.logisticsIcon}>
-                                {statusConfig.isPendingPayment ? (
+                                {statusConfig.isFailedPayment ? (
+                                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#b91c1c" strokeWidth="2.2">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                  </svg>
+                                ) : statusConfig.isPendingPayment ? (
                                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2.2">
                                     <circle cx="12" cy="12" r="10" />
                                     <line x1="12" y1="8" x2="12" y2="12" />
@@ -583,7 +599,7 @@ export default function AccountDashboard({
                             </a>
 
                             <div className={styles.orderActionsGroup}>
-                              {!statusConfig.isPendingPayment && (
+                              {!statusConfig.isPendingPayment && !statusConfig.isFailedPayment && (
                                 <Link
                                   href={`/track?id=${encodeURIComponent(orderRef)}`}
                                   className={styles.secondaryTrackBtn}
@@ -596,10 +612,16 @@ export default function AccountDashboard({
                               )}
 
                               <Link
-                                href={`/order/${encodeURIComponent(orderRef)}`}
+                                href={`/order/${encodeURIComponent(orderRef)}${statusConfig.isPendingPayment || statusConfig.isFailedPayment ? '?action=pay' : ''}`}
                                 className={styles.primaryDetailsBtn}
                               >
-                                <span>{statusConfig.isPendingPayment ? "Complete Payment" : "View Details"}</span>
+                                <span>
+                                  {statusConfig.isFailedPayment
+                                    ? "Retry Payment"
+                                    : statusConfig.isPendingPayment
+                                    ? "Complete Payment"
+                                    : "View Details"}
+                                </span>
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                   <polyline points="9 18 15 12 9 6" />
                                 </svg>

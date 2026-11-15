@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { submitCheckout } from "@/lib/storefront/checkout";
 import { getCheckoutPaymentOptions } from "@/lib/storefront/config";
 import { verifyPaymentCallback } from "@/lib/storefront/payments";
+import { createOrderPaymentSession } from "@/lib/storefront/orders";
 
 /**
  * Server Action: Return active payment options published from admin settings.
@@ -259,6 +260,34 @@ export async function initiateCashfreeCheckoutAction(data = {}) {
     return {
       success: false,
       error: error.message || "Failed to initiate Cashfree checkout",
+    };
+  }
+}
+
+/**
+ * Server Action: Create or resume a payment gateway session for an existing order with pending/failed payment.
+ *
+ * @param {Object} data
+ * @param {string} data.orderId
+ * @returns {Promise<{ success: boolean, paymentSessionId?: string, checkoutUrl?: string, environment?: string, provider?: string, error?: string }>}
+ */
+export async function createOrderPaymentSessionAction(data = {}) {
+  try {
+    const orderId = String(data?.orderId || data?.displayId || "").trim();
+    if (!orderId) {
+      return { success: false, error: "Order ID is required to initiate payment." };
+    }
+
+    const sessionData = await createOrderPaymentSession(orderId);
+    return {
+      success: true,
+      ...sessionData,
+    };
+  } catch (error) {
+    console.error("[Create Order Payment Session Action Error]:", error);
+    return {
+      success: false,
+      error: error.message || "Failed to initialize payment session for this order.",
     };
   }
 }

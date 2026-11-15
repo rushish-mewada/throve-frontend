@@ -524,6 +524,12 @@
   border: 1px solid #fde68a;
 }
 
+.statusCapsuleFailed {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
 .statusCapsuleConfirmed {
   background-color: #ecfdf5;
   color: #047857;
@@ -546,6 +552,11 @@
 .statusDotAmber {
   background-color: #d97706;
   box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
+}
+
+.statusDotRose {
+  background-color: #e11d48;
+  box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.2);
 }
 
 .statusDotGreen {
@@ -594,4 +605,74 @@
   line-height: 1.5;
   color: #78350f;
   margin: 0;
+}
+
+.failedNoticeBox {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+}
+
+.failedNoticeIcon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #fee2e2;
+  color: #b91c1c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.failedNoticeTitle {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #991b1b;
+  margin: 0 0 4px 0;
+}
+
+.failedNoticeDesc {
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: #7f1d1d;
+  margin: 0;
+}
+
+.payNowNoticeBtn {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background-color: #121212;
+  color: #ffffff;
+  border: 1px solid #121212;
+  border-radius: 6px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.payNowNoticeBtn:hover {
+  background-color: #262626;
+  border-color: #262626;
+}
+
+.payNowNoticeBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.failedIcon {
+  background-color: #fee2e2;
+  color: #b91c1c;
 }

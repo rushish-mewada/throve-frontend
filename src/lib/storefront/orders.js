@@ -81,6 +81,30 @@ export async function getOrderById(id) {
 }
 
 /**
+ * Request a payment gateway session for an existing order with pending or failed payment.
+ *
+ * @param {string} orderId
+ * @returns {Promise<Object>}
+ */
+export async function createOrderPaymentSession(orderId) {
+  if (!orderId) throw new Error("Order ID is required");
+
+  const res = await fetchStorefront(`/v1/orders/${encodeURIComponent(orderId)}/pay`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    cache: "no-store",
+  });
+
+  if (!res?.data?.success) {
+    throw new Error(res?.error?.message || "Failed to initialize payment session for order");
+  }
+
+  return res.data;
+}
+
+/**
  * Server-only helper to fetch order history and profile for an authenticated customer.
  *
  * @param {string} identifier - Phone or Email

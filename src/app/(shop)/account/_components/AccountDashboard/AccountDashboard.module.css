@@ -378,6 +378,16 @@
   box-shadow: 0 0 0 2px rgba(217, 119, 6, 0.2);
 }
 
+.statusFailed {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+.statusDotRose {
+  background-color: #e11d48;
+  box-shadow: 0 0 0 2px rgba(225, 29, 72, 0.2);
+}
+
 .statusDispatched {
   background-color: #f0f9ff;
   color: #0369a1;
