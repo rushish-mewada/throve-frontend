@@ -17,7 +17,7 @@ export async function checkPincodeServiceability(pincode) {
     const res = await fetchStorefront(`/v1/serviceability?pincode=${encodeURIComponent(cleanPin)}`, {
       cache: "no-store",
     });
-    return res;
+    return res?.data || res;
   } catch (err) {
     return { serviceable: false, error: err.message || "Network error" };
   }

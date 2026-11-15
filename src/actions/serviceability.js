@@ -16,20 +16,22 @@ export async function checkPincodeAction(pincode) {
     }
 
     const res = await checkPincodeServiceability(cleanPin);
+    const data = res?.data || res;
 
-    if (res?.serviceable) {
-      const carrier = res.recommended?.courier || res.recommended?.provider || "Shiprocket / Blue Dart Air";
-      const deliveryEst = "3-5 business days";
-      const codStatus = res.recommended?.isCodAvailable !== false ? "Cash on Delivery Available" : "Prepaid Only";
+    if (data?.serviceable) {
+      const rec = data.recommended || {};
+      const carrier = rec.displayName || rec.courier || rec.provider || "Shiprocket / Blue Dart Air";
+      const etaDays = rec.etaDays ? `${rec.etaDays}-${rec.etaDays + 2} business days` : "2-4 business days";
+      const codStatus = rec.supportsCod !== false ? "Cash on Delivery Available" : "Prepaid Only";
 
       return {
         ok: true,
         serviceable: true,
         pincode: cleanPin,
         carrier,
-        deliveryEst,
+        deliveryEst: etaDays,
         codStatus,
-        message: `Express Delivery available to ${cleanPin} in ${deliveryEst}.`,
+        message: `Express Delivery available to ${cleanPin} in ${etaDays}.`,
       };
     } else {
       return {
