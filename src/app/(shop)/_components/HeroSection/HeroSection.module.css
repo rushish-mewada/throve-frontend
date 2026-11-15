@@ -232,15 +232,15 @@
 /* Floating Hotspot Cards on Active Center Product */
 .hotspotCard {
   position: absolute;
-  width: 205px;
+  width: 224px;
   background: #ffffff;
-  border-radius: 10px;
-  padding: 10px 13px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   border: 1px solid #eeeeee;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
   z-index: 15;
   animation: cardFade 0.35s ease-out;
 }
@@ -269,59 +269,93 @@
 .cardHeader {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .cardTitle {
   font-family: var(--font-poppins), sans-serif;
-  font-size: 0.83rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: #111111;
+  line-height: 1.3;
+  flex: 1;
+  min-width: 0;
 }
 
 .wishlistBtn {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
-  color: #666666;
+  padding: 2px;
+  color: #71717a;
   display: flex;
   align-items: center;
-  transition: color 0.2s;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: color 0.2s, transform 0.15s ease;
 }
 
 .wishlistBtn:hover {
   color: #111111;
+  transform: scale(1.1);
 }
 
 .cardCollection {
   font-family: var(--font-poppins), sans-serif;
   font-size: 0.68rem;
-  color: #777777;
+  color: #71717a;
+  line-height: 1.2;
 }
 
 .cardMeta {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-family: var(--font-poppins), sans-serif;
   font-size: 0.68rem;
-  color: #555555;
-  margin-top: 1px;
+  color: #52525b;
+  margin-top: 2px;
+}
+
+.cardColor {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cardRating {
-  color: #eab308;
-  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #18181b;
+  background: #fafaf9;
+  border: 1px solid #e4e4e7;
+  border-radius: 9999px;
+  padding: 1px 7px;
+  line-height: 1.25;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ratingStar {
+  color: #f59e0b;
+  font-size: 0.72rem;
+  line-height: 1;
 }
 
 .cardPriceRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 4px;
-  padding-top: 4px;
-  border-top: 1px solid #f4f4f4;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #f4f4f5;
 }
 
 .colorSwatches {
@@ -552,6 +586,21 @@
   .cardTitle {
     font-size: 0.72rem;
     line-height: 1.2;
+  }
+
+  .cardHeader {
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .cardRating {
+    font-size: 0.58rem;
+    padding: 1px 5px;
+    gap: 2px;
+  }
+
+  .ratingStar {
+    font-size: 0.62rem;
   }
 
   .cardCollection {

@@ -408,7 +408,10 @@ export default function HeroSlider({ products = [] }) {
                     <div className={styles.cardMeta}>
                       <span className={styles.cardColor}>Color: {hs.color}</span>
                       {hs.rating && hs.rating !== "0" && Number(hs.rating) > 0 && (
-                        <span className={styles.cardRating}>★ {hs.rating}</span>
+                        <span className={styles.cardRating}>
+                          <span className={styles.ratingStar} aria-hidden="true">★</span>
+                          <span>{hs.rating}</span>
+                        </span>
                       )}
                     </div>
 
