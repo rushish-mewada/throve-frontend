@@ -117,37 +117,6 @@ export default function AddToCartClient({ variants = [], colors = [], product })
         )}
       </div>
 
-      {/* Luxury Delivery & Service Guarantee */}
-      <div
-        style={{
-          padding: '12px 14px',
-          borderRadius: '8px',
-          backgroundColor: '#fafaf9',
-          border: '1px solid #e7e5e4',
-          fontSize: '12px',
-          color: '#44403c',
-          lineHeight: 1.5,
-          display: 'flex',
-          gap: '10px',
-          alignItems: 'flex-start',
-        }}
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-          <rect x="1" y="3" width="15" height="13" />
-          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
-          <circle cx="5.5" cy="18.5" r="2.5" />
-          <circle cx="18.5" cy="18.5" r="2.5" />
-        </svg>
-        <div>
-          <strong style={{ color: '#1c1917', display: 'block', marginBottom: '2px' }}>
-            Complimentary Express Delivery & 7-Day Returns
-          </strong>
-          <span>
-            Handcrafted luxury piece in ready stock. Secured instant order processing with Cashfree One-Click Checkout & COD available across India.
-          </span>
-        </div>
-      </div>
-
       {/* Actions */}
       <div className={styles.actions}>
         <button
@@ -216,6 +185,38 @@ export default function AddToCartClient({ variants = [], colors = [], product })
             </>
           )}
         </button>
+      </div>
+
+      {/* Luxury Delivery & Service Guarantee */}
+      <div
+        style={{
+          padding: '10px 14px',
+          borderRadius: '8px',
+          backgroundColor: '#fafaf9',
+          border: '1px solid #e7e5e4',
+          fontSize: '11.5px',
+          color: '#44403c',
+          lineHeight: 1.45,
+          display: 'flex',
+          gap: '10px',
+          alignItems: 'flex-start',
+          marginTop: '2px',
+        }}
+      >
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#78716c" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
+          <rect x="1" y="3" width="15" height="13" />
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+        <div>
+          <strong style={{ color: '#1c1917', display: 'block', marginBottom: '2px' }}>
+            Complimentary Express Delivery & 7-Day Returns
+          </strong>
+          <span>
+            Handcrafted luxury piece in ready stock. Secured instant order processing with Cashfree One-Click Checkout & COD available across India.
+          </span>
+        </div>
       </div>
 
       {/* Delivery T&C Trigger */}

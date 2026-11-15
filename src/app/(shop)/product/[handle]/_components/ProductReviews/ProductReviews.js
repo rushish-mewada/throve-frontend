@@ -397,7 +397,7 @@ export default function ProductReviews({ productHandle = 'default', productTitle
   });
 
   return (
-    <section className={styles.section}>
+    <section id="reviews" className={styles.section}>
       {/* Header & Write Review Action */}
       <div className={styles.headerRow}>
         <div className={styles.headerTitleCol}>

@@ -14,7 +14,7 @@ export default function ProductInfo({ product }) {
       <p className={styles.collectionName}>{product.collection || 'Collection'}</p>
       <h1 className={styles.title}>{product.title}</h1>
       
-      {/* Price & Stock Indicator */}
+      {/* Price & Capsules */}
       <div className={styles.priceRow}>
         <div className={styles.priceGroup}>
           {product.oldPrice && <span className={styles.oldPrice}>{product.oldPrice}</span>}
@@ -23,15 +23,28 @@ export default function ProductInfo({ product }) {
 
         <div className={styles.metaGroup}>
           {product.inStock !== false && (
-            <div className={styles.stockIndicator} aria-label="Status: In Stock">
+            <div className={styles.stockCapsule} aria-label="Status: In Stock">
               <span className={styles.stockDot} aria-hidden="true" />
               <span>In Stock</span>
             </div>
           )}
-          {Number(product.sold) > 0 && (
-            <div className={styles.salesInfo}>
-              {product.sold} Sold &bull; ⭐️ {product.rating || '5.0'}
-            </div>
+          {product.rating && (
+            <button
+              type="button"
+              className={styles.reviewsCapsule}
+              onClick={() => {
+                const el = document.getElementById('reviews');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
+              title="View Client Reviews"
+              aria-label={`Rating: ${product.rating} stars`}
+            >
+              <span className={styles.starIcon}>★</span>
+              <span>{product.rating}</span>
+              <span className={styles.reviewsCountText}>
+                ({product.reviewsCount || (product.handle === 'sleeveless-princess-sheath-dress' ? '1' : '1')})
+              </span>
+            </button>
           )}
         </div>
       </div>

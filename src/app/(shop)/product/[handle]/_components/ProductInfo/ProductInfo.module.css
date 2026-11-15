@@ -22,7 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .priceGroup {
@@ -45,41 +45,72 @@
   color: #111111;
 }
 
-.salesInfo {
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.85rem;
-  color: #555555;
+.metaGroup {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.metaGroup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.stockIndicator {
+.stockCapsule {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-family: var(--font-poppins), sans-serif;
-  font-size: 0.8rem;
-  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
   color: #15803d;
-  letter-spacing: 0.01em;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .stockDot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: #16a34a;
-  box-shadow: 0 0 0 2.5px rgba(22, 163, 74, 0.2);
+  box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.25);
   display: inline-block;
   flex-shrink: 0;
   animation: pulseDot 2.4s infinite ease-in-out;
+}
+
+.reviewsCapsule {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  background-color: #fafaf9;
+  border: 1px solid #e7e5e4;
+  color: #1c1917;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.reviewsCapsule:hover {
+  background-color: #f5f5f4;
+  border-color: #111111;
+}
+
+.starIcon {
+  color: #f59e0b;
+  font-size: 0.82rem;
+}
+
+.reviewsCountText {
+  color: #78716c;
+  font-weight: 500;
+  font-size: 0.74rem;
 }
 
 @keyframes pulseDot {
@@ -96,11 +127,11 @@
 .divider {
   border: none;
   border-top: 1px solid #e0e0e0;
-  margin: 16px 0;
+  margin: 10px 0;
 }
 
 .descriptionBlock {
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .descriptionTitle {
@@ -129,8 +160,8 @@
 .formContainer {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 16px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .optionLabel {
@@ -288,7 +319,7 @@
 .actions {
   display: flex;
   gap: 16px;
-  margin-top: 1rem;
+  margin-top: 6px;
 }
 
 .addToCartBtn {
